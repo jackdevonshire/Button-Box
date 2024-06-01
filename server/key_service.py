@@ -1,8 +1,10 @@
 import time
 
-from pynput.keyboard import Key, Controller
+from pynput.keyboard import Controller
+
 from types import HttpStatusCode, NetworkResponse
 from user_scripts import UserScripts
+
 
 class KeyService:
     def __init__(self, configuration):
@@ -19,7 +21,8 @@ class KeyService:
                 break
 
         if len(current_button_config.items()) == 0:
-            return NetworkResponse.with_error("Invalid Button Reference").with_status_code(HttpStatusCode.BadRequest).get()
+            return NetworkResponse.with_error("Invalid Button Reference").with_status_code(
+                HttpStatusCode.BadRequest).get()
 
         event_configuration = current_button_config[event]
         if event_configuration["Type"] == "Keybind":
@@ -45,7 +48,7 @@ class KeyService:
             {
                 "Id": self.current_configuration["Id"],
                 "Description": self.current_configuration["Description"]
-             }).get()
+            }).get()
 
     def get_all_configurations(self):
         configurations = []

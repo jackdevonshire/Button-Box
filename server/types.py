@@ -1,5 +1,6 @@
-from flask import jsonify, session, make_response
 from enum import IntEnum
+
+from flask import jsonify, make_response
 
 
 class HttpStatusCode(IntEnum):

@@ -48,6 +48,7 @@ def get_current_configuration():
     except:
         return NetworkResponse.with_error("An unknown error occurred").get()
 
+
 @app.route('/configuration/all', methods=["GET"])
 def get_all_configurations():
     try:
