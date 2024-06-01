@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "Id": 1,
+      "Description": "Main Configuration",
+      "Buttons": [
+        {
+          "Reference": "BUTTON_1",
+          "On": {
+            "Type": "Method",
+            "Action": "switch_modes",
+            "ScreenMessage": "----\nSwitching Modes\n\n----"
+          },
+          "Off": null
+        },
+        {
+          "Reference": "BUTTON_2",
+          "On": {
+            "Type": "Keybind",
+            "Action": "CTRL+C",
+            "ScreenMessage": "----\nCopied Text\n\n----"
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "CTRL+C",
+            "ScreenMessage": "----\nCopied Text\n\n----"
+          }
+        }
+      ]
+    }
+  ]
+}
