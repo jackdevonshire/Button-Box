@@ -2,13 +2,14 @@ import time
 
 from pynput.keyboard import Key, Controller
 from types import HttpStatusCode, NetworkResponse
-
+from user_scripts import UserScripts
 
 class KeyService:
     def __init__(self, configuration):
         self.keyboard = Controller()
         self.configuration = configuration
         self.current_configuration = configuration["Configurations"][0]
+        self.user_script_service = UserScripts()
 
     def handle_key_event(self, button_reference, event):
         current_button_config = {}
@@ -30,6 +31,14 @@ class KeyService:
                 self.keyboard.press(event_configuration["Action"])
                 time.sleep(event_configuration["ActionDuration"])
                 self.keyboard.release(event_configuration["Action"])
+
+        elif event_configuration["Type"] == "Method":
+            self.user_script_service.call_script(event_configuration["Action"])
+
+        return NetworkResponse.with_data({
+            "ScreenMessage": event_configuration["ScreenMessage"],
+            "ScreenDuration": event_configuration["ScreenDuration"]
+        })
 
     def get_current_configuration(self):
         return NetworkResponse.with_data(
