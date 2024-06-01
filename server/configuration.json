@@ -10,7 +10,9 @@
           "On": {
             "Type": "Method",
             "Action": "switch_modes",
-            "ScreenMessage": "----\nSwitching Modes\n\n----"
+            "ActionDuration": null,
+            "ScreenMessage": "----\nSwitching Modes\n\n----",
+            "ScreenDuration": 1
           },
           "Off": null
         },
@@ -19,12 +21,33 @@
           "On": {
             "Type": "Keybind",
             "Action": "CTRL+C",
-            "ScreenMessage": "----\nCopied Text\n\n----"
+            "ActionDuration": 0.1,
+            "ScreenMessage": "----\nCopied Text\n\n----",
+            "ScreenDuration": 1
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+C",
-            "ScreenMessage": "----\nCopied Text\n\n----"
+            "ActionDuration": 0.1,
+            "ScreenMessage": "----\nCopied Text\n\n----",
+            "ScreenDuration": 1
+          }
+        },
+        {
+          "Reference": "BUTTON_3",
+          "On": {
+            "Type": "Keybind",
+            "Action": "CAPS",
+            "ActionDuration": null,
+            "ScreenMessage": "----\nTalking\n\n----",
+            "ScreenDuration": null
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "CAPS",
+            "ActionDuration": 0,
+            "ScreenMessage": "----\nStopped Talking\n\n----",
+            "ScreenDuration": 2
           }
         }
       ]
