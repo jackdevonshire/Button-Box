@@ -9,9 +9,9 @@
           "Reference": "BUTTON_1",
           "On": {
             "Type": "Method",
-            "Action": "switch_modes",
+            "Action": "call_api",
             "ActionDuration": null,
-            "ScreenMessage": "----\nSwitching Modes\n\n----",
+            "ScreenMessage": "----\nCalling API\n\n----",
             "ScreenDuration": 1
           },
           "Off": null
