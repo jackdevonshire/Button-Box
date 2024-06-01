@@ -1,5 +1,6 @@
 {
-  "configurations": [
+  "AuthenticationToken": "",
+  "Configurations": [
     {
       "Id": 1,
       "Description": "Main Configuration",
