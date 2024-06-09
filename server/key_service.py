@@ -51,10 +51,8 @@ class KeyService:
             for x in range(0, len(self.configurations)):
                 if self.configurations[x]["Id"] == self.current_configuration["Id"]:
                     try:
-                        print("here 1")
                         self.current_configuration = self.configurations[x + 1]
                     except:
-                        print("here 2")
                         self.current_configuration = self.configurations[0]
 
                     break
