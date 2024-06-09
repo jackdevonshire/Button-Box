@@ -1,6 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify, make_response
 import json
-from types import HttpStatusCode, NetworkResponse
 from key_service import KeyService
 
 app = Flask(__name__)
@@ -16,19 +15,19 @@ def handle_event():
     try:
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
-            return NetworkResponse.with_data({
+            return make_response(jsonify({
                 "ScreenMessage": "\nError\nInvalid Auth\n",
                 "ScreenDuration": 2
-            }).get()
+            }))
 
         event = request.json["Event"]
         button_reference = request.json["ButtonReference"]
         return key_service.handle_key_event(button_reference, event)
     except:
-        return NetworkResponse.with_data({
+        return make_response(jsonify({
             "ScreenMessage": "\nError\nUnknown\n",
             "ScreenDuration": 2
-        }).get()
+        }))
 
 
 @app.route('/configuration', methods=["POST"])
@@ -36,17 +35,17 @@ def switch_configuration(configuration_id):
     try:
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
-            return NetworkResponse.with_data({
+            return make_response(jsonify({
                 "ScreenMessage": "\nError\nInvalid Auth\n",
                 "ScreenDuration": 2
-            }).get()
+            }))
 
         return key_service.switch_configuration(configuration_id)
     except:
-        return NetworkResponse.with_data({
+        return make_response(jsonify({
             "ScreenMessage": "\nError\nUnknown\n",
             "ScreenDuration": 2
-        }).get()
+        }))
 
 
 

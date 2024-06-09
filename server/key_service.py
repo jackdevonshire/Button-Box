@@ -1,8 +1,7 @@
 import time
 
+from flask import make_response, jsonify
 from pynput.keyboard import Controller
-
-from types import NetworkResponse
 from user_scripts import UserScripts
 
 
@@ -21,10 +20,10 @@ class KeyService:
                 break
 
         if len(current_button_config.items()) == 0:
-            return NetworkResponse.with_data({
+            return make_response(jsonify({
                 "ScreenMessage": "\nError\nInvalid Button:\n"+button_reference+"\n",
                 "ScreenDuration": 2
-            })
+            }))
 
         event_configuration = current_button_config[event]
         if event_configuration["Type"] == "Keybind":
@@ -40,10 +39,10 @@ class KeyService:
         elif event_configuration["Type"] == "Method":
             self.user_script_service.call_script(event_configuration["Action"])
 
-        return NetworkResponse.with_data({
+        return make_response(jsonify({
             "ScreenMessage": event_configuration["ScreenMessage"],
             "ScreenDuration": event_configuration["ScreenDuration"]
-        })
+        }))
 
     def switch_configuration(self):
         # Switch to next configuration
@@ -56,9 +55,9 @@ class KeyService:
 
                 break
 
-        return NetworkResponse.with_data({
+        return make_response(jsonify({
             "ScreenMessage": "---\nChanged Configuration\n" + self.current_configuration["Description"] + "\n---",
             "ScreenDuration": 2,
             "ConfigurationId": self.current_configuration["Id"],
             "ConfigurationDescription": self.current_configuration["Description"]
-        })
+        }))
