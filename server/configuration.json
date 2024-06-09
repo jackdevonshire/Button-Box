@@ -4,6 +4,12 @@
     {
       "Id": 1,
       "Description": "Main Configuration",
+      "DefaultScreenMessage": [
+        "---",
+        "Current Config:",
+        "Main Configuration",
+        "---"
+      ],
       "Buttons": [
         {
           "Reference": "BUTTON_1",
