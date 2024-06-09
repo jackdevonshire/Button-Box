@@ -60,7 +60,7 @@ class KeyService:
             self.initialised_configuration = True
 
         return make_response(jsonify({
-            "ScreenMessage": ["---", "Changed Configuration:", self.current_configuration["Description"], ""],
+            "ScreenMessage": ["---", "Changed:", "Configuration", ""],
             "ScreenDuration": 2,
             "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
         }))
