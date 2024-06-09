@@ -6,11 +6,11 @@ from user_scripts import UserScripts
 
 
 class KeyService:
-    def __init__(self, configuration):
+    def __init__(self, configurations):
         self.keyboard = Controller()
         self.user_script_service = UserScripts()
-        self.configuration = configuration
-        self.current_configuration = configuration[self.configuration[0]]
+        self.configurations = configurations
+        self.current_configuration = self.configurations[0]
 
     def handle_key_event(self, button_reference, event):
         current_button_config = {}
@@ -46,12 +46,12 @@ class KeyService:
 
     def switch_configuration(self):
         # Switch to next configuration
-        for x in range(0, len(self.configuration) - 1):
-            if self.configuration[x] == self.current_configuration:
+        for x in range(0, len(self.configurations) - 1):
+            if self.configurations[x] == self.current_configuration:
                 try:
-                    self.current_configuration = self.configuration[x + 1]
+                    self.current_configuration = self.configurations[x + 1]
                 except:
-                    self.current_configuration = self.configuration[0]
+                    self.current_configuration = self.configurations[0]
 
                 break
 

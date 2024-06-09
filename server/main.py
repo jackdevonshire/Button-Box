@@ -4,10 +4,10 @@ from key_service import KeyService
 
 app = Flask(__name__)
 configuration = {}
-with open('data.json') as json_file:
-    configuration = json.load("configuration.json")
+with open('configuration.json') as json_file:
+    configuration = json.load(json_file)
 
-key_service = KeyService(configuration)
+key_service = KeyService(configuration["Configurations"])
 
 
 @app.route('/event', methods=["POST"])
@@ -46,7 +46,6 @@ def switch_configuration(configuration_id):
             "ScreenMessage": "\nError\nUnknown\n",
             "ScreenDuration": 2
         }))
-
 
 
 if __name__ == '__main__':
