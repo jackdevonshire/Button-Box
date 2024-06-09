@@ -31,7 +31,7 @@ def handle_event():
 
 
 @app.route('/configuration', methods=["POST"])
-def switch_configuration(configuration_id):
+def switch_configuration():
     try:
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
@@ -49,4 +49,4 @@ def switch_configuration(configuration_id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=80)
