@@ -5,9 +5,9 @@ HOST_IP = ""
 AUTH_TOKEN = ""
 
 # The reference of the button to control switching the controller configuration
-CONFIGURATION_BUTTON_REFERENCE = "PUSH_BTN_MODE"
+CONFIGURATION_BUTTON_REFERENCE = "PUSH_BTN_CONFIG"
 
-# All of the buttons. The key is the button reference (customisable), the value is the GPIO pin for that button
+# All the buttons. The key is the button reference (customisable), the value is the GPIO pin for that button
 BUTTONS = {
     "PUSH_BTN_CONFIG": 0,
     "PUSH_BTN_1": 0,
