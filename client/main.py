@@ -7,6 +7,7 @@ from display_service import DisplayService
 from client import Client
 from config import HOST_IP, AUTH_TOKEN, BUTTONS, CONFIGURATION_BUTTON_REFERENCE
 from gpiozero import Button
+from signal import pause
 
 display = DisplayService()
 client = Client(HOST_IP, AUTH_TOKEN, display)
@@ -26,3 +27,5 @@ for button_reference, button_gpio in BUTTONS.items():
 
     functional_button.when_activated = client.handle_event("On", button_reference)
     functional_button.when_deactivated = client.handle_event("Off", button_reference)
+
+pause()
