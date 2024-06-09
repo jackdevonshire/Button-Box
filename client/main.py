@@ -22,10 +22,10 @@ for button_reference, button_gpio in BUTTONS.items():
     functional_buttons[button_reference] = functional_button
 
     if (button_reference == CONFIGURATION_BUTTON_REFERENCE):
-        functional_button.when_activated = client.switch_configuration()
+        functional_button.when_pressed = lambda: client.switch_configuration()
         continue
 
-    functional_button.when_activated = client.handle_event("On", button_reference)
-    functional_button.when_deactivated = client.handle_event("Off", button_reference)
+    functional_button.when_pressed = lambda: client.handle_event("On", button_reference)
+    functional_button.when_released = lambda: client.handle_event("Off", button_reference)
 
 pause()
