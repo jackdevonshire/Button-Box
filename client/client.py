@@ -10,7 +10,7 @@ class Client():
 
     def handle_event(self, event, button_reference):
         endpoint = self.base_url + "/event"
-        response = requests.post(endpoint, {
+        response = requests.post(endpoint, json={
             "AuthenticationToken": self.auth_token,
             "Event": event,
             "ButtonReference": button_reference
@@ -20,7 +20,7 @@ class Client():
 
     def switch_configuration(self):
         endpoint = self.base_url + "/configuration"
-        response = requests.post(endpoint, {
+        response = requests.post(endpoint, json={
             "AuthenticationToken": self.auth_token
         })
 
