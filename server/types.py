@@ -22,25 +22,11 @@ class NetworkResponse:
         self.data = json
         return self
 
-    def with_error(self, message, log=False):
-        self.has_error = True
-        self.log = log
-        self.message = message
-        return self
-
-    def with_status_code(self, code: HttpStatusCode):
-        self.status_code = code.value
-        return self
-
     def get(self):
         if self.has_error and self.status_code == 200:
             self.status_code = 500
 
-        response = {
-            "HasError": self.has_error,
-            "Message": self.message
-        }
-
+        response = {}
         for key, value in self.data.items():
             response[key] = value
 

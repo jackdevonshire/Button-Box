@@ -2,16 +2,16 @@ import time
 
 from pynput.keyboard import Controller
 
-from types import HttpStatusCode, NetworkResponse
+from types import NetworkResponse
 from user_scripts import UserScripts
 
 
 class KeyService:
     def __init__(self, configuration):
         self.keyboard = Controller()
-        self.configuration = configuration
-        self.current_configuration = configuration["Configurations"][0]
         self.user_script_service = UserScripts()
+        self.configuration = configuration
+        self.current_configuration = configuration[self.configuration[0]]
 
     def handle_key_event(self, button_reference, event):
         current_button_config = {}
@@ -21,8 +21,10 @@ class KeyService:
                 break
 
         if len(current_button_config.items()) == 0:
-            return NetworkResponse.with_error("Invalid Button Reference").with_status_code(
-                HttpStatusCode.BadRequest).get()
+            return NetworkResponse.with_data({
+                "ScreenMessage": "\nError\nInvalid Button:\n"+button_reference+"\n",
+                "ScreenDuration": 2
+            })
 
         event_configuration = current_button_config[event]
         if event_configuration["Type"] == "Keybind":
@@ -43,14 +45,20 @@ class KeyService:
             "ScreenDuration": event_configuration["ScreenDuration"]
         })
 
-    def set_configuration(self, configuration_id):
-        switched = False
-        for configuration in self.configuration:
-            if (configuration["Id"] == configuration_id):
-                self.current_configuration = configuration
-                switched = True
+    def switch_configuration(self):
+        # Switch to next configuration
+        for x in range(0, len(self.configuration) - 1):
+            if self.configuration[x] == self.current_configuration:
+                try:
+                    self.current_configuration = self.configuration[x + 1]
+                except:
+                    self.current_configuration = self.configuration[0]
+
                 break
 
-        if not switched:
-            return NetworkResponse.with_error("Invalid Configuration Id").with_status_code(
-                HttpStatusCode.BadRequest).get()
+        return NetworkResponse.with_data({
+            "ScreenMessage": "---\nChanged Configuration\n" + self.current_configuration["Description"] + "\n---",
+            "ScreenDuration": 2,
+            "ConfigurationId": self.current_configuration["Id"],
+            "ConfigurationDescription": self.current_configuration["Description"]
+        })
