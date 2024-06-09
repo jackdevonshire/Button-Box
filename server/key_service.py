@@ -46,7 +46,7 @@ class KeyService:
         }))
 
     def switch_configuration(self):
-        if not self.initialised_configuration:
+        if self.initialised_configuration:
             # Switch to next configuration
             for x in range(0, len(self.configurations) - 1):
                 if self.configurations[x] == self.current_configuration:
@@ -55,8 +55,9 @@ class KeyService:
                     except:
                         self.current_configuration = self.configurations[0]
 
-                    self.initialised_configuration = True
                     break
+        else:
+            self.initialised_configuration = True
 
         return make_response(jsonify({
             "ScreenMessage": ["---", "Changed Configuration:", self.current_configuration["Description"], ""],
