@@ -5,7 +5,7 @@ import display_service
 class Client():
     def __init__(self, host_ip, auth_token, display : display_service.DisplayService):
         self.display_service = display
-        self.base_url = host_ip.replace("/", "")
+        self.base_url = "http://" + host_ip.replace("http://", "").replace("/", "")
         self.auth_token = auth_token
 
     def handle_event(self, event, button_reference):
