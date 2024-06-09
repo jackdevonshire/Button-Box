@@ -1,35 +1,18 @@
-from enum import IntEnum
-
 from flask import jsonify, make_response
 
 
-class HttpStatusCode(IntEnum):
-    Success = 200
-    Forbidden = 403
-    NotFound = 404
-    BadRequest = 400
-    InternalServerError = 500
-
-
 class NetworkResponse:
-    has_error = False
-    log = False
-    message = ""
     data = {}
-    status_code = 200
 
     def with_data(self, json):
         self.data = json
         return self
 
     def get(self):
-        if self.has_error and self.status_code == 200:
-            self.status_code = 500
-
         response = {}
         for key, value in self.data.items():
             response[key] = value
 
         flask_response = make_response(jsonify(response))
-        flask_response.status_code = self.status_code
+        flask_response.status_code = 200
         return flask_response

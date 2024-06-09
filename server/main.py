@@ -16,13 +16,19 @@ def handle_event():
     try:
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
-            return NetworkResponse.with_error("Invalid Auth Token").with_status_code(HttpStatusCode.Forbidden).get()
+            return NetworkResponse.with_data({
+                "ScreenMessage": "\nError\nInvalid Auth\n",
+                "ScreenDuration": 2
+            }).get()
 
         event = request.json["Event"]
         button_reference = request.json["ButtonReference"]
         return key_service.handle_key_event(button_reference, event)
     except:
-        return NetworkResponse.with_error("An unknown error occurred").get()
+        return NetworkResponse.with_data({
+            "ScreenMessage": "\nError\nUnknown\n",
+            "ScreenDuration": 2
+        }).get()
 
 
 @app.route('/configuration', methods=["POST"])
@@ -30,11 +36,18 @@ def switch_configuration(configuration_id):
     try:
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
-            return NetworkResponse.with_error("Invalid Auth Token").with_status_code(HttpStatusCode.Forbidden).get()
+            return NetworkResponse.with_data({
+                "ScreenMessage": "\nError\nInvalid Auth\n",
+                "ScreenDuration": 2
+            }).get()
 
         return key_service.switch_configuration(configuration_id)
     except:
-        return NetworkResponse.with_error("An unknown error occurred").get()
+        return NetworkResponse.with_data({
+            "ScreenMessage": "\nError\nUnknown\n",
+            "ScreenDuration": 2
+        }).get()
+
 
 
 if __name__ == '__main__':
