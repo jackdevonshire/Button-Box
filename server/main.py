@@ -37,14 +37,16 @@ def switch_configuration():
         if auth_token != configuration["AuthenticationToken"]:
             return make_response(jsonify({
                 "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-                "ScreenDuration": 2
+                "ScreenDuration": 2,
+                "DefaultScreenMessage": None
             }))
 
-        return key_service.switch_configuration(configuration_id)
+        return key_service.switch_configuration()
     except:
         return make_response(jsonify({
             "ScreenMessage": ["", "Error:", "Unknown", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "DefaultScreenMessage": None
         }))
 
 
