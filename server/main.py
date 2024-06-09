@@ -37,29 +37,5 @@ def set_configuration(configuration_id):
         return NetworkResponse.with_error("An unknown error occurred").get()
 
 
-@app.route('/configuration/current', methods=["GET"])
-def get_current_configuration():
-    try:
-        auth_token = request.json["AuthenticationToken"]
-        if auth_token != configuration["AuthenticationToken"]:
-            return NetworkResponse.with_error("Invalid Auth Token").with_status_code(HttpStatusCode.Forbidden).get()
-
-        return key_service.get_current_configuration()
-    except:
-        return NetworkResponse.with_error("An unknown error occurred").get()
-
-
-@app.route('/configuration/all', methods=["GET"])
-def get_all_configurations():
-    try:
-        auth_token = request.json["AuthenticationToken"]
-        if auth_token != configuration["AuthenticationToken"]:
-            return NetworkResponse.with_error("Invalid Auth Token").with_status_code(HttpStatusCode.Forbidden).get()
-
-        return key_service.get_all_configurations()
-    except:
-        return NetworkResponse.with_error("An unknown error occurred").get()
-
-
 if __name__ == '__main__':
     app.run()
