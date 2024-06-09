@@ -16,7 +16,7 @@ class Client():
             "ButtonReference": button_reference
         })
 
-        self.display_service.set_temporary_message(response["ScreenMessage"], response["ScreenDuration"])
+        self.display_service.set_temporary_message(response.json()["ScreenMessage"], response.json()["ScreenDuration"])
 
     def switch_configuration(self):
         endpoint = self.base_url + "/configuration"
@@ -24,5 +24,5 @@ class Client():
             "AuthenticationToken": self.auth_token
         })
 
-        self.display_service.set_default_message(response["DefaultScreenMessage"])
-        self.display_service.set_temporary_message(response["ScreenMessage"], response["ScreenDuration"])
+        self.display_service.set_default_message(response.json()["DefaultScreenMessage"])
+        self.display_service.set_temporary_message(response.json()["ScreenMessage"], response.json()["ScreenDuration"])

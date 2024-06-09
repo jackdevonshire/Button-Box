@@ -1,3 +1,8 @@
+#
+# Requirements:
+# In Raspberry Pi preferences, enable the I2C interface
+#
+
 from display_service import DisplayService
 from client import Client
 from config import HOST_IP, AUTH_TOKEN, BUTTONS, CONFIGURATION_BUTTON_REFERENCE
