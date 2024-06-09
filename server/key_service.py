@@ -11,6 +11,7 @@ class KeyService:
         self.user_script_service = UserScripts()
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
+        self.initialised_configuration = False
 
     def handle_key_event(self, button_reference, event):
         current_button_config = {}
@@ -45,15 +46,17 @@ class KeyService:
         }))
 
     def switch_configuration(self):
-        # Switch to next configuration
-        for x in range(0, len(self.configurations) - 1):
-            if self.configurations[x] == self.current_configuration:
-                try:
-                    self.current_configuration = self.configurations[x + 1]
-                except:
-                    self.current_configuration = self.configurations[0]
+        if not self.initialised_configuration:
+            # Switch to next configuration
+            for x in range(0, len(self.configurations) - 1):
+                if self.configurations[x] == self.current_configuration:
+                    try:
+                        self.current_configuration = self.configurations[x + 1]
+                    except:
+                        self.current_configuration = self.configurations[0]
 
-                break
+                    self.initialised_configuration = True
+                    break
 
         return make_response(jsonify({
             "ScreenMessage": ["---", "Changed Configuration:", self.current_configuration["Description"], ""],

@@ -8,6 +8,8 @@ client = Client(HOST_IP, AUTH_TOKEN, display)
 
 functional_buttons = {}
 
+client.switch_configuration() # First call to initialise permanent display message
+
 # Initial Setup
 for button_reference, button_gpio in BUTTONS.items():
     functional_button = Button(button_gpio)
