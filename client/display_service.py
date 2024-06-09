@@ -36,16 +36,11 @@ class DisplayService():
             self.__lcd.printline(2, lines[2].rjust(cols))
             self.__lcd.printline(3, lines[3].rjust(cols))
 
-    @staticmethod
-    def __string_to_lines(message):
-        return message.split("\n")
-
-    def set_default_message(self, message):
-        self.__default_lines = self.__string_to_lines(message)
+    def set_default_message(self, default_message):
+        self.__default_lines = default_message
 
     def set_temporary_message(self, message, duration):
-        temporary_lines = self.__string_to_lines(message)
-        self.__set_lcd(temporary_lines)
+        self.__set_lcd(message)
 
         if duration is None: # Do not switch back to default message until instructed if duration not set
             return True

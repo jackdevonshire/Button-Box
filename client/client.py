@@ -24,6 +24,5 @@ class Client():
             "AuthenticationToken": self.auth_token
         })
 
-        default_message = ["----", "Configuration:", response["ConfigurationDescription"],"----"]
-        self.display_service.set_default_message(default_message)
+        self.display_service.set_default_message(response["DefaultScreenMessage"])
         self.display_service.set_temporary_message(response["ScreenMessage"], response["ScreenDuration"])
