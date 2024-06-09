@@ -21,7 +21,7 @@ class KeyService:
 
         if len(current_button_config.items()) == 0:
             return make_response(jsonify({
-                "ScreenMessage": "\nError\nInvalid Button:\n"+button_reference+"\n",
+                "ScreenMessage": ["", "Error:", "Invalid Button", button_reference],
                 "ScreenDuration": 2
             }))
 
@@ -56,7 +56,7 @@ class KeyService:
                 break
 
         return make_response(jsonify({
-            "ScreenMessage": "---\nChanged Configuration\n" + self.current_configuration["Description"] + "\n---",
+            "ScreenMessage": ["---", "Changed Configuration:", self.current_configuration["Description"], ""],
             "ScreenDuration": 2,
             "ConfigurationId": self.current_configuration["Id"],
             "ConfigurationDescription": self.current_configuration["Description"]

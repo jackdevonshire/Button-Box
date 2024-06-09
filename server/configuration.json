@@ -11,7 +11,7 @@
             "Type": "Method",
             "Action": "call_api",
             "ActionDuration": null,
-            "ScreenMessage": "----\nCalling API\n\n----",
+            "ScreenMessage": ["", "Calling API", "", ""],
             "ScreenDuration": 1
           },
           "Off": null
@@ -22,14 +22,14 @@
             "Type": "Keybind",
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
-            "ScreenMessage": "----\nCopied Text\n\n----",
+            "ScreenMessage": ["", "Copied", "Text", ""],
             "ScreenDuration": 1
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
-            "ScreenMessage": "----\nCopied Text\n\n----",
+            "ScreenMessage": ["", "Copied", "Text", ""],
             "ScreenDuration": 1
           }
         },
@@ -39,14 +39,14 @@
             "Type": "Keybind",
             "Action": "CAPS",
             "ActionDuration": null,
-            "ScreenMessage": "----\nTalking\n\n----",
+            "ScreenMessage": ["---", "Currently", "Talking", "---"],
             "ScreenDuration": null
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CAPS",
             "ActionDuration": 0,
-            "ScreenMessage": "----\nStopped Talking\n\n----",
+            "ScreenMessage": ["---", "Stopped", "Talking", "---"],
             "ScreenDuration": 2
           }
         }

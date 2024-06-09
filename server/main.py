@@ -16,7 +16,7 @@ def handle_event():
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
             return make_response(jsonify({
-                "ScreenMessage": "\nError\nInvalid Auth\n",
+                "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
                 "ScreenDuration": 2
             }))
 
@@ -25,7 +25,7 @@ def handle_event():
         return key_service.handle_key_event(button_reference, event)
     except:
         return make_response(jsonify({
-            "ScreenMessage": "\nError\nUnknown\n",
+            "ScreenMessage": ["", "Error:", "Unknown", ""],
             "ScreenDuration": 2
         }))
 
@@ -36,14 +36,14 @@ def switch_configuration(configuration_id):
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
             return make_response(jsonify({
-                "ScreenMessage": "\nError\nInvalid Auth\n",
+                "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
                 "ScreenDuration": 2
             }))
 
         return key_service.switch_configuration(configuration_id)
     except:
         return make_response(jsonify({
-            "ScreenMessage": "\nError\nUnknown\n",
+            "ScreenMessage": ["", "Error:", "Unknown", ""],
             "ScreenDuration": 2
         }))
 
