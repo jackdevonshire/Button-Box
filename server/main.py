@@ -17,7 +17,8 @@ def handle_event():
         if auth_token != configuration["AuthenticationToken"]:
             return make_response(jsonify({
                 "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-                "ScreenDuration": 2
+                "ScreenDuration": 2,
+                "DefaultScreenMessage": key_service.get_default_screen_message()
             }))
 
         event = request.json["Event"]
@@ -26,28 +27,22 @@ def handle_event():
     except:
         return make_response(jsonify({
             "ScreenMessage": ["", "Error:", "Unknown", ""],
-            "ScreenDuration": 2
-        }))
-
-
-@app.route('/configuration', methods=["POST"])
-def switch_configuration():
-    try:
-        auth_token = request.json["AuthenticationToken"]
-        if auth_token != configuration["AuthenticationToken"]:
-            return make_response(jsonify({
-                "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-                "ScreenDuration": 2,
-                "DefaultScreenMessage": None
-            }))
-
-        return key_service.switch_configuration()
-    except:
-        return make_response(jsonify({
-            "ScreenMessage": ["", "Error:", "Unknown", ""],
             "ScreenDuration": 2,
-            "DefaultScreenMessage": None
+            "DefaultScreenMessage": key_service.get_default_screen_message()
         }))
+
+
+@app.route('/setup', methods=["POST"])
+def setup():
+    auth_token = request.json["AuthenticationToken"]
+    if auth_token != configuration["AuthenticationToken"]:
+        return make_response(jsonify({
+            "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
+            "ScreenDuration": 2,
+            "DefaultScreenMessage": ["", "Failed Setup", "Invalid Auth", ""]
+        }))
+
+    return key_service.switch_configuration()
 
 
 if __name__ == '__main__':

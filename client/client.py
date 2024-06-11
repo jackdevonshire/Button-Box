@@ -1,3 +1,5 @@
+import time
+
 import requests
 import display_service
 
@@ -16,13 +18,18 @@ class Client():
             "ButtonReference": button_reference
         })
 
-        self.display_service.set_temporary_message(response.json()["ScreenMessage"], response.json()["ScreenDuration"])
+        self.__set_lcd(self.__default_lines)
 
-    def switch_configuration(self):
-        endpoint = self.base_url + "/configuration"
+        if response.json()["ScreenDuration"] is None: # Do not switch back to default message until instructed if duration not set
+            return
+
+        time.sleep(response.json()["ScreenDuration"])
+        self.display_service.display_message(response.json()["DefaultScreenMessage"])
+
+    def setup(self):
+        endpoint = self.base_url + "/setup"
         response = requests.post(endpoint, json={
             "AuthenticationToken": self.auth_token
         })
 
-        self.display_service.set_default_message(response.json()["DefaultScreenMessage"])
-        self.display_service.set_temporary_message(response.json()["ScreenMessage"], response.json()["ScreenDuration"])
+        self.display_service.display_message(response.json()["DefaultScreenMessage"])

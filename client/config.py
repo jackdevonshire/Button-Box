@@ -4,9 +4,6 @@ HOST_IP = ""
 # This should match the servers auth token
 AUTH_TOKEN = ""
 
-# The reference of the button to control switching the controller configuration
-CONFIGURATION_BUTTON_REFERENCE = "PUSH_BTN_CONFIG"
-
 # All the buttons. The key is the button reference (customisable), the value is the GPIO pin for that button
 BUTTONS = {
     "PUSH_BTN_CONFIG": 0,

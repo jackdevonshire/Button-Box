@@ -23,7 +23,8 @@ class KeyService:
         if len(current_button_config.items()) == 0:
             return make_response(jsonify({
                 "ScreenMessage": ["", "Error:", "Invalid Button", button_reference],
-                "ScreenDuration": 2
+                "ScreenDuration": 2,
+                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
             }))
 
         event_configuration = current_button_config[event]
@@ -40,9 +41,13 @@ class KeyService:
         elif event_configuration["Type"] == "Method":
             self.user_script_service.call_script(event_configuration["Action"])
 
+        elif event_configuration["Type"] == "Mode":
+            return self.switch_configuration()
+
         return make_response(jsonify({
             "ScreenMessage": event_configuration["ScreenMessage"],
-            "ScreenDuration": event_configuration["ScreenDuration"]
+            "ScreenDuration": event_configuration["ScreenDuration"],
+            "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
         }))
 
     def switch_configuration(self):
@@ -64,3 +69,6 @@ class KeyService:
             "ScreenDuration": 2,
             "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
         }))
+
+    def get_default_screen_message(self):
+        return self.current_configuration["DefaultScreenMessage"]

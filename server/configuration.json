@@ -1,5 +1,5 @@
 {
-  "AuthenticationToken": "",
+  "AuthenticationToken": "TEST",
   "Configurations": [
     {
       "Id": 1,
@@ -7,52 +7,109 @@
       "DefaultScreenMessage": [
         "---",
         "Current Config:",
-        "Main Configuration",
+        "Main",
         "---"
       ],
       "Buttons": [
         {
-          "Reference": "BUTTON_1",
-          "On": {
-            "Type": "Method",
-            "Action": "call_api",
-            "ActionDuration": null,
-            "ScreenMessage": ["", "Calling API", "", ""],
-            "ScreenDuration": 1
-          },
-          "Off": null
-        },
-        {
-          "Reference": "BUTTON_2",
+          "Reference": "GANG_A_1",
           "On": {
             "Type": "Keybind",
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
-            "ScreenMessage": ["", "Copied", "Text", ""],
-            "ScreenDuration": 1
+            "ScreenMessage": ["", "GANG A 1 On", "", ""],
+            "ScreenDuration": 2
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CTRL+C",
+            "Action": "CTRL+V",
             "ActionDuration": 0.1,
-            "ScreenMessage": ["", "Copied", "Text", ""],
-            "ScreenDuration": 1
+            "ScreenMessage": ["", "GANG A 1 Off", "", ""],
+            "ScreenDuration": 2
           }
         },
         {
-          "Reference": "BUTTON_3",
+          "Reference": "GANG_A_2",
           "On": {
             "Type": "Keybind",
-            "Action": "CAPS",
-            "ActionDuration": null,
-            "ScreenMessage": ["---", "Currently", "Talking", "---"],
-            "ScreenDuration": null
+            "Action": "CTRL+C",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 2 On", "", ""],
+            "ScreenDuration": 2
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CAPS",
-            "ActionDuration": 0,
-            "ScreenMessage": ["---", "Stopped", "Talking", "---"],
+            "Action": "CTRL+V",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 2 Off", "", ""],
+            "ScreenDuration": 2
+          }
+        },
+        {
+          "Reference": "GANG_A_3",
+          "On": {
+            "Type": "Keybind",
+            "Action": "CTRL+C",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 3 On", "", ""],
+            "ScreenDuration": 2
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "CTRL+V",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 3 Off", "", ""],
+            "ScreenDuration": 2
+          }
+        },
+        {
+          "Reference": "GANG_A_4",
+          "On": {
+            "Type": "Keybind",
+            "Action": "CTRL+C",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 4 On", "", ""],
+            "ScreenDuration": 2
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "CTRL+V",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 4 Off", "", ""],
+            "ScreenDuration": 2
+          }
+        },
+        {
+          "Reference": "GANG_A_5",
+          "On": {
+            "Type": "Keybind",
+            "Action": "CTRL+C",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 5 On", "", ""],
+            "ScreenDuration": 2
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "CTRL+V",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 5 Off", "", ""],
+            "ScreenDuration": 2
+          }
+        },
+        {
+          "Reference": "GANG_A_6",
+          "On": {
+            "Type": "Keybind",
+            "Action": "CTRL+C",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 6 On", "", ""],
+            "ScreenDuration": 2
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "CTRL+V",
+            "ActionDuration": 0.1,
+            "ScreenMessage": ["", "GANG A 6 Off", "", ""],
             "ScreenDuration": 2
           }
         }

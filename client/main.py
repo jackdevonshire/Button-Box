@@ -5,7 +5,7 @@
 
 from display_service import DisplayService
 from client import Client
-from config import HOST_IP, AUTH_TOKEN, BUTTONS, CONFIGURATION_BUTTON_REFERENCE
+from config import HOST_IP, AUTH_TOKEN, BUTTONS
 from gpiozero import Button
 from signal import pause
 
@@ -14,16 +14,12 @@ client = Client(HOST_IP, AUTH_TOKEN, display)
 
 functional_buttons = {}
 
-client.switch_configuration() # First call to initialise permanent display message
+client.setup()
 
 # Initial Setup
 for button_reference, button_gpio in BUTTONS.items():
     functional_button = Button(button_gpio)
     functional_buttons[button_reference] = functional_button
-
-    if (button_reference == CONFIGURATION_BUTTON_REFERENCE):
-        functional_button.when_pressed = lambda: client.switch_configuration()
-        continue
 
     functional_button.when_pressed = lambda: client.handle_event("On", button_reference)
     functional_button.when_released = lambda: client.handle_event("Off", button_reference)
