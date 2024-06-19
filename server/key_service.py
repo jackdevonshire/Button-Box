@@ -12,6 +12,18 @@ class KeyService:
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
+        self.button_states = {}
+
+        self.__initialize_button_states()
+
+    def __initialize_button_states(self):
+        for configuration in self.configurations:
+            for button in configuration["Buttons"]:
+                button_reference = button["Reference"]
+
+                if button_reference not in self.button_states:
+                    self.button_states[button_reference] = "OFF"
+
 
     def handle_key_event(self, button_reference, event):
         current_button_config = {}
@@ -28,6 +40,18 @@ class KeyService:
             }))
 
         event_configuration = current_button_config[event]
+
+        for requirement in event_configuration["Requirements"]:
+            req_button_ref = requirement["ButtonReference"]
+            req_state = requirement["RequiredState"]
+
+            if self.button_states[req_button_ref] != req_state:
+                return make_response(jsonify({
+                    "ScreenMessage": ["", req_button_ref, " must be " + req_state, ""],
+                    "ScreenDuration": 2,
+                    "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
+                }))
+
         if event_configuration["Type"] == "Keybind":
             if event_configuration["ActionDuration"] == 0:
                 self.keyboard.release(event_configuration["Action"])

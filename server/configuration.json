@@ -18,14 +18,21 @@
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 1 On", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": [
+              {
+                "ButtonReference": "GANG_A_2",
+                "RequiredState": "OFF"
+              }
+            ]
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+V",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 1 Off", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           }
         },
         {
@@ -35,14 +42,16 @@
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 2 On", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+V",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 2 Off", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           }
         },
         {
@@ -52,14 +61,16 @@
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 3 On", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+V",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 3 Off", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           }
         },
         {
@@ -69,14 +80,16 @@
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 4 On", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+V",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 4 Off", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           }
         },
         {
@@ -86,14 +99,16 @@
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 5 On", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+V",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 5 Off", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           }
         },
         {
@@ -103,14 +118,16 @@
             "Action": "CTRL+C",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 6 On", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
             "Action": "CTRL+V",
             "ActionDuration": 0.1,
             "ScreenMessage": ["", "GANG A 6 Off", "", ""],
-            "ScreenDuration": 2
+            "ScreenDuration": 2,
+            "Requirements": []
           }
         }
       ]
