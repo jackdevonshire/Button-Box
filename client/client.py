@@ -32,4 +32,6 @@ class Client():
             "AuthenticationToken": self.auth_token
         })
 
+        self.display_service.display_message(["", "Starting Up", "Disable All Switches", ""])
+        time.sleep(5)
         self.display_service.display_message(response.json()["DefaultScreenMessage"])
