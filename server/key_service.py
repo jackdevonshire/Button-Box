@@ -24,7 +24,6 @@ class KeyService:
                 if button_reference not in self.button_states:
                     self.button_states[button_reference] = "OFF"
 
-
     def handle_key_event(self, button_reference, event):
         current_button_config = {}
         for button in self.current_configuration["Buttons"]:
@@ -40,6 +39,9 @@ class KeyService:
             }))
 
         event_configuration = current_button_config[event]
+
+        if event_configuration["Type"] == "Mode":
+            return self.switch_configuration()
 
         for requirement in event_configuration["Requirements"]:
             req_button_ref = requirement["ButtonReference"]
@@ -64,9 +66,6 @@ class KeyService:
 
         elif event_configuration["Type"] == "Method":
             self.user_script_service.call_script(event_configuration["Action"])
-
-        elif event_configuration["Type"] == "Mode":
-            return self.switch_configuration()
 
         return make_response(jsonify({
             "ScreenMessage": event_configuration["ScreenMessage"],
