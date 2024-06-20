@@ -1,19 +1,17 @@
 import time
 
 from flask import make_response, jsonify
-from pynput.keyboard import Controller
+import pyautogui
 from user_scripts import UserScripts
 
 
 class KeyService:
     def __init__(self, configurations):
-        self.keyboard = Controller()
         self.user_script_service = UserScripts()
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
         self.button_states = {}
-
         self.__initialize_button_states()
 
     def __initialize_button_states(self):
@@ -62,13 +60,14 @@ class KeyService:
 
         if event_configuration["Type"] == "Keybind":
             if event_configuration["ActionDuration"] == 0:
-                self.keyboard.release(event_configuration["Action"])
+                pyautogui.keyUp(event_configuration["Action"])
             elif event_configuration["ActionDuration"] == None:
-                self.keyboard.press(event_configuration["Action"])
+                print("here")
+                pyautogui.keyDown(event_configuration["Action"])
             else:
-                self.keyboard.press(event_configuration["Action"])
+                pyautogui.keyDown(event_configuration["Action"])
                 time.sleep(event_configuration["ActionDuration"])
-                self.keyboard.release(event_configuration["Action"])
+                pyautogui.keyUp(event_configuration["Action"])
 
         elif event_configuration["Type"] == "Method":
             self.user_script_service.call_script(event_configuration["Action"])

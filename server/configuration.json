@@ -12,28 +12,51 @@
       ],
       "Buttons": [
         {
-          "Reference": "GANG_A_1",
+          "Reference": "BTN_10",
+          "On": {
+            "Type": "Mode",
+            "Requirements": []
+          },
+          "Off": null
+        },
+        {
+          "Reference": "BTN_6",
           "On": {
             "Type": "Keybind",
-            "Action": "CTRL+C",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 1 On", "", ""],
-            "ScreenDuration": 2,
-            "Requirements": [
-              {
-                "ButtonReference": "GANG_A_2",
-                "RequiredState": "OFF"
-              }
-            ]
+            "Action": "shift",
+            "ActionDuration": null,
+            "ScreenMessage": ["", "Talking", "", ""],
+            "ScreenDuration": null,
+            "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CTRL+V",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 1 Off", "", ""],
+            "Action": "shift",
+            "ActionDuration": 0,
+            "ScreenMessage": ["", "Stopped Talking", "", ""],
             "ScreenDuration": 2,
             "Requirements": []
           }
+        }
+      ]
+    },
+    {
+      "Id": 2,
+      "Description": "KSP Configuration",
+      "DefaultScreenMessage": [
+        "---",
+        "Current Config:",
+        "KSP",
+        "---"
+      ],
+      "Buttons": [
+        {
+          "Reference": "BTN_10",
+          "On": {
+            "Type": "Mode",
+            "Requirements": []
+          },
+          "Off": null
         },
         {
           "Reference": "GANG_A_2",
