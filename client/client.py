@@ -18,6 +18,8 @@ class Client():
             "ButtonReference": button_reference
         })
 
+        self.display_service.display_message(response.json()["ScreenMessage"])
+
         if response.json()["ScreenDuration"] is None: # Do not switch back to default message until instructed if duration not set
             return
 
