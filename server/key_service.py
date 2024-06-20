@@ -39,6 +39,12 @@ class KeyService:
             }))
 
         event_configuration = current_button_config[event]
+        if event_configuration == None:
+            return make_response(jsonify({
+                "ScreenMessage": self.current_configuration["DefaultScreenMessage"],
+                "ScreenDuration": 1,
+                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
+            }))
 
         if event_configuration["Type"] == "Mode":
             return self.switch_configuration()
