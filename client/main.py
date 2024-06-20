@@ -15,6 +15,7 @@ client.setup()
 # Initialise button states
 button_states = {}
 for button_reference, button in BUTTONS.items():
+    button_states[button_reference] = False
 
 while True:
     for button_reference, button in BUTTONS.items():
