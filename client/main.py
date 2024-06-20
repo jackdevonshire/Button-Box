@@ -20,7 +20,7 @@ for button_reference, button in BUTTONS.items():
 while True:
     for button_reference, button in BUTTONS.items():
         try:
-            is_pressed = button.is_pressed()
+            is_pressed = button.is_pressed
             existing_is_pressed_state = button_states[button_reference]
 
             if is_pressed != existing_is_pressed_state:
