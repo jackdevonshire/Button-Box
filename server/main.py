@@ -23,6 +23,9 @@ def handle_event():
 
         event = request.json["Event"]
         button_reference = request.json["ButtonReference"]
+
+        print("Button: " + button_reference + ", Event: " + event)
+
         return key_service.handle_key_event(button_reference, event)
     except:
         return make_response(jsonify({

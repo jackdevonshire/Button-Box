@@ -18,8 +18,6 @@ class Client():
             "ButtonReference": button_reference
         })
 
-        self.__set_lcd(self.__default_lines)
-
         if response.json()["ScreenDuration"] is None: # Do not switch back to default message until instructed if duration not set
             return
 
