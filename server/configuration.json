@@ -206,17 +206,17 @@
           "On": {
             "Type": "Keybind",
             "Action": "t",
-            "ActionDuration": null,
+            "ActionDuration": 0.5,
             "ScreenMessage": ["", "SAS", "Enabled", ""],
-            "ScreenDuration": null,
+            "ScreenDuration": 2,
             "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
             "Action": "t",
-            "ActionDuration": 0,
+            "ActionDuration": 0.5,
             "ScreenMessage": ["", "SAS", "Disabled", ""],
-            "ScreenDuration": 0,
+            "ScreenDuration": 2,
             "Requirements": []
           }
         },
@@ -225,7 +225,7 @@
           "On": {
             "Type": "Keybind",
             "Action": "r",
-            "ActionDuration": null,
+            "ActionDuration": 0.5,
             "ScreenMessage": ["", "RCS", "Enabled", ""],
             "ScreenDuration": null,
             "Requirements": []
@@ -233,9 +233,9 @@
           "Off": {
             "Type": "Keybind",
             "Action": "r",
-            "ActionDuration": 0,
+            "ActionDuration": 0.5,
             "ScreenMessage": ["", "RCS", "Disabled", ""],
-            "ScreenDuration": 0,
+            "ScreenDuration": 2,
             "Requirements": []
           }
         }
