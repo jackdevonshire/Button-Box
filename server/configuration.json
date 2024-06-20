@@ -59,97 +59,183 @@
           "Off": null
         },
         {
-          "Reference": "GANG_A_2",
+          "Reference": "BTN_6",
           "On": {
             "Type": "Keybind",
-            "Action": "CTRL+C",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 2 On", "", ""],
+            "Action": "x",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "THRUST", "Minimum", ""],
+            "ScreenDuration": 2,
+            "Requirements": []
+          },
+          "Off": null
+        },
+        {
+          "Reference": "BTN_7",
+          "On": {
+            "Type": "Keybind",
+            "Action": "z",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "THRUST", "Maximum", ""],
+            "ScreenDuration": 2,
+            "Requirements": []
+          },
+          "Off": null
+        },
+        {
+          "Reference": "BTN_8",
+          "On": {
+            "Type": "Keybind",
+            "Action": "ctrl",
+            "ActionDuration": null,
+            "ScreenMessage": ["", "THRUST", "Decrease", ""],
+            "ScreenDuration": null,
+            "Requirements": []
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "ctrl",
+            "ActionDuration": 0,
+            "ScreenMessage": ["", "THRUST", "Decrease", ""],
+            "ScreenDuration": 0,
+            "Requirements": []
+          }
+        },
+        {
+          "Reference": "BTN_9",
+          "On": {
+            "Type": "Keybind",
+            "Action": "shift",
+            "ActionDuration": null,
+            "ScreenMessage": ["", "THRUST", "Increase", ""],
+            "ScreenDuration": null,
+            "Requirements": []
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "shift",
+            "ActionDuration": 0,
+            "ScreenMessage": ["", "THRUST", "Increase", ""],
+            "ScreenDuration": 0,
+            "Requirements": []
+          }
+        },
+        {
+          "Reference": "PROTECTED_1",
+          "On": {
+            "Type": "Keybind",
+            "Action": "space",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "DANGER", "STAGE", ""],
+            "ScreenDuration": 3,
+            "Requirements": []
+          },
+          "Off": null
+        },
+        {
+          "Reference": "PROTECTED_2",
+          "On": {
+            "Type": "Keybind",
+            "Action": "backspace",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["DANGER", "ABORTING", "ABORTING", "DANGER"],
+            "ScreenDuration": 5,
+            "Requirements": []
+          },
+          "Off": null
+        },
+        {
+          "Reference": "SWITCH_1",
+          "On": {
+            "Type": "Keybind",
+            "Action": "v",
+            "ActionDuration": null,
+            "ScreenMessage": ["", "Looking", "Inside", ""],
+            "ScreenDuration": null,
+            "Requirements": []
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "v",
+            "ActionDuration": 0,
+            "ScreenMessage": ["", "Looking", "Inside", ""],
+            "ScreenDuration": 0,
+            "Requirements": []
+          }
+        },
+        {
+          "Reference": "SWITCH_5",
+          "On": {
+            "Type": "Keybind",
+            "Action": "l",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "Lights", "On", ""],
             "ScreenDuration": 2,
             "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CTRL+V",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 2 Off", "", ""],
+            "Action": "l",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "Lights", "Off", ""],
             "ScreenDuration": 2,
             "Requirements": []
           }
         },
         {
-          "Reference": "GANG_A_3",
+          "Reference": "SWITCH_4",
           "On": {
             "Type": "Keybind",
-            "Action": "CTRL+C",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 3 On", "", ""],
+            "Action": "g",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "Gear", "Down", ""],
             "ScreenDuration": 2,
             "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CTRL+V",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 3 Off", "", ""],
+            "Action": "g",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "Gear", "Up", ""],
             "ScreenDuration": 2,
             "Requirements": []
           }
         },
         {
-          "Reference": "GANG_A_4",
+          "Reference": "SWITCH_3",
           "On": {
             "Type": "Keybind",
-            "Action": "CTRL+C",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 4 On", "", ""],
-            "ScreenDuration": 2,
+            "Action": "t",
+            "ActionDuration": null,
+            "ScreenMessage": ["", "SAS", "Enabled", ""],
+            "ScreenDuration": null,
             "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CTRL+V",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 4 Off", "", ""],
-            "ScreenDuration": 2,
+            "Action": "t",
+            "ActionDuration": 0,
+            "ScreenMessage": ["", "SAS", "Disabled", ""],
+            "ScreenDuration": 0,
             "Requirements": []
           }
         },
         {
-          "Reference": "GANG_A_5",
+          "Reference": "SWITCH_2",
           "On": {
             "Type": "Keybind",
-            "Action": "CTRL+C",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 5 On", "", ""],
-            "ScreenDuration": 2,
+            "Action": "r",
+            "ActionDuration": null,
+            "ScreenMessage": ["", "RCS", "Enabled", ""],
+            "ScreenDuration": null,
             "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "CTRL+V",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 5 Off", "", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "GANG_A_6",
-          "On": {
-            "Type": "Keybind",
-            "Action": "CTRL+C",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 6 On", "", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "CTRL+V",
-            "ActionDuration": 0.1,
-            "ScreenMessage": ["", "GANG A 6 Off", "", ""],
-            "ScreenDuration": 2,
+            "Action": "r",
+            "ActionDuration": 0,
+            "ScreenMessage": ["", "RCS", "Disabled", ""],
+            "ScreenDuration": 0,
             "Requirements": []
           }
         }
