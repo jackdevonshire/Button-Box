@@ -25,9 +25,9 @@ while True:
 
             if is_pressed != existing_is_pressed_state:
                 if is_pressed:
-                    client.handle_event("ON", button_reference)
+                    client.handle_event("On", button_reference)
                 else:
-                    client.handle_event("OFF", button_reference)
+                    client.handle_event("Off", button_reference)
 
                 button_states[button_reference] = is_pressed
 
