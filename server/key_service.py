@@ -1,7 +1,7 @@
 import time
 
 from flask import make_response, jsonify
-import pyautogui
+import pydirectinput
 from user_scripts import UserScripts
 
 
@@ -60,14 +60,14 @@ class KeyService:
 
         if event_configuration["Type"] == "Keybind":
             if event_configuration["ActionDuration"] == 0:
-                pyautogui.keyUp(event_configuration["Action"])
+                pydirectinput.keyUp(event_configuration["Action"])
             elif event_configuration["ActionDuration"] == None:
-                print("here")
-                pyautogui.keyDown(event_configuration["Action"])
+                pydirectinput.keyDown(event_configuration["Action"])
             else:
-                pyautogui.keyDown(event_configuration["Action"])
+                print(event_configuration["Action"])
+                pydirectinput.keyDown(event_configuration["Action"])
                 time.sleep(event_configuration["ActionDuration"])
-                pyautogui.keyUp(event_configuration["Action"])
+                pydirectinput.keyUp(event_configuration["Action"])
 
         elif event_configuration["Type"] == "Method":
             self.user_script_service.call_script(event_configuration["Action"])
