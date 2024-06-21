@@ -1,12 +1,16 @@
+import time
 import liquidcrystal_i2c
+from multiprocessing import Process
 
 cols = 20
 rows = 4
 
 
+
 class DisplayService():
     def __init__(self):
         self.__lcd = liquidcrystal_i2c.LiquidCrystal_I2C(0x27, 1, numlines=rows)
+        self.temporary_message_process = None
 
     def __set_lcd(self, lines, centre_align=True):
         if len(lines) > 4:
@@ -33,5 +37,21 @@ class DisplayService():
             self.__lcd.printline(2, lines[2].rjust(cols))
             self.__lcd.printline(3, lines[3].rjust(cols))
 
-    def display_message(self, message):
+    def __display_message(self, message):
         self.__set_lcd(message)
+
+    def display_temporary_message(self, temp_message, duration, default_message):
+        if self.temporary_message_process != None: # If there is an active thread, cancel it
+            self.temporary_message_process.kill()
+
+        self.temporary_message_process = Process(target=self.display_temporary_message_process(temp_message, duration, default_message))
+        self.temporary_message_process.start()
+
+    def display_temporary_message_process(self, temp_message, duration, default_message):
+        self.__display_message(temp_message)
+
+        if duration is None: # Do not switch back to default message until instructed if duration not set
+            return
+
+        time.sleep(duration)
+        self.__display_message.display_message(default_message)
