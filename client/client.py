@@ -16,7 +16,7 @@ class Client():
             "ButtonReference": button_reference
         })
 
-        self.display_service.display_temporary_message(response.json()["ScreenMessage"], 5, response.json()["DefaultScreenMessage"])
+        self.display_service.display_temporary_message(response.json()["ScreenMessage"], response.json()["ScreenDuration"], response.json()["DefaultScreenMessage"])
 
     def setup(self):
         endpoint = self.base_url + "/setup"

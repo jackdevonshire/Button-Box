@@ -110,7 +110,7 @@
             "ScreenMessage": ["", "THRUST", "Increase", ""],
             "ScreenDuration": null,
             "Requirements": []
-          },
+          },m
           "Off": {
             "Type": "Keybind",
             "Action": "shift",
@@ -157,7 +157,7 @@
             "Type": "Keybind",
             "Action": "m",
             "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Looking", "At Map", ""],
+            "ScreenMessage": ["", "Lookingmmmmmmmmmmmm", "At Map", ""],
             "ScreenDuration": null,
             "Requirements": []
           },

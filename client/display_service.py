@@ -54,4 +54,4 @@ class DisplayService():
             return
 
         time.sleep(duration)
-        self.__display_message.display_message(default_message)
+        self.__display_messagemmmm(default_message)
