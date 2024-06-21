@@ -59,7 +59,7 @@
           "Off": null
         },
         {
-          "Reference": "BTN_6",
+          "Reference": "BTN_9",
           "On": {
             "Type": "Keybind",
             "Action": "x",
@@ -102,7 +102,7 @@
           }
         },
         {
-          "Reference": "BTN_9",
+          "Reference": "BTN_6",
           "On": {
             "Type": "Keybind",
             "Action": "shift",
@@ -136,29 +136,36 @@
           "Reference": "PROTECTED_2",
           "On": {
             "Type": "Keybind",
-            "Action": "backspace",
+            "Action": "1",
             "ActionDuration": 0.5,
             "ScreenMessage": ["DANGER", "ABORTING", "ABORTING", "DANGER"],
-            "ScreenDuration": 5,
-            "Requirements": []
-          },
-          "Off": null
-        },
-        {
-          "Reference": "SWITCH_1",
-          "On": {
-            "Type": "Keybind",
-            "Action": "v",
-            "ActionDuration": null,
-            "ScreenMessage": ["", "Looking", "Inside", ""],
             "ScreenDuration": null,
             "Requirements": []
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "v",
+            "Action": "1",
             "ActionDuration": 0,
-            "ScreenMessage": ["", "Looking", "Inside", ""],
+            "ScreenMessage": ["DANGER", "ABORTING", "ABORTING", "DANGER"],
+            "ScreenDuration": 0,
+            "Requirements": []
+          }
+        },
+        {
+          "Reference": "SWITCH_1",
+          "On": {
+            "Type": "Keybind",
+            "Action": "m",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "Looking", "At Map", ""],
+            "ScreenDuration": null,
+            "Requirements": []
+          },
+          "Off": {
+            "Type": "Keybind",
+            "Action": "m",
+            "ActionDuration": 0.5,
+            "ScreenMessage": ["", "Looking", "At Map", ""],
             "ScreenDuration": 0,
             "Requirements": []
           }
@@ -167,7 +174,7 @@
           "Reference": "SWITCH_5",
           "On": {
             "Type": "Keybind",
-            "Action": "l",
+            "Action": "u",
             "ActionDuration": 0.5,
             "ScreenMessage": ["", "Lights", "On", ""],
             "ScreenDuration": 2,
@@ -175,7 +182,7 @@
           },
           "Off": {
             "Type": "Keybind",
-            "Action": "l",
+            "Action": "u",
             "ActionDuration": 0.5,
             "ScreenMessage": ["", "Lights", "Off", ""],
             "ScreenDuration": 2,
