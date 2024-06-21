@@ -24,12 +24,12 @@ while True:
             existing_is_pressed_state = button_states[button_reference]
 
             if is_pressed != existing_is_pressed_state:
+                button_states[button_reference] = is_pressed
+
                 if is_pressed:
                     client.handle_event("On", button_reference)
                 else:
                     client.handle_event("Off", button_reference)
-
-                button_states[button_reference] = is_pressed
 
         except:
             continue

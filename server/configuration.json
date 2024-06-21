@@ -157,7 +157,7 @@
             "Type": "Keybind",
             "Action": "m",
             "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Lookingmmmmmmmmmmmm", "At Map", ""],
+            "ScreenMessage": ["", "Looking", "At Map", ""],
             "ScreenDuration": null,
             "Requirements": []
           },
