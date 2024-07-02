@@ -23,8 +23,7 @@ class Client():
         if response.json()["ScreenDuration"] is None: # Do not switch back to default message until instructed if duration not set
             return
 
-        time.sleep(response.json()["ScreenDuration"])
-        self.display_service.display_message(response.json()["DefaultScreenMessage"])
+        self.display_service.set_default_message(response.json()["DefaultScreenMessage"], response.json()["ScreenDuration"])
 
     def setup(self):
         endpoint = self.base_url + "/setup"
