@@ -31,6 +31,7 @@ while True:
 
                 button_states[button_reference] = is_pressed
 
+            display.check_and_update_default_message()
         except:
             continue
 
