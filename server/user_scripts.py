@@ -26,4 +26,12 @@ class UserScripts:
         now = datetime.now()
         time = "%s:%s:%s" % (now.hour, now.minute, now.second)
 
+        # Important:
+        # For scripts that return a message, make sure it is set up in the "Off" section
+        # of the button configuration. The "On" action should be null, otherwise
+        # the display message will immediately be overridden on button release
+        #
+        # To return a message it must be a tuple
+        # 0 - A list of four strings for the LCD display
+        # 1 - Time in seconds to display the message
         return ["", "Current Time:", time, ""], 5
