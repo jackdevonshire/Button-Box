@@ -1,252 +1,408 @@
 {
-  "AuthenticationToken": "TEST",
-  "Configurations": [
-    {
-      "Id": 1,
-      "Description": "Main Configuration",
-      "DefaultScreenMessage": [
-        "---",
-        "Current Config:",
-        "Main",
-        "---"
-      ],
-      "Buttons": [
-        {
-          "Reference": "BTN_10",
-          "On": {
-            "Type": "Mode",
-            "Requirements": []
-          },
-          "Off": null
-        },
-        {
-          "Reference": "BTN_6",
-          "On": {
-            "Type": "Keybind",
-            "Action": "shift",
-            "ActionDuration": null,
-            "ScreenMessage": ["", "Talking", "", ""],
-            "ScreenDuration": null,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "shift",
-            "ActionDuration": 0,
-            "ScreenMessage": ["", "Stopped Talking", "", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          }
-        }
-      ]
-    },
-    {
-      "Id": 2,
-      "Description": "KSP Configuration",
-      "DefaultScreenMessage": [
-        "---",
-        "Current Config:",
-        "KSP",
-        "---"
-      ],
-      "Buttons": [
-        {
-          "Reference": "BTN_10",
-          "On": {
-            "Type": "Mode",
-            "Requirements": []
-          },
-          "Off": null
-        },
-        {
-          "Reference": "BTN_9",
-          "On": {
-            "Type": "Keybind",
-            "Action": "x",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "THRUST", "Minimum", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          },
-          "Off": null
-        },
-        {
-          "Reference": "BTN_7",
-          "On": {
-            "Type": "Keybind",
-            "Action": "z",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "THRUST", "Maximum", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          },
-          "Off": null
-        },
-        {
-          "Reference": "BTN_8",
-          "On": {
-            "Type": "Keybind",
-            "Action": "ctrl",
-            "ActionDuration": null,
-            "ScreenMessage": ["", "THRUST", "Decrease", ""],
-            "ScreenDuration": null,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "ctrl",
-            "ActionDuration": 0,
-            "ScreenMessage": ["", "THRUST", "Decrease", ""],
-            "ScreenDuration": 0,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "BTN_6",
-          "On": {
-            "Type": "Keybind",
-            "Action": "shift",
-            "ActionDuration": null,
-            "ScreenMessage": ["", "THRUST", "Increase", ""],
-            "ScreenDuration": null,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "shift",
-            "ActionDuration": 0,
-            "ScreenMessage": ["", "THRUST", "Increase", ""],
-            "ScreenDuration": 0,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "PROTECTED_1",
-          "On": {
-            "Type": "Keybind",
-            "Action": "space",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "DANGER", "STAGE", ""],
-            "ScreenDuration": 3,
-            "Requirements": []
-          },
-          "Off": null
-        },
-        {
-          "Reference": "PROTECTED_2",
-          "On": {
-            "Type": "Keybind",
-            "Action": "1",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["DANGER", "ABORTING", "ABORTING", "DANGER"],
-            "ScreenDuration": null,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "1",
-            "ActionDuration": 0,
-            "ScreenMessage": ["DANGER", "ABORTING", "ABORTING", "DANGER"],
-            "ScreenDuration": 0,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "SWITCH_1",
-          "On": {
-            "Type": "Keybind",
-            "Action": "m",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Looking", "At Map", ""],
-            "ScreenDuration": null,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "m",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Looking", "At Map", ""],
-            "ScreenDuration": 0,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "SWITCH_5",
-          "On": {
-            "Type": "Keybind",
-            "Action": "u",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Lights", "On", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "u",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Lights", "Off", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "SWITCH_4",
-          "On": {
-            "Type": "Keybind",
-            "Action": "g",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Gear", "Down", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "g",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "Gear", "Up", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "SWITCH_3",
-          "On": {
-            "Type": "Keybind",
-            "Action": "t",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "SAS", "Enabled", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "t",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "SAS", "Disabled", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          }
-        },
-        {
-          "Reference": "SWITCH_2",
-          "On": {
-            "Type": "Keybind",
-            "Action": "r",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "RCS", "Enabled", ""],
-            "ScreenDuration": null,
-            "Requirements": []
-          },
-          "Off": {
-            "Type": "Keybind",
-            "Action": "r",
-            "ActionDuration": 0.5,
-            "ScreenMessage": ["", "RCS", "Disabled", ""],
-            "ScreenDuration": 2,
-            "Requirements": []
-          }
-        }
-      ]
-    }
-  ]
+	"AuthenticationToken": "TEST",
+	"Configurations": [
+		{
+			"Id": 1,
+			"Description": "Main Configuration",
+			"DefaultScreenMessage": [
+				"---",
+				"Current Config:",
+				"Main",
+				"---"
+			],
+			"Buttons": [
+				{
+					"Reference": "BTN_1",
+					"On": {
+						"Type": "Mode",
+						"Requirements": []
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_6",
+					"On": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": null,
+						"ScreenMessage": [
+							"",
+							"Talking",
+							"",
+							""
+						],
+						"ScreenDuration": null,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"Stopped Talking",
+							"",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					}
+				}
+			]
+		},
+		{
+			"Id": 2,
+			"Description": "KSP Configuration",
+			"DefaultScreenMessage": [
+				"---",
+				"Current Config:",
+				"KSP",
+				"---"
+			],
+			"Buttons": [
+				{
+					"Reference": "BTN_1",
+					"On": {
+						"Type": "Mode",
+						"Requirements": []
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "x",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Minimum",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "z",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Maximum",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_5",
+					"On": {
+						"Type": "Keybind",
+						"Action": "ctrl",
+						"ActionDuration": null,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Decrease",
+							""
+						],
+						"ScreenDuration": null,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "ctrl",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Decrease",
+							""
+						],
+						"ScreenDuration": 0,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "BTN_3",
+					"On": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": null,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Increase",
+							""
+						],
+						"ScreenDuration": null,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Increase",
+							""
+						],
+						"ScreenDuration": 0,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "PROTECTED_1",
+					"On": {
+						"Type": "Keybind",
+						"Action": "space",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"DANGER",
+							"STAGE",
+							""
+						],
+						"ScreenDuration": 3,
+						"Requirements": []
+					},
+					"Off": null
+				},
+				{
+					"Reference": "PROTECTED_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "space",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"DANGER",
+							"STAGE",
+							""
+						],
+						"ScreenDuration": 3,
+						"Requirements": []
+					},
+					"Off": null
+				},
+				{
+					"Reference": "PROTECTED_3",
+					"On": {
+						"Type": "Keybind",
+						"Action": "",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"----",
+							"ABORT",
+							"ARMED",
+							"----"
+						],
+						"ScreenDuration": null,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"----",
+							"ABORT",
+							"ARMED",
+							"----"
+						],
+						"ScreenDuration": 0,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "PROTECTED_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "1",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"DANGER",
+							"ABORTING",
+							"ABORTING",
+							"DANGER"
+						],
+						"ScreenDuration": null,
+						"Requirements": [
+							{
+								"ButtonReference": "PROTECTED_3",
+								"RequiredState": "On"
+							}
+						]
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "1",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"DANGER",
+							"ABORTING",
+							"ABORTING",
+							"DANGER"
+						],
+						"ScreenDuration": 0,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "SWITCH_5",
+					"On": {
+						"Type": "Keybind",
+						"Action": "m",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Looking",
+							"At Map",
+							""
+						],
+						"ScreenDuration": null,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "m",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Looking",
+							"At Map",
+							""
+						],
+						"ScreenDuration": 0,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "SWITCH_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "u",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Lights",
+							"On",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "u",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Lights",
+							"Off",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "SWITCH_3",
+					"On": {
+						"Type": "Keybind",
+						"Action": "g",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Gear",
+							"Down",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "g",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Gear",
+							"Up",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "SWITCH_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "r",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"RCS",
+							"Enabled",
+							""
+						],
+						"ScreenDuration": null,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "r",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"RCS",
+							"Disabled",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "SWITCH_1",
+					"On": {
+						"Type": "Keybind",
+						"Action": "t",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"SAS",
+							"Enabled",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "t",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"SAS",
+							"Disabled",
+							""
+						],
+						"ScreenDuration": 2,
+						"Requirements": []
+					}
+				}
+			]
+		}
+	]
 }

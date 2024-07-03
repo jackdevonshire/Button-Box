@@ -44,6 +44,8 @@ class KeyService:
                 "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
             }))
 
+        self.button_states[button_reference] = event
+
         if event_configuration["Type"] == "Mode":
             return self.switch_configuration()
 
@@ -64,7 +66,6 @@ class KeyService:
             elif event_configuration["ActionDuration"] == None:
                 pydirectinput.keyDown(event_configuration["Action"])
             else:
-                print(event_configuration["Action"])
                 pydirectinput.keyDown(event_configuration["Action"])
                 time.sleep(event_configuration["ActionDuration"])
                 pydirectinput.keyUp(event_configuration["Action"])
