@@ -71,7 +71,15 @@ class KeyService:
                 pydirectinput.keyUp(event_configuration["Action"])
 
         elif event_configuration["Type"] == "Method":
-            self.user_script_service.call_script(event_configuration["Action"])
+            result = self.user_script_service.call_script(event_configuration["Action"])
+            if result is not None:
+                message, duration = result
+
+                return make_response(jsonify({
+                    "ScreenMessage": message,
+                    "ScreenDuration": duration,
+                    "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
+                }))
 
         return make_response(jsonify({
             "ScreenMessage": event_configuration["ScreenMessage"],
