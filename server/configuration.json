@@ -230,16 +230,17 @@
 						"Action": "1",
 						"ActionDuration": 0.5,
 						"ScreenMessage": [
+							"============",
 							"DANGER",
 							"ABORTING",
-							"ABORTING",
-							"DANGER"
+							"============"
 						],
 						"ScreenDuration": null,
 						"Requirements": [
 							{
 								"ButtonReference": "PROTECTED_3",
-								"RequiredState": "On"
+								"RequiredState": "On",
+								"ErrorMessage": ["", "Error", "Abort Unarmed", ""]
 							}
 						]
 					},

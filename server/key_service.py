@@ -55,7 +55,7 @@ class KeyService:
 
             if self.button_states[req_button_ref] != req_state:
                 return make_response(jsonify({
-                    "ScreenMessage": ["", req_button_ref, " must be " + req_state, ""],
+                    "ScreenMessage": requirement["ErrorMessage"],
                     "ScreenDuration": 2,
                     "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
                 }))
