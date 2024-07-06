@@ -14,6 +14,7 @@ The whole build process is fully documented in [this Github's wiki](https://gith
 * Fully Wireless (connects to PC via a REST API over WIFI, using a battery bank this is fully wireless)
 * Map buttons to custom keyboard keybinds (multiple keybinds supported)
 * Map buttons to run custom python scripts
+* Map buttons to command prompt executions (e.g. open chrome to a specific website)
 * Add requirements for button activiations (e.g. require button X to be activated before button Y can be)
 * Set custom display messages after button presses
 * Configure multiple modes to map buttons to different actions for different games e.g. (Zoom Meeting, Kerbal Space Program, Microsoft Flight Sim, Photoshop Editing etc)
