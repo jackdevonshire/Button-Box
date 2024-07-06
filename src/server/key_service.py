@@ -74,7 +74,6 @@ class KeyService:
             else:
                 for action in actions:
                     pydirectinput.keyDown(action)
-                    time.sleep(0.1)
 
                 time.sleep(duration)
                 for action in actions:
@@ -112,8 +111,8 @@ class KeyService:
             self.initialised_configuration = True
 
         return make_response(jsonify({
-            "ScreenMessage": ["---", "Changed", "Configuration", ""],
-            "ScreenDuration": 2,
+            "ScreenMessage": self.current_configuration["DefaultScreenMessage"],
+            "ScreenDuration": 0,
             "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
         }))
 
