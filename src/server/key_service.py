@@ -1,3 +1,4 @@
+import os
 import time
 
 from flask import make_response, jsonify
@@ -46,6 +47,7 @@ class KeyService:
 
         self.button_states[button_reference] = event
 
+
         if event_configuration["Type"] == "Mode":
             return self.switch_configuration()
 
@@ -89,6 +91,10 @@ class KeyService:
                     "ScreenDuration": duration,
                     "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
                 }))
+
+        elif event_configuration["Type"] == "Command":
+            os.system(event_configuration["Action"])
+
 
         return make_response(jsonify({
             "ScreenMessage": event_configuration["ScreenMessage"],
