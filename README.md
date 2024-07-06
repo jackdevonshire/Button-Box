@@ -12,7 +12,7 @@ The whole build process is fully documented in [this Github's wiki](https://gith
 ## Current Features
 
 * Fully Wireless (connects to PC via a REST API over WIFI, using a battery bank this is fully wireless)
-* Map buttons to custom keyboard keybinds
+* Map buttons to custom keyboard keybinds (multiple keybinds supported)
 * Map buttons to run custom python scripts
 * Add requirements for button activiations (e.g. require button X to be activated before button Y can be)
 * Set custom display messages after button presses
@@ -20,7 +20,6 @@ The whole build process is fully documented in [this Github's wiki](https://gith
 
 ## Planned Features
 These are the features I actively plan to add
-* Add support for multiple keypresses
 
 ## Wish List
 These are the features I would love to add given the time
