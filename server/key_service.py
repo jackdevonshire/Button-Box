@@ -61,14 +61,24 @@ class KeyService:
                 }))
 
         if event_configuration["Type"] == "Keybind":
-            if event_configuration["ActionDuration"] == 0:
-                pydirectinput.keyUp(event_configuration["Action"])
-            elif event_configuration["ActionDuration"] == None:
-                pydirectinput.keyDown(event_configuration["Action"])
+            actions = event_configuration["Action"].split(",")
+            duration = event_configuration["ActionDuration"]
+
+            if duration == 0:
+                for action in actions:
+                    pydirectinput.keyUp(action)
+
+            elif duration == None:
+                for action in actions:
+                    pydirectinput.keyDown(action)
             else:
-                pydirectinput.keyDown(event_configuration["Action"])
-                time.sleep(event_configuration["ActionDuration"])
-                pydirectinput.keyUp(event_configuration["Action"])
+                for action in actions:
+                    pydirectinput.keyDown(action)
+                    time.sleep(0.1)
+
+                time.sleep(duration)
+                for action in actions:
+                    pydirectinput.keyUp(action)
 
         elif event_configuration["Type"] == "Method":
             result = self.user_script_service.call_script(event_configuration["Action"])

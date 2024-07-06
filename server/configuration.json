@@ -29,6 +29,16 @@
 					}
 				},
 				{
+					"Reference": "BTN_3",
+					"On": null,
+					"Off": {
+						"Type": "Keybind",
+						"Action": "ctrl,shift",
+						"ActionDuration": 0.5,
+						"Requirements": []
+					}
+				},
+				{
 					"Reference": "BTN_6",
 					"On": {
 						"Type": "Keybind",
