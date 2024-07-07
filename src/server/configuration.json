@@ -39,6 +39,25 @@
 					}
 				},
 				{
+					"Reference": "BTN_4",
+					"On": null,
+					"Off": {
+						"Type": "Command",
+						"Action": "start chrome -o https://jackdevonshire.co.uk",
+						"ActionDuration": 0.5,
+						"Requirements": []
+					}
+				},
+				{
+					"Reference": "BTN_5",
+					"On": null,
+					"Off": {
+						"Type": "Teams",
+						"Action": "settings",
+						"Requirements": []
+					}
+				},
+				{
 					"Reference": "BTN_6",
 					"On": {
 						"Type": "Keybind",
