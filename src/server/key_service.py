@@ -1,14 +1,12 @@
-import os
-import time
-
 from flask import make_response, jsonify
-import pydirectinput
-from user_scripts import UserScripts
+
+from button.keybind_button import KeybindButton
+from button.method_button import MethodButton
+from button.command_button import CommandButton
 
 
 class KeyService:
     def __init__(self, configurations):
-        self.user_script_service = UserScripts()
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
@@ -47,7 +45,6 @@ class KeyService:
 
         self.button_states[button_reference] = event
 
-
         if event_configuration["Type"] == "Mode":
             return self.switch_configuration()
 
@@ -63,42 +60,32 @@ class KeyService:
                 }))
 
         if event_configuration["Type"] == "Keybind":
-            actions = event_configuration["Action"].split(",")
-            duration = event_configuration["ActionDuration"]
-
-            if duration == 0:
-                for action in actions:
-                    pydirectinput.keyUp(action)
-
-            elif duration == None:
-                for action in actions:
-                    pydirectinput.keyDown(action)
-            else:
-                for action in actions:
-                    pydirectinput.keyDown(action)
-
-                time.sleep(duration)
-                for action in actions:
-                    pydirectinput.keyUp(action)
-
+            button = KeybindButton(event_configuration)
         elif event_configuration["Type"] == "Method":
-            result = self.user_script_service.call_script(event_configuration["Action"])
-            if result is not None:
-                message, duration = result
-
-                return make_response(jsonify({
-                    "ScreenMessage": message,
-                    "ScreenDuration": duration,
-                    "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-                }))
-
+            button = MethodButton(event_configuration)
         elif event_configuration["Type"] == "Command":
-            os.system(event_configuration["Action"])
+            button = CommandButton(event_configuration)
 
+        result = button.handle()
+        if result is not None:
+            message, duration = result
+
+            return make_response(jsonify({
+                "ScreenMessage": message,
+                "ScreenDuration": duration,
+                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
+            }))
+
+        if "ScreenMessage" in self.current_configuration and "ScreenDuration" in self.current_configuration:
+            return make_response(jsonify({
+                "ScreenMessage": self.current_configuration["ScreenMessage"],
+                "ScreenDuration": self.current_configuration["ScreenDuration"],
+                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
+            }))
 
         return make_response(jsonify({
-            "ScreenMessage": event_configuration["ScreenMessage"],
-            "ScreenDuration": event_configuration["ScreenDuration"],
+            "ScreenMessage": ["", "", "", ""],
+            "ScreenDuration": 0,
             "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
         }))
 

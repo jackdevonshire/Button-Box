@@ -12,7 +12,7 @@ key_service = KeyService(configuration["Configurations"])
 
 @app.route('/event', methods=["POST"])
 def handle_event():
-    try:
+    if True:
         auth_token = request.json["AuthenticationToken"]
         if auth_token != configuration["AuthenticationToken"]:
             return make_response(jsonify({
@@ -27,7 +27,7 @@ def handle_event():
         print("Button: " + button_reference + ", Event: " + event)
 
         return key_service.handle_key_event(button_reference, event)
-    except:
+    else:
         return make_response(jsonify({
             "ScreenMessage": ["", "Error:", "Unknown", ""],
             "ScreenDuration": 2,
