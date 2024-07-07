@@ -80,10 +80,10 @@ class KeyService:
                 "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
             }))
 
-        if "ScreenMessage" in self.current_configuration and "ScreenDuration" in self.current_configuration:
+        if "ScreenMessage" in event_configuration and "ScreenDuration" in event_configuration:
             return make_response(jsonify({
-                "ScreenMessage": self.current_configuration["ScreenMessage"],
-                "ScreenDuration": self.current_configuration["ScreenDuration"],
+                "ScreenMessage": event_configuration["ScreenMessage"],
+                "ScreenDuration": event_configuration["ScreenDuration"],
                 "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
             }))
 
