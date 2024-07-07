@@ -49,6 +49,15 @@
 					}
 				},
 				{
+					"Reference": "BTN_5",
+					"On": null,
+					"Off": {
+						"Type": "Teams",
+						"Action": "settings",
+						"Requirements": []
+					}
+				},
+				{
 					"Reference": "BTN_6",
 					"On": {
 						"Type": "Keybind",

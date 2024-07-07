@@ -3,6 +3,7 @@ from flask import make_response, jsonify
 from button.keybind_button import KeybindButton
 from button.method_button import MethodButton
 from button.command_button import CommandButton
+from button.msteams_button import MSTeamsButton
 
 
 class KeyService:
@@ -45,7 +46,8 @@ class KeyService:
 
         self.button_states[button_reference] = event
 
-        if event_configuration["Type"] == "Mode":
+        event_type = event_configuration["Type"].lower()
+        if event_type == "mode":
             return self.switch_configuration()
 
         for requirement in event_configuration["Requirements"]:
@@ -59,12 +61,14 @@ class KeyService:
                     "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
                 }))
 
-        if event_configuration["Type"] == "Keybind":
+        if event_type == "keybind":
             button = KeybindButton(event_configuration)
-        elif event_configuration["Type"] == "Method":
+        elif event_type == "method":
             button = MethodButton(event_configuration)
-        elif event_configuration["Type"] == "Command":
+        elif event_type == "command":
             button = CommandButton(event_configuration)
+        elif event_type == "teams":
+            button = MSTeamsButton(event_configuration)
 
         result = button.handle()
         if result is not None:
