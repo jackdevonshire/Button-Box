@@ -50,16 +50,17 @@ class KeyService:
         if event_type == "mode":
             return self.switch_configuration()
 
-        for requirement in event_configuration["Requirements"]:
-            req_button_ref = requirement["ButtonReference"]
-            req_state = requirement["RequiredState"]
+        if "Requirements" in event_configuration:
+            for requirement in event_configuration["Requirements"]:
+                req_button_ref = requirement["ButtonReference"]
+                req_state = requirement["RequiredState"]
 
-            if self.button_states[req_button_ref] != req_state:
-                return make_response(jsonify({
-                    "ScreenMessage": requirement["ErrorMessage"],
-                    "ScreenDuration": 2,
-                    "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-                }))
+                if self.button_states[req_button_ref] != req_state:
+                    return make_response(jsonify({
+                        "ScreenMessage": requirement["ErrorMessage"],
+                        "ScreenDuration": 2,
+                        "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
+                    }))
 
         if event_type == "keybind":
             button = KeybindButton(event_configuration)
