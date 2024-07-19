@@ -12,8 +12,8 @@ import os
 retrieved_host_ip = False
 
 app = Flask(__name__)
-display = DisplayService()
-client = Client(AUTH_TOKEN, display)
+display_service = DisplayService()
+client = Client(AUTH_TOKEN, display_service)
 
 @app.route('/display', methods=["POST"])
 def display():
@@ -31,7 +31,7 @@ def display():
 
         print(host_ip)
 
-    display.display_message(request.json["ScreenMessage"])
+    display_service.display_message(request.json["ScreenMessage"])
 
     return "Success", 200
 
