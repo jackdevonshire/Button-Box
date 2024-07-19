@@ -10,8 +10,6 @@ class DisplayService():
         self.__lcd = liquidcrystal_i2c.LiquidCrystal_I2C(0x27, 1, numlines=rows)
 
     def __set_lcd(self, lines, centre_align=True):
-        self.__lcd.clear()
-        
         if len(lines) > 4:
             lines = lines[:3]
 
