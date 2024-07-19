@@ -25,6 +25,7 @@ These are the features I actively plan to add
 
 ## Wish List
 These are the features I would love to add given the time
+* Add Flask API to Button Box to handle LCD Screen seperately to button press events - so that the server.py can display any message and update the LCD display independently of button press events - useful for showing updated game stats etc
 * A fully customisable menu system
 * Scrolling messages that aren't limited to 4x20 character lines
 * Support for different display types
