@@ -1,8 +1,5 @@
 from gpiozero import Button
 
-# This should match the servers auth token
-AUTH_TOKEN = ""
-
 # All the buttons. The key is the button reference (customisable), the value is the GPIO pin for that button
 BUTTONS = {
     "BTN_1": Button(14),

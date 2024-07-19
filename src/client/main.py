@@ -4,7 +4,7 @@
 #
 from flask import Flask, request
 from client import Client
-from config import AUTH_TOKEN, BUTTONS
+from config import BUTTONS
 from display_service import DisplayService
 import threading
 import os
@@ -13,14 +13,10 @@ retrieved_host_ip = False
 
 app = Flask(__name__)
 display_service = DisplayService()
-client = Client(AUTH_TOKEN, display_service)
+client = Client(display_service)
 
 @app.route('/display', methods=["POST"])
 def display():
-    auth_token = request.json["AuthenticationToken"]
-    if auth_token != AUTH_TOKEN:
-        return "Invalid Auth", 401
-
     global retrieved_host_ip
     if retrieved_host_ip == False:
         retrieved_host_ip = True

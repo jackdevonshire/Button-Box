@@ -13,17 +13,8 @@ key_service = KeyService(configuration["Configurations"])
 @app.route('/event', methods=["POST"])
 def handle_event():
     try:
-        auth_token = request.json["AuthenticationToken"]
-        if auth_token != configuration["AuthenticationToken"]:
-            return make_response(jsonify({
-                "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-                "ScreenDuration": 2,
-                "DefaultScreenMessage": key_service.get_default_screen_message()
-            }))
-
         event = request.json["Event"]
         button_reference = request.json["ButtonReference"]
-
 
         return key_service.handle_key_event(button_reference, event)
     except:
@@ -36,14 +27,6 @@ def handle_event():
 
 @app.route('/setup', methods=["POST"])
 def setup():
-    auth_token = request.json["AuthenticationToken"]
-    if auth_token != configuration["AuthenticationToken"]:
-        return make_response(jsonify({
-            "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-            "ScreenDuration": 2,
-            "DefaultScreenMessage": ["", "Failed Setup", "Invalid Auth", ""]
-        }))
-
     return key_service.switch_configuration()
 
 
