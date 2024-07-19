@@ -1,5 +1,6 @@
-from flask import make_response, jsonify
+import time
 
+from display_service import DisplayService
 from button.keybind_button import KeybindButton
 from button.method_button import MethodButton
 from button.command_button import CommandButton
@@ -7,14 +8,20 @@ from button.msteams_button import MSTeamsButton
 
 
 class KeyService:
-    def __init__(self, configurations):
+    def __init__(self, configurations, display_service : DisplayService):
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
         self.button_states = {}
-        self.__initialize_button_states()
+        self.display_service = display_service
 
-    def __initialize_button_states(self):
+        # Initialise self
+        self.__initialise()
+
+    def __initialise(self):
+        self.__initialise_button_states()
+        self.switch_configuration()
+    def __initialise_button_states(self):
         for configuration in self.configurations:
             for button in configuration["Buttons"]:
                 button_reference = button["Reference"]
@@ -30,19 +37,12 @@ class KeyService:
                 break
 
         if len(current_button_config.items()) == 0:
-            return make_response(jsonify({
-                "ScreenMessage": ["", "Error:", "Invalid Button", button_reference],
-                "ScreenDuration": 2,
-                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-            }))
+            self.display_service.display_temporary_message(["", "Error:", "Invalid Button", button_reference], 2)
+            return self.display_service.display_temporary_message(["", "Error:", "Invalid Button", button_reference], 2)
 
         event_configuration = current_button_config[event]
         if event_configuration == None:
-            return make_response(jsonify({
-                "ScreenMessage": self.current_configuration["DefaultScreenMessage"],
-                "ScreenDuration": 1,
-                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-            }))
+            return
 
         self.button_states[button_reference] = event
 
@@ -56,11 +56,7 @@ class KeyService:
                 req_state = requirement["RequiredState"]
 
                 if self.button_states[req_button_ref] != req_state:
-                    return make_response(jsonify({
-                        "ScreenMessage": requirement["ErrorMessage"],
-                        "ScreenDuration": 2,
-                        "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-                    }))
+                    return self.display_service.display_temporary_message(requirement["ErrorMessage"], 2)
 
         if event_type == "keybind":
             button = KeybindButton(event_configuration)
@@ -74,25 +70,12 @@ class KeyService:
         result = button.handle()
         if result is not None:
             message, duration = result
-
-            return make_response(jsonify({
-                "ScreenMessage": message,
-                "ScreenDuration": duration,
-                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-            }))
+            return self.display_service.display_temporary_message(message, duration)
 
         if "ScreenMessage" in event_configuration and "ScreenDuration" in event_configuration:
-            return make_response(jsonify({
-                "ScreenMessage": event_configuration["ScreenMessage"],
-                "ScreenDuration": event_configuration["ScreenDuration"],
-                "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-            }))
+            return self.display_service.display_temporary_message(event_configuration["ScreenMessage"], event_configuration["ScreenDuration"])
 
-        return make_response(jsonify({
-            "ScreenMessage": ["", "", "", ""],
-            "ScreenDuration": 0,
-            "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-        }))
+        return self.display_service.force_default_message()
 
     def switch_configuration(self):
         if self.initialised_configuration:
@@ -108,11 +91,5 @@ class KeyService:
         else:
             self.initialised_configuration = True
 
-        return make_response(jsonify({
-            "ScreenMessage": self.current_configuration["DefaultScreenMessage"],
-            "ScreenDuration": 0,
-            "DefaultScreenMessage": self.current_configuration["DefaultScreenMessage"]
-        }))
-
-    def get_default_screen_message(self):
-        return self.current_configuration["DefaultScreenMessage"]
+        self.display_service.set_default_message(self.current_configuration["DefaultScreenMessage"])
+        self.display_service.force_default_message()
