@@ -13,7 +13,7 @@ retrieved_host_ip = False
 
 app = Flask(__name__)
 display = DisplayService()
-client = Client(AUTH_TOKEN)
+client = Client(AUTH_TOKEN, display)
 
 @app.route('/display', methods=["POST"])
 def display(self):

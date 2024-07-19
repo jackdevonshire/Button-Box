@@ -2,9 +2,10 @@ import time
 import requests
 import os
 class Client():
-    def __init__(self, auth_token):
+    def __init__(self, auth_token, display_service):
         self.base_url = ""
         self.auth_token = auth_token
+        self.display_service = display_service
 
     def handle_event(self, event, button_reference):
         endpoint = self.base_url + "/event"
