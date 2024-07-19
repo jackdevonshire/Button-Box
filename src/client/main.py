@@ -29,8 +29,6 @@ def display():
         with open(host_ip_file, 'a') as the_file:
             the_file.write(host_ip)
 
-        print(host_ip)
-
     display_service.display_message(request.json["ScreenMessage"])
 
     return "Success", 200

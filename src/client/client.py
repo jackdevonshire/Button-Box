@@ -29,3 +29,4 @@ class Client():
                     host_ip = first_line.strip()
                     self.display_service.display_message(["", "Obtained Host IP", "Configuring Box", ""])
                     self.base_url = "http://" + host_ip.replace("http://", "").replace("/", "")
+                    break
