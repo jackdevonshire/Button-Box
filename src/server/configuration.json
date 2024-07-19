@@ -14,7 +14,7 @@
 				{
 					"Reference": "BTN_1",
 					"On": {
-						"Type": "Mode",
+						"Type": "Mode"
 					},
 					"Off": null
 				},
