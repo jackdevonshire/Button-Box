@@ -39,9 +39,9 @@ def run_display_update_server():
     app.run(host="0.0.0.0", port=8000)
 
 # Setup Client
-client.setup()
 display_server_thread = threading.Thread(target=run_display_update_server)
 display_server_thread.start()
+client.setup()
 
 # Initialise button states
 button_states = {}
