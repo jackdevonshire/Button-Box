@@ -18,7 +18,7 @@ client = Client(AUTH_TOKEN, display)
 @app.route('/display', methods=["POST"])
 def display():
     auth_token = request.json["AuthenticationToken"]
-    if auth_token != AUTH_TOKEN["AUTH_TOKEN"]:
+    if auth_token != AUTH_TOKEN:
         return "Invalid Auth", 401
 
     global retrieved_host_ip
