@@ -4,19 +4,32 @@
 #
 from flask import Flask, request
 from client import Client
-from config import HOST_IP, AUTH_TOKEN, BUTTONS
+from config import AUTH_TOKEN, BUTTONS
 from display_service import DisplayService
 import threading
+import os
+
+retrieved_host_ip = False
 
 app = Flask(__name__)
 display = DisplayService()
-client = Client(HOST_IP, AUTH_TOKEN)
+client = Client(AUTH_TOKEN)
 
 @app.route('/display', methods=["POST"])
 def display(self):
     auth_token = request.json["AuthenticationToken"]
     if auth_token != AUTH_TOKEN["AUTH_TOKEN"]:
         return "Invalid Auth", 401
+
+    global retrieved_host_ip
+    if retrieved_host_ip == False:
+        retrieved_host_ip = True
+        host_ip = request.remote_addr
+        host_ip_file = os.getcwd() + "/host_ip.txt"
+        with open(host_ip_file, 'a') as the_file:
+            the_file.write(host_ip)
+
+        print(host_ip)
 
     display.display_message(request.json["ScreenMessage"])
 

@@ -1,8 +1,5 @@
 from gpiozero import Button
 
-# The Local IP Address of the machine hosting the Python Flask Server
-HOST_IP = ""
-
 # This should match the servers auth token
 AUTH_TOKEN = ""
 
