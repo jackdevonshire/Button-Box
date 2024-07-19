@@ -23,7 +23,7 @@ def display(self):
     return "Success", 200
 
 def run_display_update_server():
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=8000)
 
 # Setup Client
 client.setup()
