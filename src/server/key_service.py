@@ -37,7 +37,6 @@ class KeyService:
                 break
 
         if len(current_button_config.items()) == 0:
-            self.display_service.display_temporary_message(["", "Error:", "Invalid Button", button_reference], 2)
             return self.display_service.display_temporary_message(["", "Error:", "Invalid Button", button_reference], 2)
 
         event_configuration = current_button_config[event]
