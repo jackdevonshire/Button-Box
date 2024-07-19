@@ -4,13 +4,13 @@
 #
 from flask import Flask, request
 from client import Client
-from config import HOST_IP, AUTH_TOKEN, BUTTONS, USERNAME
+from config import HOST_IP, AUTH_TOKEN, BUTTONS
 from display_service import DisplayService
 import threading
 
 app = Flask(__name__)
 display = DisplayService()
-client = Client(HOST_IP, AUTH_TOKEN, display)
+client = Client(HOST_IP, AUTH_TOKEN)
 
 @app.route('/display', methods=["POST"])
 def display(self):
