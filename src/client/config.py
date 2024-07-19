@@ -6,6 +6,9 @@ HOST_IP = ""
 # This should match the servers auth token
 AUTH_TOKEN = ""
 
+# This should match exactly the user that runs this program
+USERNAME = ""
+
 # All the buttons. The key is the button reference (customisable), the value is the GPIO pin for that button
 BUTTONS = {
     "BTN_1": Button(14),
