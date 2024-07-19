@@ -16,7 +16,7 @@ display = DisplayService()
 client = Client(AUTH_TOKEN, display)
 
 @app.route('/display', methods=["POST"])
-def display(self):
+def display():
     auth_token = request.json["AuthenticationToken"]
     if auth_token != AUTH_TOKEN["AUTH_TOKEN"]:
         return "Invalid Auth", 401
