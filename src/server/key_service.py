@@ -44,9 +44,12 @@ class KeyService:
         if event_configuration == None:
             return
 
-        self.button_states[button_reference] = event
+        # If valid button press, cancel any custom scripts that are running
+        self.script_service.stop_current_script()
 
+        self.button_states[button_reference] = event
         event_type = event_configuration["Type"].lower()
+
         if event_type == "mode":
             return self.switch_configuration()
 
