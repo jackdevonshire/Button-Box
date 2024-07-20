@@ -56,9 +56,12 @@ class MicrosoftFlightSimulator:
             if not self.active_thread:
                 return
 
-            alt = int(self.aq.get("PLANE_ALTITUDE"))
-            speed = int(self.aq.get("AIRSPEED_INDICATED"))
-            vertical = int(self.aq.get("VERTICAL_SPEED"))
+            try:
+                alt = int(self.aq.get("PLANE_ALTITUDE"))
+                speed = int(self.aq.get("AIRSPEED_INDICATED"))
+                vertical = int(self.aq.get("VERTICAL_SPEED"))
+            except:
+                continue
 
             self.display_service.display_permanent([
                 "Altitude: " + str(alt) + "m",
