@@ -1,8 +1,8 @@
 from button.default_button import DefaultButton
 from user_scripts import UserScripts
 
-
 class MethodButton(DefaultButton):
+    def __init__(self):
+        self.script_Service = UserScripts(self.display_service)
     def handle(self):
-        script_service = UserScripts()
-        return script_service.call_script(self.event_configuration["Action"])
+        return self.script_Service.call_script(self.event_configuration["Action"])

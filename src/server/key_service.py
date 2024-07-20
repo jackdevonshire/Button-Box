@@ -1,5 +1,3 @@
-import time
-
 from display_service import DisplayService
 from button.keybind_button import KeybindButton
 from button.method_button import MethodButton
@@ -58,23 +56,15 @@ class KeyService:
                     return self.display_service.display_temporary_message(requirement["ErrorMessage"], 2)
 
         if event_type == "keybind":
-            button = KeybindButton(event_configuration)
+            button = KeybindButton(event_configuration, self.display_service)
         elif event_type == "method":
-            button = MethodButton(event_configuration)
+            button = MethodButton(event_configuration, self.display_service)
         elif event_type == "command":
-            button = CommandButton(event_configuration)
+            button = CommandButton(event_configuration, self.display_service)
         elif event_type == "teams":
-            button = MSTeamsButton(event_configuration)
+            button = MSTeamsButton(event_configuration, self.display_service)
 
-        result = button.handle()
-        if result is not None:
-            message, duration = result
-            return self.display_service.display_temporary_message(message, duration)
-
-        if "ScreenMessage" in event_configuration and "ScreenDuration" in event_configuration:
-            return self.display_service.display_temporary_message(event_configuration["ScreenMessage"], event_configuration["ScreenDuration"])
-
-        return self.display_service.force_default_message()
+        return button.handle()
 
     def switch_configuration(self):
         if self.initialised_configuration:
