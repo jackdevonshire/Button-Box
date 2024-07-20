@@ -1,10 +1,12 @@
 from display_service import DisplayService
 from user_scripts import UserScripts
+from game_services.ms_flight_sim import MicrosoftFlightSimulator
 
 from button.keybind_button import KeybindButton
 from button.script_button import ScriptButton
 from button.command_button import CommandButton
 from button.msteams_button import MSTeamsButton
+from button.msflightsim_button import MSFlightSimButton
 
 
 class KeyService:
@@ -13,8 +15,11 @@ class KeyService:
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
         self.button_states = {}
+
         self.display_service = display_service
         self.script_service = script_service
+
+        self.ms_flight_sim_service = MicrosoftFlightSimulator(display_service)
 
         # Initialise self
         self.__initialise()
@@ -33,6 +38,7 @@ class KeyService:
     def __cleanup(self):
         # Stopping any user scripts that are constantly updating the display
         self.script_service.stop_current_script()
+        self.ms_flight_sim_service.stop_updating_display()
     def handle_key_event(self, button_reference, event):
         # On any button event we want to stop any processes that are actively updating the display
         self.__cleanup()
@@ -72,6 +78,8 @@ class KeyService:
             button = CommandButton(event_configuration, self.display_service)
         elif event_type == "teams":
             button = MSTeamsButton(event_configuration, self.display_service)
+        elif event_type =="msflightsim":
+            button = MSFlightSimButton(event_configuration, self.display_service, self.ms_flight_sim_service)
 
         return button.handle()
 

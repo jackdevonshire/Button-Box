@@ -437,6 +437,14 @@
 					"Off": null
 				},
 				{
+					"Reference": "BTN_2",
+					"On": null,
+					"Off": {
+						"Type": "MSFlightSim",
+						"Action": "get_altitude"
+					}
+				},
+				{
 					"Reference": "BTN_3",
 					"On": null,
 					"Off": {
