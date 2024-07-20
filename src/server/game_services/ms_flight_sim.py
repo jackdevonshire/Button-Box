@@ -74,7 +74,6 @@ class MicrosoftFlightSimulator:
         elif action == "display_verticalspeed":
             return self.__start_updating_display("Vertical Speed", "VERTICAL_SPEED", " ft/s")
 
-
         # Control Actions - Control Surfaces
         if action == "flaps_increase":
             return self.__increase_flaps()
@@ -84,25 +83,6 @@ class MicrosoftFlightSimulator:
             return self.__spoilers_on()
         elif action == "spoilers_off":
             return self.__spoilers_off()
-
-        """
-        parking on
-        parking off
-        autopilot on
-        autopilot off
-        autothrust on
-        autothrust off
-        brake on
-        brake off
-        reverse thrust on
-        reverse thrust off
-        thrust toga
-        thurst increase
-        thrust decrease
-        apu on
-        """
-
-        pass
 
 
     #

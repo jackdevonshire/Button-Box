@@ -441,7 +441,7 @@
 					"On": null,
 					"Off": {
 						"Type": "MSFlightSim",
-						"Action": ""
+						"Action": "brakes_off"
 					}
 				},
 				{
