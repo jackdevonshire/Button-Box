@@ -66,7 +66,7 @@ class MicrosoftFlightSimulator:
             if not check:
                 return
 
-        # Display Actions
+        # Display Actions - General
         if action == "display_altitude":
             return self.__start_updating_display("Altitude", "PLANE_ALTITUDE", "metres")
         elif action == "display_airspeed":
@@ -75,11 +75,32 @@ class MicrosoftFlightSimulator:
             return self.__start_updating_display("Vertical Speed", "VERTICAL_SPEED", " ft/s")
 
 
-        # Control Actions
+        # Control Actions - Control Surfaces
         if action == "flaps_increase":
             return self.__increase_flaps()
         elif action == "flaps_decrease":
             return self.__decrease_flaps()
+        elif action == "spoilers_on":
+            return self.__spoilers_on()
+        elif action == "spoilers_off":
+            return self.__spoilers_off()
+
+        """
+        parking on
+        parking off
+        autopilot on
+        autopilot off
+        autothrust on
+        autothrust off
+        brake on
+        brake off
+        reverse thrust on
+        reverse thrust off
+        thrust toga
+        thurst increase
+        thrust decrease
+        apu on
+        """
 
         pass
 
@@ -108,3 +129,11 @@ class MicrosoftFlightSimulator:
 
         self.aq.set("FLAPS_HANDLE_INDEX", current_flaps)
         return self.display_service.display_temporary_message(["", "Flaps Set", str(current_flaps), ""], 2)
+
+    def __spoilers_on(self):
+        self.aq.set("SPOILERS_HANDLE_POSITION", 1)
+        self.display_service.display_temporary_message(["", "Spoilers", "On", ""], 2)
+
+    def __spoilers_off(self):
+        self.aq.set("SPOILERS_HANDLE_POSITION", 0)
+        self.display_service.display_temporary_message(["", "Spoilers", "Off", ""], 2)
