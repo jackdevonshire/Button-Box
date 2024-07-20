@@ -30,7 +30,13 @@ class KeyService:
                 if button_reference not in self.button_states:
                     self.button_states[button_reference] = "OFF"
 
+    def __cleanup(self):
+        # Stopping any user scripts that are constantly updating the display
+        self.script_service.stop_current_script()
     def handle_key_event(self, button_reference, event):
+        # On any button event we want to stop any processes that are actively updating the display
+        self.__cleanup()
+
         current_button_config = {}
         for button in self.current_configuration["Buttons"]:
             if button["Reference"] == button_reference:
@@ -43,9 +49,6 @@ class KeyService:
         event_configuration = current_button_config[event]
         if event_configuration == None:
             return
-
-        # If valid button press, cancel any custom scripts that are running
-        self.script_service.stop_current_script()
 
         self.button_states[button_reference] = event
         event_type = event_configuration["Type"].lower()
