@@ -1,50 +1,29 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request
 import json
+from display_service import DisplayService
 from key_service import KeyService
+from user_scripts import UserScripts
 
 app = Flask(__name__)
 configuration = {}
 with open('configuration.json') as json_file:
     configuration = json.load(json_file)
 
-key_service = KeyService(configuration["Configurations"])
-
+display_service = DisplayService(configuration["ButtonBoxHostIP"])
+script_service = UserScripts(display_service)
+key_service = KeyService(configuration["Configurations"], display_service, script_service)
 
 @app.route('/event', methods=["POST"])
 def handle_event():
     try:
-        auth_token = request.json["AuthenticationToken"]
-        if auth_token != configuration["AuthenticationToken"]:
-            return make_response(jsonify({
-                "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-                "ScreenDuration": 2,
-                "DefaultScreenMessage": key_service.get_default_screen_message()
-            }))
-
         event = request.json["Event"]
         button_reference = request.json["ButtonReference"]
+        key_service.handle_key_event(button_reference, event)
 
-
-        return key_service.handle_key_event(button_reference, event)
+        return "Success", 200
     except:
-        return make_response(jsonify({
-            "ScreenMessage": ["", "Error:", "Unknown", ""],
-            "ScreenDuration": 2,
-            "DefaultScreenMessage": key_service.get_default_screen_message()
-        }))
-
-
-@app.route('/setup', methods=["POST"])
-def setup():
-    auth_token = request.json["AuthenticationToken"]
-    if auth_token != configuration["AuthenticationToken"]:
-        return make_response(jsonify({
-            "ScreenMessage": ["", "Error:", "Invalid Auth", ""],
-            "ScreenDuration": 2,
-            "DefaultScreenMessage": ["", "Failed Setup", "Invalid Auth", ""]
-        }))
-
-    return key_service.switch_configuration()
+        display_service.display_temporary_message(["", "Error:", "Unknown", ""], 2)
+        return "Error", 500
 
 
 if __name__ == '__main__':

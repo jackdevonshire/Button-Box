@@ -1,7 +1,5 @@
 import time
-
 import pydirectinput
-
 from button.default_button import DefaultButton
 
 TEAMS_KEYS = {
@@ -68,4 +66,4 @@ class MSTeamsButton(DefaultButton):
             key_to_activate = key_to_activate.replace("comma", ",")
             pydirectinput.keyUp(key_to_activate)
 
-        return teams_keys["message"], 2
+        self.display_service.display_temporary_message(teams_keys["message"], 2)

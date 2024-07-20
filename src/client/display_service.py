@@ -1,3 +1,5 @@
+import time
+
 import liquidcrystal_i2c
 from datetime import datetime
 
@@ -8,13 +10,18 @@ rows = 4
 class DisplayService():
     def __init__(self):
         self.__lcd = liquidcrystal_i2c.LiquidCrystal_I2C(0x27, 1, numlines=rows)
-        self.__default_message = "Default Message"
-
-        self.waiting_to_display_default_message = False
-        self.duration_to_wait = 0
-        self.time_started_waiting = datetime.now()
+        self.changing_screen = False
 
     def __set_lcd(self, lines, centre_align=True):
+        count = 0
+        while self.changing_screen:
+            time.sleep(0.2)
+            count += 1
+            if count >= 5:
+                return
+
+        self.changing_screen = True
+
         if len(lines) > 4:
             lines = lines[:3]
 
@@ -39,22 +46,7 @@ class DisplayService():
             self.__lcd.printline(2, lines[2].rjust(cols))
             self.__lcd.printline(3, lines[3].rjust(cols))
 
+        self.changing_screen = False
+
     def display_message(self, message):
         self.__set_lcd(message)
-
-    def set_default_message(self, message, duration_to_wait):
-        self.__default_message = message
-        self.duration_to_wait = duration_to_wait
-        self.time_started_waiting = datetime.now()
-        self.waiting_to_display_default_message = True
-
-    def check_and_update_default_message(self):
-        if not self.waiting_to_display_default_message:
-            return
-
-        current_time = datetime.now()
-        total_time_waited = (current_time-self.time_started_waiting).total_seconds()
-
-        if total_time_waited >= self.duration_to_wait:
-            self.__set_lcd(self.__default_message)
-            self.waiting_to_display_default_message = False

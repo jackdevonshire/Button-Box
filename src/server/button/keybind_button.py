@@ -23,4 +23,5 @@ class KeybindButton(DefaultButton):
             for action in actions:
                 pydirectinput.keyUp(action)
 
-        return None
+        if "ScreenMessage" in self.event_configuration and "ScreenDuration" in self.event_configuration:
+            return self.display_service.display_temporary_message(self.event_configuration["ScreenMessage"], self.event_configuration["ScreenDuration"])
