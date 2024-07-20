@@ -25,11 +25,9 @@ These are the features I actively plan to add
 
 ## Wish List
 These are the features I would love to add given the time
-* Add Flask API to Button Box to handle LCD Screen seperately to button press events - so that the server.py can display any message and update the LCD display independently of button press events - useful for showing updated game stats etc
 * A fully customisable menu system
 * Scrolling messages that aren't limited to 4x20 character lines
 * Support for different display types
 * Ability to stream live data to LCD screen - currently data can be retrieved from a game API via a custom script, but it can only be displayed for a set period of time and does not automatically refresh
 * Make a program for customising the configuration to avoid having to work with raw JSON - Flask Website / Admin Panel?
-* Make a system whereby you don't need to log in to the Raspberry Pi to manually change the host IP if you want to use it with multiple PC's
 * Implement [headless WIFI setup](https://github.com/drkmsmithjr/wifi-connect-headless-rpi) so the button box works across different networks
