@@ -28,6 +28,5 @@ These are the features I would love to add given the time
 * A fully customisable menu system
 * Scrolling messages that aren't limited to 4x20 character lines
 * Support for different display types
-* Ability to stream live data to LCD screen - currently data can be retrieved from a game API via a custom script, but it can only be displayed for a set period of time and does not automatically refresh
 * Make a program for customising the configuration to avoid having to work with raw JSON - Flask Website / Admin Panel?
 * Implement [headless WIFI setup](https://github.com/drkmsmithjr/wifi-connect-headless-rpi) so the button box works across different networks
