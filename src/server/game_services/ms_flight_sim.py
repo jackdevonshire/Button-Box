@@ -1,5 +1,6 @@
 # Sim Connect Available Variables
 # https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_AutopilotAssistant_Variables.htm
+# https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Simulation_Variables.htm#h
 import time
 
 from SimConnect import *
@@ -27,7 +28,7 @@ class MicrosoftFlightSimulator:
 
         return False
 
-    def __update_display_thread(self, title, sim_connect_reference):
+    def __update_display_thread(self, title, sim_connect_reference, units=None):
         self.active_thread = True
         while True:
             if not self.active_thread:
@@ -41,12 +42,17 @@ class MicrosoftFlightSimulator:
                 value = int(number)
             except:
                 pass
-            self.display_service.display_permanent(["", title, str(value), ""])
+
+            value = str(value)
+            if units is not None:
+                value += units
+
+            self.display_service.display_permanent(["", title, value, ""])
             time.sleep(1)
 
-    def __start_updating_display(self, title, sim_connect_reference):
+    def __start_updating_display(self, title, sim_connect_reference, units=None):
         self.stop_updating_display()
-        thread = threading.Thread(target=self.__update_display_thread, args=(title, sim_connect_reference))
+        thread = threading.Thread(target=self.__update_display_thread, args=(title, sim_connect_reference, units))
         thread.start()
 
     def stop_updating_display(self):
@@ -60,11 +66,20 @@ class MicrosoftFlightSimulator:
             if not check:
                 return
 
-        # Ifs for display actions
-        if action == "get_altitude":
-            self.__start_updating_display("Current Altitude", "PLANE_ALTITUDE")
+        # Display Actions
+        if action == "display_altitude":
+            return self.__start_updating_display("Altitude", "PLANE_ALTITUDE", "metres")
+        elif action == "display_airspeed":
+            return self.__start_updating_display("Air Speed", "AIRSPEED_INDICATED", "knots")
+        elif action == "display_verticalspeed":
+            return self.__start_updating_display("Vertical Speed", "VERTICAL_SPEED", " ft/s")
 
-        # Ifs for control actions
+
+        # Control Actions
+        if action == "flaps_increase":
+            return self.__increase_flaps()
+        elif action == "flaps_decrease":
+            return self.__decrease_flaps()
 
         pass
 
@@ -72,3 +87,24 @@ class MicrosoftFlightSimulator:
     #
     # Below are just my own wrapper methods for the MS Flight Sim Connect API, utilising the Python-SimConnect library
     #
+
+    def __increase_flaps(self):
+        max_flaps = self.aq.get("FLAPS_NUM_HANDLE_POSITIONS")
+        current_flaps = self.aq.get("FLAPS_HANDLE_INDEX")
+
+        current_flaps += 1
+        if current_flaps > max_flaps:
+            return self.display_service.display_temporary_message(["", "Flaps Set", str(max_flaps), ""], 2)
+
+        self.aq.set("FLAPS_HANDLE_INDEX", current_flaps)
+        return self.display_service.display_temporary_message(["", "Flaps Set", str(current_flaps), ""], 2)
+
+    def __decrease_flaps(self):
+        current_flaps = self.aq.get("FLAPS_HANDLE_INDEX")
+        current_flaps -= 1
+
+        if current_flaps < 0:
+            return self.display_service.display_temporary_message(["", "Flaps Set", "0", ""], 2)
+
+        self.aq.set("FLAPS_HANDLE_INDEX", current_flaps)
+        return self.display_service.display_temporary_message(["", "Flaps Set", str(current_flaps), ""], 2)
