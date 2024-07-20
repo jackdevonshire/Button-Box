@@ -50,9 +50,30 @@ class MicrosoftFlightSimulator:
             self.display_service.display_permanent(["", title, value, ""])
             time.sleep(1)
 
+    def __update_display_general_stats_thread(self):
+        self.active_thread = True
+        while True:
+            if not self.active_thread:
+                return
+
+            alt = int(self.aq.get("PLANE_ALTITUDE"))
+            speed = int(self.aq.get("AIRSPEED_INDICATED"))
+            vertical = int(self.aq.get("VERTICAL_SPEED"))
+
+            self.display_service.display_permanent([
+                "Altitude: " + str(alt) + "m",
+                "Airspeed: " + str(speed) + " knots",
+                "V-Speed: " + str(vertical) + " ft/s",
+                ""], True)
+            time.sleep(1)
     def __start_updating_display(self, title, sim_connect_reference, units=None):
         self.stop_updating_display()
         thread = threading.Thread(target=self.__update_display_thread, args=(title, sim_connect_reference, units))
+        thread.start()
+
+    def __start_updating_display_with_general_stats(self):
+        self.stop_updating_display()
+        thread = threading.Thread(target=self.__update_display_general_stats_thread)
         thread.start()
 
     def stop_updating_display(self):
@@ -73,6 +94,8 @@ class MicrosoftFlightSimulator:
             return self.__start_updating_display("Air Speed", "AIRSPEED_INDICATED", "knots")
         elif action == "display_verticalspeed":
             return self.__start_updating_display("Vertical Speed", "VERTICAL_SPEED", " ft/s")
+        elif action == "display_stats":
+            return self.__start_updating_display_with_general_stats()
 
         # Control Actions - Control Surfaces
         if action == "flaps_increase":

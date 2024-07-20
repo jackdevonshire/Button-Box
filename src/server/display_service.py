@@ -13,14 +13,16 @@ class DisplayService:
     def set_default_message(self, default_message):
         self.default_message = default_message
 
-    def display_permanent(self, message):
+    def display_permanent(self, message, align_center=True):
         requests.post(self.base_url, json={
-            "ScreenMessage": message
+            "ScreenMessage": message,
+            "AlignCenter": align_center
         })
 
     def force_default_message(self):
         requests.post(self.base_url, json={
-            "ScreenMessage": self.default_message
+            "ScreenMessage": self.default_message,
+            "AlignCenter": True
         })
 
     def display_temporary_message(self, message, timeout):
