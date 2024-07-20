@@ -22,7 +22,7 @@
 					"Reference": "BTN_2",
 					"On": null,
 					"Off": {
-						"Type": "Method",
+						"Type": "Script",
 						"Action": "show_time_example"
 					}
 				},

@@ -1,7 +1,7 @@
 from button.default_button import DefaultButton
 from user_scripts import UserScripts
 
-class MethodButton(DefaultButton):
+class ScriptButton(DefaultButton):
     def __init__(self):
         self.script_Service = UserScripts(self.display_service)
     def handle(self):

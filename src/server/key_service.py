@@ -1,6 +1,6 @@
 from display_service import DisplayService
 from button.keybind_button import KeybindButton
-from button.method_button import MethodButton
+from button.script_button import ScriptButton
 from button.command_button import CommandButton
 from button.msteams_button import MSTeamsButton
 
@@ -57,8 +57,8 @@ class KeyService:
 
         if event_type == "keybind":
             button = KeybindButton(event_configuration, self.display_service)
-        elif event_type == "method":
-            button = MethodButton(event_configuration, self.display_service)
+        elif event_type == "script":
+            button = ScriptButton(event_configuration, self.display_service)
         elif event_type == "command":
             button = CommandButton(event_configuration, self.display_service)
         elif event_type == "teams":
