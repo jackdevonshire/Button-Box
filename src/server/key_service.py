@@ -1,4 +1,6 @@
 from display_service import DisplayService
+from user_scripts import UserScripts
+
 from button.keybind_button import KeybindButton
 from button.script_button import ScriptButton
 from button.command_button import CommandButton
@@ -6,12 +8,13 @@ from button.msteams_button import MSTeamsButton
 
 
 class KeyService:
-    def __init__(self, configurations, display_service : DisplayService):
+    def __init__(self, configurations, display_service : DisplayService, script_service: UserScripts):
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
         self.button_states = {}
         self.display_service = display_service
+        self.script_service = script_service
 
         # Initialise self
         self.__initialise()
@@ -58,7 +61,7 @@ class KeyService:
         if event_type == "keybind":
             button = KeybindButton(event_configuration, self.display_service)
         elif event_type == "script":
-            button = ScriptButton(event_configuration, self.display_service)
+            button = ScriptButton(event_configuration, self.display_service, self.script_service)
         elif event_type == "command":
             button = CommandButton(event_configuration, self.display_service)
         elif event_type == "teams":

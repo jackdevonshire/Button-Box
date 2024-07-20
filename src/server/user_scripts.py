@@ -27,4 +27,4 @@ class UserScripts:
         now = datetime.now()
         time = "%s:%s:%s" % (now.hour, now.minute, now.second)
 
-        self.display_service.display_temporary_message(time, 2)
+        self.display_service.display_temporary_message(["", "Current Time", time, ""], 2)

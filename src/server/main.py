@@ -2,14 +2,16 @@ from flask import Flask, request
 import json
 from display_service import DisplayService
 from key_service import KeyService
+from user_scripts import UserScripts
 
 app = Flask(__name__)
 configuration = {}
 with open('configuration.json') as json_file:
     configuration = json.load(json_file)
 
-display_Service = DisplayService(configuration["ButtonBoxHostIP"])
-key_service = KeyService(configuration["Configurations"], display_Service)
+display_service = DisplayService(configuration["ButtonBoxHostIP"])
+script_service = UserScripts(display_service)
+key_service = KeyService(configuration["Configurations"], display_service, script_service)
 
 @app.route('/event', methods=["POST"])
 def handle_event():
@@ -20,7 +22,7 @@ def handle_event():
 
         return "Success", 200
     except:
-        display_Service.display_temporary_message(["", "Error:", "Unknown", ""], 2)
+        display_service.display_temporary_message(["", "Error:", "Unknown", ""], 2)
         return "Error", 500
 
 
