@@ -437,35 +437,27 @@
 					"Off": null
 				},
 				{
+					"Reference": "BTN_2",
+					"On": null,
+					"Off": {
+						"Type": "MSFlightSim",
+						"Action": "brakes_off"
+					}
+				},
+				{
 					"Reference": "BTN_3",
 					"On": null,
 					"Off": {
-						"Type": "Keybind",
-						"Action": "f7",
-						"ActionDuration": 0.1,
-						"ScreenMessage": [
-							"",
-							"Flaps",
-							"Increased",
-							""
-						],
-						"ScreenDuration": 2
+						"Type": "MSFlightSim",
+						"Action": "flaps_increase"
 					}
 				},
 				{
 					"Reference": "BTN_5",
 					"On": null,
 					"Off": {
-						"Type": "Keybind",
-						"Action": "f6",
-						"ActionDuration": 0.1,
-						"ScreenMessage": [
-							"",
-							"Flaps",
-							"Decreased",
-							""
-						],
-						"ScreenDuration": 2
+						"Type": "MSFlightSim",
+						"Action": "flaps_decrease"
 					}
 				},
 				{
@@ -515,28 +507,12 @@
 				{
 					"Reference": "SWITCH_1",
 					"On": {
-						"Type": "Keybind",
-						"Action": "]",
-						"ActionDuration": 0.1,
-						"ScreenMessage": [
-							"",
-							"Spoilers",
-							"On",
-							""
-						],
-						"ScreenDuration": 2
+						"Type": "MSFlightSim",
+						"Action": "spoilers_on"
 					},
 					"Off": {
-						"Type": "Keybind",
-						"Action": "[",
-						"ActionDuration": 0.1,
-						"ScreenMessage": [
-							"",
-							"Spoilers",
-							"Off",
-							""
-						],
-						"ScreenDuration": 2
+						"Type": "MSFlightSim",
+						"Action": "spoilers_off"
 					}
 				},
 				{
