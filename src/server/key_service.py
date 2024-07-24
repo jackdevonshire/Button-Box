@@ -84,6 +84,8 @@ class KeyService:
         return button.handle()
 
     def switch_configuration(self):
+        self.ms_flight_sim_service.stop_service()
+
         if self.initialised_configuration:
             # Switch to next configuration
             for x in range(0, len(self.configurations)):

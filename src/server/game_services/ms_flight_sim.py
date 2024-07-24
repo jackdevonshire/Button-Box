@@ -7,6 +7,7 @@ from SimConnect import *
 from display_service import DisplayService
 import threading
 
+
 class MicrosoftFlightSimulator:
     def __init__(self, display_service: DisplayService):
         self.display_service = display_service
@@ -15,6 +16,12 @@ class MicrosoftFlightSimulator:
         self.aq = None
 
         self.active_thread = False
+
+    def stop_service(self):
+        self.active_thread = False
+        self.sm = None
+        self.aq = None
+        self.setup = False
 
     def setup_sim_connect(self):
         try:
@@ -69,6 +76,7 @@ class MicrosoftFlightSimulator:
                 "V-Speed: " + str(vertical) + " ft/s",
                 ""], True)
             time.sleep(1)
+
     def __start_updating_display(self, title, sim_connect_reference, units=None):
         self.stop_updating_display()
         thread = threading.Thread(target=self.__update_display_thread, args=(title, sim_connect_reference, units))
@@ -109,7 +117,6 @@ class MicrosoftFlightSimulator:
             return self.__spoilers_on()
         elif action == "spoilers_off":
             return self.__spoilers_off()
-
 
     #
     # Below are just my own wrapper methods for the MS Flight Sim Connect API, utilising the Python-SimConnect library
