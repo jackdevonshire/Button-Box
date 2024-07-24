@@ -11,17 +11,20 @@ The whole build process is fully documented in [this Github's wiki](https://gith
 
 ## Current Features
 
-* Fully Wireless (connects to PC via a REST API over WIFI, using a battery bank this is fully wireless)
-* Map buttons to custom keyboard keybinds (multiple keybinds supported)
-* Map buttons to run custom python scripts
-* Map buttons to command prompt executions (e.g. open chrome to a specific website)
-* Map buttons to specific Microsoft Teams functions
-* Add requirements for button activiations (e.g. require button X to be activated before button Y can be)
-* Set custom display messages after button presses
-* Configure multiple modes to map buttons to different actions for different games e.g. (Zoom Meeting, Kerbal Space Program, Microsoft Flight Sim, Photoshop Editing etc)
+* Fully wireless (no wires needed at all with powerbank), with no need to log into Rasperry Pi after first setup
+* Map buttons to
+  * Keyboard Shortcuts
+  * Custom Python Scripts
+  * Command Line executions (e.g. open chrome to specific website)
+  * Microsoft Teams functions
+  * Microsoft Flight Simulator functions
+* Ability to set requirements for button activiations (e.g. button X must be on before Y can be activated)
+* Custom display messages with support for streaming live messages to the display (e.g. to show game information such as flight simulator air speed)
+* Multiple modes for different use cases without programatic switching - can create and switch between as many modes as you like
 
 ## Planned Features
 These are the features I actively plan to add
+* Ability to toggle between different actions each time a button is pressed, rather than just ON/OFF
 
 ## Wish List
 These are the features I would love to add given the time
