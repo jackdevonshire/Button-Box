@@ -19,13 +19,13 @@ key_service = KeyService(configuration["Configurations"], configuration["Integra
 
 @app.route('/event', methods=["POST"])
 def handle_event():
-    try:
+    if True:
         event = request.json["Event"]
         button_reference = request.json["ButtonReference"]
         key_service.handle_key_event(button_reference, event)
 
         return "Success", 200
-    except:
+    else:
         display_service.display_temporary_message(["", "Error:", "Unknown", ""], 2)
         return "Error", 500
 
