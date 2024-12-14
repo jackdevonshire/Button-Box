@@ -1,6 +1,12 @@
 {
 	"NOTICE": "THIS IS AN EXAMPLE ONLY. RENAME THIS FILE TO 'configuration.json'",
 	"ButtonBoxHostIP": "192.168.0.128",
+	"Integrations": {
+		"Tapo": {
+			"TapoAppEmail": "example@example.org",
+			"TapoAppPassword": "tapoapppassword"
+		}
+	},
 	"Configurations": [
 		{
 			"Id": 1,
@@ -595,6 +601,37 @@
 							""
 						],
 						"ScreenDuration": 2
+					}
+				}
+			]
+		},
+		{
+			"Id": 4,
+			"Description": "Tapo Integration Example",
+			"DefaultScreenMessage": [
+				"---",
+				"Current Config:",
+				"Tapo Integration",
+				"---"
+			],
+			"Buttons": [
+				{
+					"Reference": "BTN_1",
+					"On": {
+						"Type": "Mode"
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_2",
+					"On": null,
+					"Off": {
+						"Type": "Tapo",
+						"Action": {
+							"DeviceType": "plug",
+							"DeviceIP": "192.168.x.x",
+							"Action": "on"
+						}
 					}
 				}
 			]

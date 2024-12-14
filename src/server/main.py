@@ -15,7 +15,7 @@ except:
 
 display_service = DisplayService(configuration["ButtonBoxHostIP"])
 script_service = UserScripts(display_service)
-key_service = KeyService(configuration["Configurations"], display_service, script_service)
+key_service = KeyService(configuration["Configurations"], configuration["Integrations"], display_service, script_service)
 
 @app.route('/event', methods=["POST"])
 def handle_event():

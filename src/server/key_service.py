@@ -7,14 +7,15 @@ from button.script_button import ScriptButton
 from button.command_button import CommandButton
 from button.msteams_button import MSTeamsButton
 from button.msflightsim_button import MSFlightSimButton
-
+from button.tapo_button import TapoButton
 
 class KeyService:
-    def __init__(self, configurations, display_service : DisplayService, script_service: UserScripts):
+    def __init__(self, configurations, integrations, display_service : DisplayService, script_service: UserScripts):
         self.configurations = configurations
         self.current_configuration = self.configurations[0]
         self.initialised_configuration = False
         self.button_states = {}
+        self.integrations = integrations
 
         self.display_service = display_service
         self.script_service = script_service
@@ -78,8 +79,10 @@ class KeyService:
             button = CommandButton(event_configuration, self.display_service)
         elif event_type == "teams":
             button = MSTeamsButton(event_configuration, self.display_service)
-        elif event_type =="msflightsim":
+        elif event_type == "msflightsim":
             button = MSFlightSimButton(event_configuration, self.display_service, self.ms_flight_sim_service)
+        elif event_type == "tapo":
+            button = TapoButton(event_configuration, self.display_service, self.integrations["Tapo"])
 
         return button.handle()
 
