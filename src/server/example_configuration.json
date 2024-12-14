@@ -1,0 +1,603 @@
+{
+	"NOTICE": "THIS IS AN EXAMPLE ONLY. RENAME THIS FILE TO 'configuration.json'",
+	"ButtonBoxHostIP": "192.168.0.128",
+	"Configurations": [
+		{
+			"Id": 1,
+			"Description": "Main Configuration",
+			"DefaultScreenMessage": [
+				"---",
+				"Current Config:",
+				"Main",
+				"---"
+			],
+			"Buttons": [
+				{
+					"Reference": "BTN_1",
+					"On": {
+						"Type": "Mode"
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_2",
+					"On": null,
+					"Off": {
+						"Type": "Script",
+						"Action": "show_time_example"
+					}
+				},
+				{
+					"Reference": "BTN_3",
+					"On": null,
+					"Off": {
+						"Type": "Keybind",
+						"Action": "ctrl,shift",
+						"ActionDuration": 0.5
+					}
+				},
+				{
+					"Reference": "BTN_4",
+					"On": null,
+					"Off": {
+						"Type": "Command",
+						"Action": "start chrome -o https://jackdevonshire.co.uk",
+						"ActionDuration": 0.5
+					}
+				},
+				{
+					"Reference": "BTN_5",
+					"On": null,
+					"Off": {
+						"Type": "Teams",
+						"Action": "settings"
+					}
+				},
+				{
+					"Reference": "BTN_6",
+					"On": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": null,
+						"ScreenMessage": [
+							"",
+							"Talking",
+							"",
+							""
+						],
+						"ScreenDuration": null
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"Stopped Talking",
+							"",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				}
+			]
+		},
+		{
+			"Id": 2,
+			"Description": "KSP Configuration",
+			"DefaultScreenMessage": [
+				"---",
+				"Current Config:",
+				"KSP",
+				"---"
+			],
+			"Buttons": [
+				{
+					"Reference": "BTN_1",
+					"On": {
+						"Type": "Mode"
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "x",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Minimum",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "z",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Maximum",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_5",
+					"On": {
+						"Type": "Keybind",
+						"Action": "ctrl",
+						"ActionDuration": null,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Decrease",
+							""
+						],
+						"ScreenDuration": null
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "ctrl",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Decrease",
+							""
+						],
+						"ScreenDuration": 0
+					}
+				},
+				{
+					"Reference": "BTN_3",
+					"On": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": null,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Increase",
+							""
+						],
+						"ScreenDuration": null
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "shift",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"THRUST",
+							"Increase",
+							""
+						],
+						"ScreenDuration": 0
+					}
+				},
+				{
+					"Reference": "PROTECTED_1",
+					"On": {
+						"Type": "Keybind",
+						"Action": "space",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"DANGER",
+							"STAGE",
+							""
+						],
+						"ScreenDuration": 3
+					},
+					"Off": null
+				},
+				{
+					"Reference": "PROTECTED_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "space",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"DANGER",
+							"STAGE",
+							""
+						],
+						"ScreenDuration": 3
+					},
+					"Off": null
+				},
+				{
+					"Reference": "PROTECTED_3",
+					"On": {
+						"Type": "Keybind",
+						"Action": "",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"----",
+							"ABORT",
+							"ARMED",
+							"----"
+						],
+						"ScreenDuration": null
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"----",
+							"ABORT",
+							"ARMED",
+							"----"
+						],
+						"ScreenDuration": 0
+					}
+				},
+				{
+					"Reference": "PROTECTED_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "1",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"============",
+							"DANGER",
+							"ABORTING",
+							"============"
+						],
+						"ScreenDuration": null,
+						"Requirements": [
+							{
+								"ButtonReference": "PROTECTED_3",
+								"RequiredState": "On",
+								"ErrorMessage": [
+									"",
+									"Error",
+									"Abort Unarmed",
+									""
+								]
+							}
+						]
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "1",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"DANGER",
+							"ABORTING",
+							"ABORTING",
+							"DANGER"
+						],
+						"ScreenDuration": 0
+					}
+				},
+				{
+					"Reference": "SWITCH_5",
+					"On": {
+						"Type": "Keybind",
+						"Action": "m",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Looking",
+							"At Map",
+							""
+						],
+						"ScreenDuration": null
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "m",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Looking",
+							"At Map",
+							""
+						],
+						"ScreenDuration": 0
+					}
+				},
+				{
+					"Reference": "SWITCH_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "u",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Lights",
+							"On",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "u",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Lights",
+							"Off",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				},
+				{
+					"Reference": "SWITCH_3",
+					"On": {
+						"Type": "Keybind",
+						"Action": "g",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Gear",
+							"Down",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "g",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Gear",
+							"Up",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				},
+				{
+					"Reference": "SWITCH_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "r",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"RCS",
+							"Enabled",
+							""
+						],
+						"ScreenDuration": null
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "r",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"RCS",
+							"Disabled",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				},
+				{
+					"Reference": "SWITCH_1",
+					"On": {
+						"Type": "Keybind",
+						"Action": "t",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"SAS",
+							"Enabled",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "t",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"SAS",
+							"Disabled",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				}
+			]
+		},
+		{
+			"Id": 3,
+			"Description": "Flight Sim Configuration",
+			"DefaultScreenMessage": [
+				"---",
+				"Current Config:",
+				"Flight Sim",
+				"---"
+			],
+			"Buttons": [
+				{
+					"Reference": "BTN_1",
+					"On": {
+						"Type": "Mode"
+					},
+					"Off": null
+				},
+				{
+					"Reference": "BTN_2",
+					"On": null,
+					"Off": {
+						"Type": "MSFlightSim",
+						"Action": "display_stats"
+					}
+				},
+				{
+					"Reference": "BTN_3",
+					"On": null,
+					"Off": {
+						"Type": "MSFlightSim",
+						"Action": "flaps_increase"
+					}
+				},
+				{
+					"Reference": "BTN_5",
+					"On": null,
+					"Off": {
+						"Type": "MSFlightSim",
+						"Action": "flaps_decrease"
+					}
+				},
+				{
+					"Reference": "BTN_6",
+					"On": {
+						"Type": "Keybind",
+						"Action": "decimal",
+						"ActionDuration": null,
+						"Requirements": [],
+						"ScreenMessage": [
+							"",
+							"Warning",
+							"Braking",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "decimal",
+						"ActionDuration": 0,
+						"ScreenMessage": [
+							"",
+							"Warning",
+							"Braking",
+							""
+						],
+						"ScreenDuration": 0
+					}
+				},
+				{
+					"Reference": "BTN_10",
+					"On": null,
+					"Off": {
+						"Type": "Keybind",
+						"Action": "shift,p",
+						"ActionDuration": 0.5,
+						"ScreenMessage": [
+							"",
+							"Toggle",
+							"Pushback",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				},
+				{
+					"Reference": "SWITCH_1",
+					"On": {
+						"Type": "MSFlightSim",
+						"Action": "spoilers_on"
+					},
+					"Off": {
+						"Type": "MSFlightSim",
+						"Action": "spoilers_off"
+					}
+				},
+				{
+					"Reference": "SWITCH_2",
+					"On": {
+						"Type": "Keybind",
+						"Action": "ctrl,decimal",
+						"ActionDuration": 0.1,
+						"ScreenMessage": [
+							"",
+							"Parking Brake",
+							"On",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "ctrl,decimal",
+						"ActionDuration": 0.1,
+						"ScreenMessage": [
+							"",
+							"Parking Brake",
+							"Off",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				},
+				{
+					"Reference": "SWITCH_4",
+					"On": {
+						"Type": "Keybind",
+						"Action": "z,alt",
+						"ActionDuration": 2,
+						"ScreenMessage": [
+							"",
+							"Autopilot",
+							"On",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "shift,alt,z",
+						"ActionDuration": 1,
+						"ScreenMessage": [
+							"",
+							"Autopilot",
+							"Off",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				},
+				{
+					"Reference": "SWITCH_5",
+					"On": {
+						"Type": "Keybind",
+						"Action": "g",
+						"ActionDuration": 0.1,
+						"ScreenMessage": [
+							"",
+							"Gear",
+							"Up",
+							""
+						],
+						"ScreenDuration": 2
+					},
+					"Off": {
+						"Type": "Keybind",
+						"Action": "g",
+						"ActionDuration": 0.1,
+						"ScreenMessage": [
+							"",
+							"Gear",
+							"Down",
+							""
+						],
+						"ScreenDuration": 2
+					}
+				}
+			]
+		}
+	]
+}

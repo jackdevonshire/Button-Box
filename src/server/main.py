@@ -6,8 +6,12 @@ from user_scripts import UserScripts
 
 app = Flask(__name__)
 configuration = {}
-with open('configuration.json') as json_file:
-    configuration = json.load(json_file)
+try:
+    with open('configuration.json') as json_file:
+        configuration = json.load(json_file)
+except:
+    with open('example_configuration.json') as json_file:
+        configuration = json.load(json_file)
 
 display_service = DisplayService(configuration["ButtonBoxHostIP"])
 script_service = UserScripts(display_service)
