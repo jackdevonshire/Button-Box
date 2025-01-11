@@ -8,6 +8,7 @@ from button.command_button import CommandButton
 from button.msteams_button import MSTeamsButton
 from button.msflightsim_button import MSFlightSimButton
 from button.tapo_button import TapoButton
+from button.broadlink_button import BroadlinkButton
 
 class KeyService:
     def __init__(self, configurations, integrations, display_service : DisplayService, script_service: UserScripts):
@@ -83,6 +84,8 @@ class KeyService:
             button = MSFlightSimButton(event_configuration, self.display_service, self.ms_flight_sim_service)
         elif event_type == "tapo":
             button = TapoButton(event_configuration, self.display_service, self.integrations["Tapo"])
+        elif event_type == "broadlink":
+            button = BroadlinkButton(event_configuration, self.display_service, self.integrations["Broadlink"])
 
         return button.handle()
 
