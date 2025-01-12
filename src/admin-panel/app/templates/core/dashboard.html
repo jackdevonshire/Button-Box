@@ -24,7 +24,7 @@
                            <div class="col-sm-8">
                               <div class="detail">
                                  <p class="detail-subtitle">Button Box IP</p>
-                                 <span class="number">{{data['ButtonBoxIP']}}</span>
+                                    <input id="ip" onchange="changeIp()" class="form-control" value="{{data['ButtonBoxIP']}}">
                               </div>
                            </div>
                         </div>
@@ -167,6 +167,28 @@
          window.location.reload()
       } else {
          alert("Failed to remove configuration: " + (result.Message || "Unknown error"));
+      }
+   }
+
+   async function changeIp() {
+      let ip = document.getElementById("ip").value;
+
+      let response = await fetch('{{url_for("core.api_change_ip")}}', {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+            ButtonBoxIP: ip
+         })
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+         window.location.reload()
+      } else {
+         alert("Failed to change IP: " + (result.Message || "Unknown error"));
       }
    }
 </script>
