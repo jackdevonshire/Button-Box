@@ -72,7 +72,7 @@
                                  <div class="col-sm-8">
                                     <div class="detail">
                                        <p class="detail-subtitle">Button Box IP</p>
-                                       <span class="number">192.168.X.X</span>
+                                       <span class="number">{{data['ButtonBoxIP']}}</span>
                                     </div>
                                  </div>
                               </div>
@@ -91,7 +91,7 @@
                                  <div class="col-sm-8">
                                     <div class="detail">
                                        <p class="detail-subtitle">Active Configuration</p>
-                                       <span class="number">Main Configuration</span>
+                                       <span class="number">{{data['ActiveConfiguration']['Name']}}</span>
                                     </div>
                                  </div>
                               </div>
@@ -120,24 +120,17 @@
                                    <th></th>
                                  </thead>
                                  <tbody>
-                                    <tr class="odd">
-                                       <td>1</td>
-                                       <td>Main Configuration</td>
-                                       <td>The main configuration for testing purposes</td>
-                                       <td class="text-end">
-                                          <a href="" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
-                                          <a href="" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
-                                       </td>
-                                    </tr>
-                                    <tr class="odd">
-                                       <td>2</td>
-                                       <td>Another Configuration</td>
-                                       <td>Another configuration for testing purposes</td>
-                                       <td class="text-end">
-                                          <a href="" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
-                                          <a href="" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
-                                       </td>
-                                    </tr>
+                                    {% for configuration in data['Configurations'] %}
+                                       <tr class="odd">
+                                          <td>{{configuration['Id']}}</td>
+                                          <td>{{configuration['Name']}}</td>
+                                          <td>The main configuration for testing purposes</td>
+                                          <td class="text-end">
+                                             <a href="#TODO" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
+                                             <a href="#TODO" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
                                  </tbody>
                               </table>
                            </div>

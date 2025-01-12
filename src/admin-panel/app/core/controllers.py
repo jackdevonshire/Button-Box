@@ -10,4 +10,4 @@ key_service = KeyService(db)
 
 @core.route("/", methods=["GET"])
 def dashboard():
-    return render_template("core/dashboard.html")
+    return render_template("core/dashboard.html", data=core_service.get_dashboard_data())

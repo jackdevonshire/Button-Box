@@ -7,6 +7,13 @@ class Configuration(db.Model):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
 
+    def to_api_response(self):
+        return {
+            "Id": self.id,
+            "Name": self.name,
+            "Description": self.description
+        }
+
 class Integration(db.Model):
     __tablename__ = 'integration'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
