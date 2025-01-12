@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import joinedload
 
 from app import app
-from app.core.models import Configuration, ConfigurationButton, Setting
+from app.core.models import Configuration, ConfigurationButton, Setting, IntegrationAction
 from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey, EventType
 
 
@@ -27,8 +27,8 @@ class ButtonBoxService:
             with app.app_context():
                 self.current_configuration = Configuration.query.order_by(Configuration.id).first()
                 self.current_buttons = ConfigurationButton.query.options(
-                    joinedload(ConfigurationButton.integration_action)) \
-                    .filter_by(configuration_id=self.current_configuration.id).all()
+                    joinedload(ConfigurationButton.integration_action).joinedload(IntegrationAction.integration)
+                ).filter_by(configuration_id=self.current_configuration.id).all()
                 # Now initiate communication with Button Box
                 self.reconnect()
 
@@ -55,9 +55,9 @@ class ButtonBoxService:
             return NetworkResponse().with_error("Configuration does not exist", HttpStatusCode.NotFound)
 
         self.current_configuration = new_configuration
-        self.current_buttons = self.current_buttons = ConfigurationButton.query.options(
-            joinedload(ConfigurationButton.integration_action)).filter_by(
-            configuration_id=self.current_configuration.id).all()
+        self.current_buttons = ConfigurationButton.query.options(
+            joinedload(ConfigurationButton.integration_action).joinedload(IntegrationAction.integration)
+        ).filter_by(configuration_id=self.current_configuration.id).all()
         self.display_service.set_default_message(["", "Current Mode", self.current_configuration.name, ""])
         self.display_service.force_default_message()
         return NetworkResponse().get()

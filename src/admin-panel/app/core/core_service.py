@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from app.core.models import IntegrationAction, Configuration, ConfigurationButton, Setting
+from sqlalchemy.orm import joinedload
+
+from app.core.models import Configuration, ConfigurationButton, Setting, IntegrationAction
 from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey
 
 
@@ -36,7 +38,9 @@ class CoreService:
 
     def get_configuration_data(self, id):
         configuration = Configuration.query.filter_by(id=id).first()
-        configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
+        configuration_buttons = ConfigurationButton.query.options(
+            joinedload(ConfigurationButton.integration_action).joinedload(IntegrationAction.integration)
+        ).filter_by(configuration_id=id).all()
 
         all_integration_actions = []
         for integration in self.integration_factory.get_all_integrations():
