@@ -3,7 +3,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction
 from app.core.display_service import DisplayService
-
+from app.core.button_box_service import ButtonBoxService
 
 class BaseIntegrationService:
     def __init__(self, db: SQLAlchemy):
@@ -63,5 +63,5 @@ class BaseIntegrationService:
     def remove_action(self, id):
         raise NotImplementedError()  # TODO IN HERE
 
-    def handle_action(self, action: IntegrationAction, display: DisplayService):
+    def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         pass
