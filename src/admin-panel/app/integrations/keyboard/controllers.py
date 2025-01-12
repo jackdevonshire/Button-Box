@@ -1,7 +1,8 @@
-from flask import Blueprint
+from app.integrations.keyboard.service import KeyboardService
 
-url_prefix = "/integration/keyboard"
-bp_keyboard = Blueprint('bp_keyboard', __name__, url_prefix=url_prefix)
+keyboard_service = KeyboardService()
+bp_keyboard = keyboard_service.blueprint
+
 
 # Standard Routes (the same across all integrations
 @bp_keyboard.route("/configure")
