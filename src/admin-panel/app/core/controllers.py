@@ -75,3 +75,4 @@ def api_change_active_configuration():
         return button_box_service.api_change_active_configuration(data["ConfigurationId"])
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+

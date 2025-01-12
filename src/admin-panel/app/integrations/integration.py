@@ -18,6 +18,9 @@ class BaseIntegrationService:
         # Other setup
         self.db = db
 
+    """
+    This initialises the configuration in the database, so that it is available to be seen in the UI if it is active
+    """
     def initialise(self):
         with app.app_context():
             existing_integration = Integration.query.filter_by(id=self.id).first()
@@ -35,6 +38,14 @@ class BaseIntegrationService:
                 db.session.add(new_integration)
             db.session.commit()
 
+    """
+    This initialises anything specific to the service. Unlike the database initialise() method,
+    this will be used by each individual service to initialise anything they need to do.
+    
+    Such as authenticating with an external API etc etc
+    """
+    def initialise_service(self):
+        pass
 
     def get_actions(self):
         integration_actions = IntegrationAction.query.filter_by(integration_id=self.id).all()

@@ -15,6 +15,9 @@ class KeyboardService(BaseIntegrationService):
         self.blueprint = bp_keyboard
         self.url_prefix = url_prefix
 
+    def initialise_service(self):
+        pass
+
     def handle_action(self, action: IntegrationAction):
         print("HEY, HANDLING ACTION")
         raise NotImplementedError()
