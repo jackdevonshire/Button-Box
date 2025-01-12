@@ -39,3 +39,12 @@ class ButtonBoxService:
 
         return NetworkResponse().get()
 
+    def api_change_active_configuration(self, configuration_id):
+        new_configuration = Configuration.query.filter_by(id=configuration_id).first()
+        if not new_configuration:
+            return NetworkResponse().with_error("Configuration does not exist", HttpStatusCode.NotFound)
+
+        self.current_configuration = new_configuration
+        self.display_service.set_default_message(["", "Current Mode", self.current_configuration.name, ""])
+        self.display_service.force_default_message()
+        return NetworkResponse().get()

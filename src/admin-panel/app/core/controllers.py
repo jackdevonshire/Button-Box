@@ -67,3 +67,11 @@ def api_change_ip():
         return button_box_service.api_change_ip(data["ButtonBoxIP"])
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+
+@core.route("/configuration/active", methods=["POST"])
+def api_change_active_configuration():
+    data = request.json
+    try:
+        return button_box_service.api_change_active_configuration(data["ConfigurationId"])
+    except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()

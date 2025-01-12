@@ -43,7 +43,15 @@
                            <div class="col-sm-8">
                               <div class="detail">
                                  <p class="detail-subtitle">Active Configuration</p>
-                                 <span class="number">{{data['ActiveConfiguration']['Name']}}</span>
+                                 <select onchange="changeConfiguration()" class="form-control" id="activeConfigurationId">
+                                    {% for configuration in data['AllConfigurations'] %}
+                                       {% if configuration['Id'] == data['ActiveConfiguration']['Id'] %}
+                                          <option value="{{configuration['Id']}}" selected="selected">{{configuration['Name']}}</option>
+                                       {% else %}
+                                          <option value="{{configuration['Id']}}">{{configuration['Name']}}</option>
+                                       {% endif %}
+                                    {% endfor %}
+                                 </select>
                               </div>
                            </div>
                         </div>
@@ -62,7 +70,7 @@
                            <div class="col-sm-8">
                               <div class="detail">
                                  <p class="detail-subtitle">Reconnect</p>
-                                 <button class="btn btn-primary mb-2" onclick="changeIp()">Click to reconnect</button>
+                                 <button class="btn btn-primary mb-1" onclick="changeIp()">Click to reconnect</button>
                               </div>
                            </div>
                         </div>
@@ -208,6 +216,28 @@
          window.location.reload()
       } else {
          alert("Failed to change IP: " + (result.Message || "Unknown error"));
+      }
+   }
+
+   async function changeConfiguration() {
+      let configurationId = document.getElementById("activeConfigurationId").value;
+
+      let response = await fetch('{{url_for("core.api_change_active_configuration")}}', {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+            ConfigurationId: configurationId
+         })
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+         window.location.reload()
+      } else {
+         alert("Failed to change active configuration: " + (result.Message || "Unknown error"));
       }
    }
 </script>

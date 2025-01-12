@@ -21,18 +21,7 @@ class CoreService:
         all_configurations = Configuration.query.all()
 
         if ip == "":
-            ip = "Please enter Button Box IP"
-
-        if len(all_configurations) <= 0:
-            return {
-                "ButtonBoxIP": ip,
-                "ActiveConfiguration": {
-                    "Id": -1,
-                    "Name": "",
-                    "Description": ""
-                },
-                "All Configurations": []
-            }
+            ip = "Enter IP Here"
 
         return {
             "ButtonBoxIP": ip,
