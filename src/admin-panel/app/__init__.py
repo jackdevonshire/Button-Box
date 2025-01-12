@@ -37,10 +37,6 @@ for integration in all_integrations:
     integration.initialise()
     print(f"Integration ({integration.name}) successfully initialised")
 
-# Get default/first current configuration in the key service
-from app.core.controllers import button_box_service
-button_box_service.initialise()
-
 # Initialise default settings
 from app.core.models import Setting, Configuration, ConfigurationButton, Integration, IntegrationAction
 with app.app_context():
@@ -75,3 +71,7 @@ with app.app_context():
         db.session.add(ksp_launch_button)
         db.session.add(ksp_abort_button)
         db.session.commit()
+
+# Get default/first current configuration in the key service
+from app.core.controllers import button_box_service
+button_box_service.initialise()

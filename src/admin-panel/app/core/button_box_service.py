@@ -19,8 +19,9 @@ class ButtonBoxService:
                 self.current_configuration = Configuration.query.order_by(Configuration.id).first()
 
                 # Now initiate communication with Button Box
+                print(Setting.query.filter_by(key="ButtonBoxIP").first())
                 ip = Setting.query.filter_by(key="ButtonBoxIP").first().value
                 self.display_service.update_host_ip(ip)
                 self.display_service.set_default_message(["", "Current Mode", self.current_configuration.name, ""])
 
-                self.__initialised = True
+            self.__initialised = True
