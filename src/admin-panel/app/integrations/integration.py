@@ -32,5 +32,18 @@ class BaseIntegrationService:
                 db.session.add(new_integration)
                 db.session.commit()
 
+    def get_actions(self):
+        integration_actions = IntegrationAction.query.filter_by(integration_id=self.id).all()
+        return integration_actions
+
+    def add_action(self, name, description, configuration):
+        raise NotImplementedError() # TODO IN HERE
+
+    def edit_action(self, name, description, configuration):
+        raise NotImplementedError() # TODO IN HERE
+    
+    def remove_action(self, id):
+        raise NotImplementedError() # TODO IN HERE
+
     def handle_action(self, action:IntegrationAction):
         pass
