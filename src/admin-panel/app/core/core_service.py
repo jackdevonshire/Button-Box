@@ -37,8 +37,11 @@ class CoreService:
     def get_configuration_data(self, id):
         configuration = Configuration.query.filter_by(id=id).first()
         configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
-        all_integration_actions = IntegrationAction.query.all()
-        all_integration_actions = [x.to_api_response() for x in all_integration_actions]
+
+        all_integration_actions = []
+        for integration in self.integration_factory.get_all_integrations():
+            for action in integration.get_actions():
+                all_integration_actions.append(action.to_api_response())
 
         available_integration_actions = [] # Filter by only active integrations
         for action in all_integration_actions:
