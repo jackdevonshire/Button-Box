@@ -57,7 +57,7 @@
       <div class="container">
          <div class="page-title">
             <h3>Configurations
-               <a href="#TODO" class="btn btn-sm btn-outline-primary float-end"><i class="fas fa-plus-circle"></i> Add</a>
+               <button class="btn btn-sm btn-outline-primary float-end" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createConfigModal"><i class="fas fa-plus-circle"></i> New Configuration</button>
             </h3>
          </div>
          <div class="box box-primary">
@@ -94,4 +94,61 @@
       </div>
    </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="createConfigModal" tabindex="-1" aria-labelledby="createConfigModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Configuration</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <div class="mb-3">
+            <label for="configName" class="form-label">Name</label>
+            <input id="configName" type="text" name="configName" placeholder="Configuration Name" class="form-control" required="">
+         </div>
+         <div class="mb-3">
+            <label for="configDescription" class="form-label">Name</label>
+            <textarea id="configDescription" type="text" name="configDescription" placeholder="Configuration Description" class="form-control" required=""></textarea>
+         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onClick="createConfiguration()" class="btn btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+   async function createConfiguration() {
+      let name = document.getElementById("configName").value;
+      let description = document.getElementById("configDescription").value;
+
+      if (name == "" || description == "") {
+         alert("Please provide both a name and a description")
+         return;
+      }
+
+      let response = await fetch('{{url_for("core.api_create_configuration")}}', {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+            ConfigurationName: name,
+            ConfigurationDescription: description
+         })
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+         window.location.reload()
+      } else {
+         alert("Failed to create configuration: " + (result.error || "Unknown error"));
+      }
+   }
+</script>
 {% endblock %}

@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
 from app.integrations.integration_factory import IntegrationFactory
 
-
 class CoreService:
     def __init__(self, db: SQLAlchemy, key_service):
         self.db = db
@@ -44,6 +43,10 @@ class CoreService:
             "AllConfigurations": [x.to_api_response() for x in all_configurations]
         }
 
+    def api_create_configuration(self, name, description):
+        new_configuration = Configuration(name=name, description=description)
+        self.db.session.add(new_configuration)
+        self.db.session.commit()
 
 """
 Dashboard:

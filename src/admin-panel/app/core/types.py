@@ -1,6 +1,8 @@
 from enum import Enum, IntEnum
 from flask import jsonify, make_response
 
+class ErrorMessage:
+    Generic = "Whoops something went wrong. Please try again later!"
 
 class HttpStatusCode(IntEnum):
     Success = 200
@@ -22,7 +24,7 @@ class NetworkResponse:
         self.data = data
         return self
 
-    def with_error(self, message):
+    def with_error(self, message, code: HttpStatusCode):
         self.has_error = True
         self.message = message
         return self
