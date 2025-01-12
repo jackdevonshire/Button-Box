@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.core.service import CoreService
+from app.core.core_service import CoreService
 from app import db
 
 bp_keyboard = Blueprint('bp_keyboard', __name__, url_prefix='/integration/keyboard')
