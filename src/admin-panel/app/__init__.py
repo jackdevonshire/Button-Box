@@ -75,3 +75,8 @@ with app.app_context():
 # Get default/first current configuration in the key service
 from app.core.controllers import button_box_service
 button_box_service.initialise()
+
+# Initialise all integrations - allows them to auth with external API's etc
+for integration in all_integrations:
+    integration.initialise_service()
+    print(f"Integration ({integration.name}) ready to handle events")
