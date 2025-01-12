@@ -79,6 +79,10 @@ class CoreService:
         if len(configuration_buttons) > 0:
             return NetworkResponse().with_error("Please delete the buttons in this configuration before removing it", HttpStatusCode.BadRequest).get()
 
+        all_configurations = len(Configuration.query.all())
+        if all_configurations <= 1:
+            return NetworkResponse().with_error("You must always have at-least one configuration present", HttpStatusCode.BadRequest).get()
+
         self.db.session.delete(configuration)
         self.db.session.commit()
         return NetworkResponse().get()
