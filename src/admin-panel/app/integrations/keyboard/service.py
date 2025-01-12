@@ -10,7 +10,7 @@ class KeyboardService(BaseIntegrationService):
         self.id = 1
         self.name = "Keyboard"
         self.description = "An integration to simulate keyboard interactions on the server hosts machine"
-        self.is_active = True
+        self.is_active = True # TODO in future, add an integration manager so we can delete this and just manage on a web page
         self.configuration = {}
         self.blueprint = bp_keyboard
         self.url_prefix = url_prefix
