@@ -23,13 +23,13 @@ def configuration_page(id):
 
 # Handles all button presses from the button box
 @core.route("/event", methods=["POST"])
-def api_event():
+def api_handle_event():
     data = request.json
 
     try:
-        return button_box_service.handle_event(data["ButtonBoxReference"], data["Event"])
+        return button_box_service.api_handle_event(data["ButtonReference"], data["Event"])
     except:
-        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError)
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
 @core.route("/api/configuration/create", methods=["POST"])
 def api_create_configuration():
