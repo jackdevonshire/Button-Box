@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
 from app.integrations.integration_factory import IntegrationFactory
+from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage
 
 class CoreService:
     def __init__(self, db: SQLAlchemy, key_service):
@@ -47,6 +48,20 @@ class CoreService:
         new_configuration = Configuration(name=name, description=description)
         self.db.session.add(new_configuration)
         self.db.session.commit()
+        return NetworkResponse().get()
+
+    def api_remove_configuration(self, id):
+        configuration = Configuration.query.filter_by(id=id).first()
+        if not configuration:
+            return
+
+        configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
+        if len(configuration_buttons) > 0:
+            return NetworkResponse().with_error("Please delete the buttons in this configuration before removing it", HttpStatusCode.BadRequest).get()
+
+        self.db.session.delete(configuration)
+        self.db.session.commit()
+        return NetworkResponse().get()
 
 """
 Dashboard:

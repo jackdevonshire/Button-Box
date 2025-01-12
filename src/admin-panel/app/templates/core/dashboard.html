@@ -80,7 +80,7 @@
                                     <td>{{configuration['Description']}}</td>
                                     <td class="text-end">
                                        <a href="#TODO" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
-                                       <a href="#TODO" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
+                                       <button onclick="removeConfiguration({{configuration['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
                                     </td>
                                  </tr>
                               {% endfor %}
@@ -147,7 +147,27 @@
       if (response.ok) {
          window.location.reload()
       } else {
-         alert("Failed to create configuration: " + (result.error || "Unknown error"));
+         alert("Failed to create configuration: " + (result.Message || "Unknown error"));
+      }
+   }
+
+   async function removeConfiguration(id) {
+      let response = await fetch('{{url_for("core.api_remove_configuration")}}', {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+            ConfigurationId: id
+         })
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+         window.location.reload()
+      } else {
+         alert("Failed to remove configuration: " + (result.Message || "Unknown error"));
       }
    }
 </script>

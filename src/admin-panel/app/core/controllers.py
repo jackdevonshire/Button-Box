@@ -20,8 +20,16 @@ def dashboard():
 @core.route("/api/configuration/create", methods=["POST"])
 def api_create_configuration():
     data = request.json
-    if True:
-        core_service.api_create_configuration(data["ConfigurationName"], data["ConfigurationDescription"])
-        return NetworkResponse().get()
-    else:
+    try:
+        return core_service.api_create_configuration(data["ConfigurationName"], data["ConfigurationDescription"])
+    except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+
+
+@core.route("/api/configuration/remove", methods=["POST"])
+def api_remove_configuration():
+    data = request.json
+    try:
+        return core_service.api_remove_configuration(data["ConfigurationId"])
+    except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
