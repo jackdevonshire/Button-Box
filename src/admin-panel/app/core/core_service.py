@@ -1,11 +1,18 @@
 from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
+from app.integrations.integration_factory import IntegrationFactory
 
 
 class CoreService:
     def __init__(self, db: SQLAlchemy, key_service):
         self.db = db
         self.key_service = key_service
+
+    def get_nav_links(self):
+        nav_links = {}
+        for integration in IntegrationFactory().get_all_integrations():
+            nav_links[integration.name] = integration.url_prefix
+        return nav_links
 
     def get_dashboard_data(self):
         ip = Setting.query.filter_by(key="ButtonBoxIP").first().value
@@ -35,6 +42,8 @@ class CoreService:
             },
             "AllConfigurations": [x.to_api_response() for x in all_configurations]
         }
+
+
 """
 Dashboard:
     View current active configuration name, description

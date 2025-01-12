@@ -1,4 +1,5 @@
-from app.integrations.keyboard.controllers import bp_keyboard as bp_keyboard
+from app.integrations.keyboard.controllers import bp_keyboard, url_prefix
+
 from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction
 
@@ -12,6 +13,7 @@ class KeyboardService(BaseIntegrationService):
         self.is_active = True
         self.configuration = {}
         self.blueprint = bp_keyboard
+        self.url_prefix = url_prefix
 
     def handle_action(self, action: IntegrationAction):
         print("HEY, HANDLING ACTION")

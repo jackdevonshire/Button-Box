@@ -13,6 +13,7 @@ class BaseIntegrationService:
         self.is_active = None
         self.configuration = None
         self.blueprint = None
+        self.url_prefix = None
 
         # Other setup
         self.db = db
