@@ -1,10 +1,12 @@
 import time
 import requests
 import threading
+
+
 class DisplayService:
     def __init__(self, host_ip):
         host_ip = host_ip.replace("http://", "")
-        host_ip = host_ip.replace("/","")
+        host_ip = host_ip.replace("/", "")
 
         self.base_url = "http://" + host_ip + ":8000/display"
         self.default_message = []
@@ -35,9 +37,9 @@ class DisplayService:
             return self.display_permanent(self.default_message)
 
         self.display_permanent(message)
-        reset_default_thread = threading.Thread(target=self.__wait_to_reset_default_message,args=(current_request, timeout))
+        reset_default_thread = threading.Thread(target=self.__wait_to_reset_default_message,
+                                                args=(current_request, timeout))
         reset_default_thread.start()
-
 
     def __wait_to_reset_default_message(self, current_request, timeout):
         time.sleep(timeout)

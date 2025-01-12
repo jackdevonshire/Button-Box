@@ -35,3 +35,10 @@ class ConfigurationButton(db.Model):
 
     configuration = db.relationship('Configuration', backref=db.backref('buttons', lazy=True))
     integration_action = db.relationship('IntegrationAction', backref=db.backref('buttons', lazy=True))
+
+class Setting(db.Model):
+    __tablename__ = 'setting'
+
+    # Define columns for the "settings" table
+    key = db.Column(db.String, primary_key=True, nullable=False)
+    value = db.Column(db.String, nullable=False)
