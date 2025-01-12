@@ -22,8 +22,9 @@ app.register_blueprint(core)
 # Configure integration routes
 all_integrations = integration_factory.get_all_integrations()
 for integration in all_integrations:
-    app.register_blueprint(integration.blueprint)
-    print(f"Blueprint for ({integration.name}) successfully loaded")
+    if integration.blueprint:
+        app.register_blueprint(integration.blueprint)
+        print(f"Blueprint for ({integration.name}) successfully loaded")
 
 # Create the database and tables
 with app.app_context():
