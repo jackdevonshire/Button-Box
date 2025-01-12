@@ -13,7 +13,8 @@ class IntegrationFactory:
         for integration in ALL_INTEGRATIONS:
             self.integrations_by_id[integration.id] = integration
 
-    def get_all_integrations(self):
+    @staticmethod
+    def get_all_integrations():
         return ALL_INTEGRATIONS
 
     def get_integration_by_id(self, id):
