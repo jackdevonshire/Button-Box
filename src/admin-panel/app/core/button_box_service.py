@@ -78,6 +78,6 @@ class ButtonBoxService:
                 integration_service.handle_action(button.integration_action, self.display_service)
                 return NetworkResponse().get()
 
-        self.display_service.display_temporary_message(["", "Button Not", "Mapped", ""], 1)
+        print("Button not mapped")
 
         return NetworkResponse().get()
