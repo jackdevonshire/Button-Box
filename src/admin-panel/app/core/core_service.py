@@ -64,13 +64,16 @@ class CoreService:
         if not configuration:
             return
 
-        configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
-        if len(configuration_buttons) > 0:
-            return NetworkResponse().with_error("Please delete the buttons in this configuration before removing it", HttpStatusCode.BadRequest).get()
+        if self.button_box_service.current_configuration.id == configuration.id:
+            return NetworkResponse().with_error("You cannot delete an active configuration", HttpStatusCode.BadRequest).get()
 
         all_configurations = len(Configuration.query.all())
         if all_configurations <= 1:
             return NetworkResponse().with_error("You must always have at-least one configuration present", HttpStatusCode.BadRequest).get()
+
+        configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
+        if len(configuration_buttons) > 0:
+            return NetworkResponse().with_error("Please delete the buttons in this configuration before removing it", HttpStatusCode.BadRequest).get()
 
         self.db.session.delete(configuration)
         self.db.session.commit()
