@@ -42,3 +42,4 @@ class Setting(db.Model):
     # Define columns for the "settings" table
     key = db.Column(db.String, primary_key=True, nullable=False)
     value = db.Column(db.String, nullable=False)
+    visible = db.Column(db.Boolean, nullable=False)
