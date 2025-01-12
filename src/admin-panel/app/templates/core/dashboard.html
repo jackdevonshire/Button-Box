@@ -6,8 +6,7 @@
    <div class="container">
       <div class="row">
          <div class="col-md-12 page-header">
-            <div class="page-pretitle">Overview</div>
-            <h2 class="page-title">Dashboard</h2>
+            <h2>Dashboard</h2>
          </div>
       </div>
       <div class="row">
@@ -79,7 +78,7 @@
                                     <td>{{configuration['Name']}}</td>
                                     <td>{{configuration['Description']}}</td>
                                     <td class="text-end">
-                                       <a href="#TODO" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
+                                       <a href="{{url_for('core.configuration_page', id=configuration['Id'])}}" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
                                        <button onclick="removeConfiguration({{configuration['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
                                     </td>
                                  </tr>
@@ -109,7 +108,7 @@
             <input id="configName" type="text" name="configName" placeholder="Configuration Name" class="form-control" required="">
          </div>
          <div class="mb-3">
-            <label for="configDescription" class="form-label">Name</label>
+            <label for="configDescription" class="form-label">Description</label>
             <textarea id="configDescription" type="text" name="configDescription" placeholder="Configuration Description" class="form-control" required=""></textarea>
          </div>
       </div>

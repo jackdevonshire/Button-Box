@@ -19,7 +19,7 @@
             <h1 style="color: black;">Button Box</h1>
          </div>
          <ul class="list-unstyled components text-secondary">
-            <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{{url_for('core.dashboard_page')}}"><i class="fas fa-home"></i> Dashboard</a></li>
          </ul>
           {% for name, link in nav_links.items() %}
          <ul class="list-unstyled components text-secondary">

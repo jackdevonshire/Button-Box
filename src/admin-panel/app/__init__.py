@@ -60,8 +60,8 @@ with app.app_context():
         db.session.add(abort_rocket_action)
         db.session.commit()
 
-        ksp_launch_button = ConfigurationButton(configuration_id=ksp_config.id, physical_key=1, event_type=1, integration_action_id=launch_rocket_action.id)
-        ksp_abort_button = ConfigurationButton(configuration_id=ksp_config.id, physical_key=2, event_type=2, integration_action_id=abort_rocket_action.id)
+        ksp_launch_button = ConfigurationButton(configuration_id=ksp_config.id, physical_key=1, event_type=0, integration_action_id=launch_rocket_action.id)
+        ksp_abort_button = ConfigurationButton(configuration_id=ksp_config.id, physical_key=2, event_type=1, integration_action_id=abort_rocket_action.id)
         db.session.add(ksp_launch_button)
         db.session.add(ksp_abort_button)
         db.session.commit()

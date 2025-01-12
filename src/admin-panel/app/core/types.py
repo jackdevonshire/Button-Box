@@ -2,7 +2,7 @@ from enum import Enum, IntEnum
 from flask import jsonify, make_response
 
 class ErrorMessage:
-    Generic = "Whoops something went wrong. Please try again later!"
+    Generic = "Whoops an error ocurred. Please try again later"
 
 class HttpStatusCode(IntEnum):
     Success = 200
@@ -75,3 +75,7 @@ class PhysicalKey(Enum):
     PROTECTED_2 = 16
     PROTECTED_3 = 17
     PROTECTED_4 = 18
+
+    @classmethod
+    def to_dict(cls):
+        return {key.name: key.value for key in cls}

@@ -9,11 +9,16 @@ key_service = KeyService(db)
 core_service = CoreService(db, key_service)
 
 @core.route("/", methods=["GET"])
-def dashboard():
+def dashboard_page():
     nav_links = core_service.get_nav_links()
     data = core_service.get_dashboard_data()
-    print(data)
     return render_template("core/dashboard.html", nav_links=nav_links, data=data)
+
+@core.route("/configuration/<id>", methods=["GET"])
+def configuration_page(id):
+    nav_links = core_service.get_nav_links()
+    data = core_service.get_configuration_data(id)
+    return render_template("core/configuration.html", nav_links=nav_links, data=data)
 
 
 
@@ -32,4 +37,12 @@ def api_remove_configuration():
     try:
         return core_service.api_remove_configuration(data["ConfigurationId"])
     except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+
+@core.route("/api/button/create", methods=["POST"])
+def api_create_button():
+    data = request.json
+    if True:
+        return core_service.api_create_button(data["ConfigurationId"], data["PhysicalButton"], data["EventType"], data["IntegrationActionId"])
+    else:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()

@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
 from app.integrations.integration_factory import IntegrationFactory
-from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage
+from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage, PhysicalKey, EventType
 
 class CoreService:
     def __init__(self, db: SQLAlchemy, key_service):
@@ -44,6 +44,26 @@ class CoreService:
             "AllConfigurations": [x.to_api_response() for x in all_configurations]
         }
 
+    def get_configuration_data(self, id):
+        configuration = Configuration.query.filter_by(id=id).first()
+        configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
+        all_integration_actions = IntegrationAction.query.all()
+        all_integration_actions = [x.to_api_response() for x in all_integration_actions]
+
+        available_integration_actions = [] # Filter by only active integrations
+        for action in all_integration_actions:
+            if action["Integration"]["Active"]:
+                available_integration_actions.append(action)
+
+        return {
+            "Id": configuration.id,
+            "Name": configuration.name,
+            "Description": configuration.description,
+            "Buttons": [x.to_api_response() for x in configuration_buttons],
+            "AvailableActions": available_integration_actions,
+            "AvailableButtons": PhysicalKey.to_dict()
+        }
+
     def api_create_configuration(self, name, description):
         new_configuration = Configuration(name=name, description=description)
         self.db.session.add(new_configuration)
@@ -62,6 +82,13 @@ class CoreService:
         self.db.session.delete(configuration)
         self.db.session.commit()
         return NetworkResponse().get()
+
+    def api_create_button(self, configuration_id, physical_button, event_type, integration_action_id):
+        button = ConfigurationButton(configuration_id=configuration_id, physical_key=physical_button, event_type=event_type, integration_action_id=integration_action_id)
+        self.db.session.add(button)
+        self.db.session.commit()
+        return NetworkResponse().get()
+
 
 """
 Dashboard:
