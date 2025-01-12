@@ -1,24 +1,18 @@
 import time
 import requests
 import threading
-from flask_sqlalchemy import SQLAlchemy
-from app.core.models import Setting
-from app import app
 
 
 class DisplayService:
-    def __init__(self, db: SQLAlchemy):
-        self.db = db
+    def __init__(self):
         self.base_url = ""
         self.default_message = []
         self.latest_request = 0
 
-    def update_host_ip(self):
-        with app.app_context():
-            host_ip = Setting.query.filter_by(key="ButtonBoxIP").first().value
-            host_ip = host_ip.replace("http://", "")
-            host_ip = host_ip.replace("/", "")
-            self.base_url = "http://" + host_ip + ":8000/display"
+    def update_host_ip(self, host_ip):
+        host_ip = host_ip.replace("http://", "")
+        host_ip = host_ip.replace("/", "")
+        self.base_url = "http://" + host_ip + ":8000/display"
 
     def set_default_message(self, default_message):
         self.default_message = default_message
