@@ -81,3 +81,6 @@ class ButtonBoxService:
         print("Button not mapped")
 
         return NetworkResponse().get()
+
+    def refresh_current_configuration(self):
+        self.api_change_active_configuration(self.current_configuration.id)

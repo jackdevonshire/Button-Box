@@ -65,6 +65,7 @@ class CoreService:
         new_configuration = Configuration(name=name, description=description)
         self.db.session.add(new_configuration)
         self.db.session.commit()
+        self.button_box_service.refresh_current_configuration()
         return NetworkResponse().get()
 
     def api_remove_configuration(self, id):
@@ -85,12 +86,14 @@ class CoreService:
 
         self.db.session.delete(configuration)
         self.db.session.commit()
+        self.button_box_service.refresh_current_configuration()
         return NetworkResponse().get()
 
     def api_create_button(self, configuration_id, button_name, physical_button, event_type, integration_action_id):
         button = ConfigurationButton(configuration_id=configuration_id, name=button_name, physical_key=physical_button, event_type=event_type, integration_action_id=integration_action_id)
         self.db.session.add(button)
         self.db.session.commit()
+        self.button_box_service.refresh_current_configuration()
         return NetworkResponse().get()
 
     def api_remove_button(self, id):
@@ -100,6 +103,7 @@ class CoreService:
 
         self.db.session.delete(button)
         self.db.session.commit()
+        self.button_box_service.refresh_current_configuration()
         return NetworkResponse().get()
 
 """
