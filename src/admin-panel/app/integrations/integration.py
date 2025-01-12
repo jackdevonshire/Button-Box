@@ -41,7 +41,7 @@ class BaseIntegrationService:
 
     def edit_action(self, name, description, configuration):
         raise NotImplementedError() # TODO IN HERE
-    
+
     def remove_action(self, id):
         raise NotImplementedError() # TODO IN HERE
 

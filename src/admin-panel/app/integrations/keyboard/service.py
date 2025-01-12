@@ -14,4 +14,5 @@ class KeyboardService(BaseIntegrationService):
         self.blueprint = bp_keyboard
 
     def handle_action(self, action: IntegrationAction):
-        pass
+        print("HEY, HANDLING ACTION")
+        raise NotImplementedError()

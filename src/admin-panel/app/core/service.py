@@ -4,3 +4,6 @@ from app.core.models import Integration, IntegrationAction, Configuration, Confi
 class CoreService:
     def __init__(self, db: SQLAlchemy): # Will also need to import the different integrations here, and an integration factory
         self.db = db
+
+    def connect(self):
+        
