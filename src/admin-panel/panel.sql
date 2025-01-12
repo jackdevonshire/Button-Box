@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "configuration" (
 CREATE TABLE IF NOT EXISTS "configuration_button" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"configuration_id"	INTEGER NOT NULL,
-	"physical_key"	TEXT NOT NULL,
+	"physical_key"	INTEGER NOT NULL,
 	"event_type"	INTEGER NOT NULL,
 	"integration_action_id"	INTEGER NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
