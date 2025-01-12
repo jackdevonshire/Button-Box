@@ -38,8 +38,8 @@ for integration in all_integrations:
     print(f"Integration ({integration.name}) successfully initialised")
 
 # Get default/first current configuration in the key service
-from app.core.controllers import key_service
-key_service.initialise()
+from app.core.controllers import button_box_service
+button_box_service.initialise()
 
 # Initialise default settings
 from app.core.models import Setting, Configuration, ConfigurationButton, Integration, IntegrationAction

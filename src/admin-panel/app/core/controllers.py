@@ -5,8 +5,8 @@ from app import db
 from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage
 
 core = Blueprint('core', __name__, url_prefix='')
-key_service = ButtonBoxService(db)
-core_service = CoreService(db, key_service)
+button_box_service = ButtonBoxService(db)
+core_service = CoreService(db, button_box_service)
 
 @core.route("/", methods=["GET"])
 def dashboard_page():

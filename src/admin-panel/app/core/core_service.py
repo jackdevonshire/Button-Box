@@ -4,9 +4,9 @@ from app.integrations.integration_factory import IntegrationFactory
 from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage, PhysicalKey, EventType
 
 class CoreService:
-    def __init__(self, db: SQLAlchemy, key_service):
+    def __init__(self, db: SQLAlchemy, button_box_service):
         self.db = db
-        self.key_service = key_service
+        self.button_box_service = button_box_service
 
     def get_nav_links(self):
         nav_links = {}
@@ -17,7 +17,7 @@ class CoreService:
 
     def get_dashboard_data(self):
         ip = Setting.query.filter_by(key="ButtonBoxIP").first().value
-        active_config = Configuration.query.filter_by(id=self.key_service.current_configuration_id).first()
+        active_config = self.button_box_service.current_configuration
         all_configurations = Configuration.query.all()
 
         if ip == "":
