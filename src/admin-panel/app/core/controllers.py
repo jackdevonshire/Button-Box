@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request
 from app.core.core_service import CoreService
-from app.core.key_service import KeyService
+from app.core.button_box_service import ButtonBoxService
 from app import db
 from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage
 
 core = Blueprint('core', __name__, url_prefix='')
-key_service = KeyService(db)
+key_service = ButtonBoxService(db)
 core_service = CoreService(db, key_service)
 
 @core.route("/", methods=["GET"])

@@ -3,7 +3,7 @@ from app.core.models import Integration, IntegrationAction, Configuration, Confi
 from app import app
 
 
-class KeyService:
+class ButtonBoxService:
     def __init__(self, db: SQLAlchemy):
         self.current_configuration_id = None
         self.db = db
