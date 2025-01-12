@@ -21,7 +21,9 @@ class BaseIntegrationService:
     def initialise(self):
         with app.app_context():
             existing_integration = Integration.query.filter_by(id=self.id).first()
-            if not existing_integration:
+            if existing_integration:
+                existing_integration.active = self.is_active
+            else:
                 new_integration = Integration(
                     id=self.id,
                     name=self.name,
@@ -31,7 +33,8 @@ class BaseIntegrationService:
                 )
 
                 db.session.add(new_integration)
-                db.session.commit()
+            db.session.commit()
+
 
     def get_actions(self):
         integration_actions = IntegrationAction.query.filter_by(integration_id=self.id).all()

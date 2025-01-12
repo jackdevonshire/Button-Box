@@ -11,7 +11,8 @@ class CoreService:
     def get_nav_links(self):
         nav_links = {}
         for integration in IntegrationFactory().get_all_integrations():
-            nav_links[integration.name] = integration.url_prefix
+            if integration.is_active:
+                nav_links[integration.name] = integration.url_prefix
         return nav_links
 
     def get_dashboard_data(self):
