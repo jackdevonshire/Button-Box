@@ -41,14 +41,8 @@ for integration in all_integrations:
 from app.core.models import Setting
 with app.app_context():
     settings = Setting.query.all()
-    if len(settings) < 3:
+    if len(settings) < 1:
         print("Invalid settings detected. Populating default setting values")
-
         ip_setting = Setting(key="ButtonBoxIP", value="", visible=True)
-        default_configuration = Setting(key="DefaultConfigurationId", value="", visible=False)
-        current_configuration = Setting(key="CurrentConfigurationId", value="", visible=False)
-
         db.session.add(ip_setting)
-        db.session.add(default_configuration)
-        db.session.add(current_configuration)
         db.session.commit()
