@@ -2,6 +2,7 @@ from app import db, app
 import json
 from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction
+from app.core.display_service import DisplayService
 
 
 class BaseIntegrationService:
@@ -21,6 +22,7 @@ class BaseIntegrationService:
     """
     This initialises the configuration in the database, so that it is available to be seen in the UI if it is active
     """
+
     def initialise(self):
         with app.app_context():
             existing_integration = Integration.query.filter_by(id=self.id).first()
@@ -44,6 +46,7 @@ class BaseIntegrationService:
     
     Such as authenticating with an external API etc etc
     """
+
     def initialise_service(self):
         pass
 
@@ -52,13 +55,13 @@ class BaseIntegrationService:
         return integration_actions
 
     def add_action(self, name, description, configuration):
-        raise NotImplementedError() # TODO IN HERE
+        raise NotImplementedError()  # TODO IN HERE
 
     def edit_action(self, name, description, configuration):
-        raise NotImplementedError() # TODO IN HERE
+        raise NotImplementedError()  # TODO IN HERE
 
     def remove_action(self, id):
-        raise NotImplementedError() # TODO IN HERE
+        raise NotImplementedError()  # TODO IN HERE
 
-    def handle_action(self, action:IntegrationAction):
+    def handle_action(self, action: IntegrationAction, display: DisplayService):
         pass
