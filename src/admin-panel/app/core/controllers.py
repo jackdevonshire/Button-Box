@@ -8,7 +8,6 @@ core = Blueprint('core', __name__, url_prefix='')
 button_box_service = ButtonBoxService(db)
 core_service = CoreService(db, button_box_service)
 
-
 @core.route("/", methods=["GET"])
 def dashboard_page():
     nav_links = core_service.get_nav_links()
@@ -22,6 +21,15 @@ def configuration_page(id):
     data = core_service.get_configuration_data(id)
     return render_template("core/configuration.html", nav_links=nav_links, data=data)
 
+# Handles all button presses from the button box
+@core.route("/event", methods=["POST"])
+def api_event():
+    data = request.json
+
+    try:
+        return button_box_service.handle_event(data["ButtonBoxReference"], data["Event"])
+    except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError)
 
 @core.route("/api/configuration/create", methods=["POST"])
 def api_create_configuration():

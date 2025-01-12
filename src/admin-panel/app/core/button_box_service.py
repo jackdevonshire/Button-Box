@@ -48,3 +48,8 @@ class ButtonBoxService:
         self.display_service.set_default_message(["", "Current Mode", self.current_configuration.name, ""])
         self.display_service.force_default_message()
         return NetworkResponse().get()
+
+    def handle_event(self, button, event):
+        print(f"BUTTON {button} {event}")
+
+        return NetworkResponse().get()

@@ -24,10 +24,13 @@ class DisplayService:
         })
 
     def force_default_message(self):
-        requests.post(self.base_url, json={
-            "ScreenMessage": self.default_message,
-            "AlignCenter": True
-        })
+        try:
+            requests.post(self.base_url, json={
+                "ScreenMessage": self.default_message,
+                "AlignCenter": True
+            })
+        except:
+            print("Failed to connect to Button Box. Reconnect once it has loaded, or change the IP in the admin panel")
 
     def display_temporary_message(self, message, timeout):
         self.latest_request += 1
