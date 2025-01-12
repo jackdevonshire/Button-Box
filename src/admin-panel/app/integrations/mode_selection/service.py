@@ -1,10 +1,9 @@
-from app.integrations.keyboard.controllers import bp_keyboard, url_prefix
-
 from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction, Configuration, ConfigurationButton
 from app.core.display_service import DisplayService
 from app.core.button_box_service import ButtonBoxService
 from app import db
+
 
 class ModeSelectionService(BaseIntegrationService):
     def __init__(self):
