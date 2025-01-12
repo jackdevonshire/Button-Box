@@ -67,9 +67,11 @@ class ConfigurationButton(db.Model):
 
     def to_api_response(self):
         event_name = EventType(self.event_type).name
+        button = PhysicalKey(self.physical_key).name
+
         return {
             "Id": self.id,
-            "PhysicalKey": self.physical_key,
+            "PhysicalKey": button,
             "EventType": event_name,
             "IntegrationAction": self.integration_action.to_api_response()
         }

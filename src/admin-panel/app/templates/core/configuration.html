@@ -24,18 +24,20 @@
                         <table width="100%" class="table table-hover dataTable no-footer dtr-inline" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
                            <thead>
                              <th>Id</th>
-                             <th>Name</th>
                              <th>Description</th>
+                             <th>Key</th>
+                             <th>Event</th>
                              <th></th>
                            </thead>
                            <tbody>
-                              {% for configuration in data['AllConfigurations'] %}
+                              {% for button in data['Buttons'] %}
                                  <tr class="odd">
-                                    <td>{{configuration['Id']}}</td>
-                                    <td>{{configuration['Name']}}</td>
-                                    <td>{{configuration['Description']}}</td>
+                                    <td>{{button['Id']}}</td>
+                                    <td>{{button['IntegrationAction']['Integration']['Name']}} | {{button['IntegrationAction']['Name']}}</td>
+                                    <td>{{button['PhysicalKey']}}</td>
+                                    <td>{{button['EventType']}}</td>
                                     <td class="text-end">
-                                       <button onclick="removeConfiguration({{configuration['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
+                                       <button onclick="removeButton({{button['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
                                     </td>
                                  </tr>
                               {% endfor %}
@@ -127,23 +129,14 @@
       }
    }
 
-
-
-
-
-
-
-
-
-    // TODO - DELETE
-   async function removeConfiguration(id) {
-      let response = await fetch('{{url_for("core.api_remove_configuration")}}', {
+   async function removeButton(id) {
+      let response = await fetch('{{url_for("core.api_remove_button")}}', {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
          body: JSON.stringify({
-            ConfigurationId: id
+            ButtonId: id
          })
       });
 
@@ -152,7 +145,7 @@
       if (response.ok) {
          window.location.reload()
       } else {
-         alert("Failed to remove configuration: " + (result.Message || "Unknown error"));
+         alert("Failed to remove button: " + (result.Message || "Unknown error"));
       }
    }
 </script>

@@ -89,6 +89,14 @@ class CoreService:
         self.db.session.commit()
         return NetworkResponse().get()
 
+    def api_remove_button(self, id):
+        button = ConfigurationButton.query.filter_by(id=id).first()
+        if not button:
+            return
+
+        self.db.session.delete(button)
+        self.db.session.commit()
+        return NetworkResponse().get()
 
 """
 Dashboard:

@@ -42,7 +42,17 @@ def api_remove_configuration():
 @core.route("/api/button/create", methods=["POST"])
 def api_create_button():
     data = request.json
-    if True:
+    try:
         return core_service.api_create_button(data["ConfigurationId"], data["PhysicalButton"], data["EventType"], data["IntegrationActionId"])
-    else:
+    except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+
+
+
+@core.route("/api/button/remove", methods=["POST"])
+def api_remove_button():
+    data = request.json
+    try:
+        return core_service.api_remove_button(data["ButtonId"])
+    except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
