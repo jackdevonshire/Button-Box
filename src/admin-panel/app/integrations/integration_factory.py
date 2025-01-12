@@ -1,11 +1,11 @@
 # Import integration services
 from app.integrations.keyboard.controllers import keyboard_service
-from app.integrations.mode_selection.service import ModeSelectionService
+from app.integrations.mode_selection.controllers import mode_selection_service
 
 # List all integrations here
 ALL_INTEGRATIONS = [
     keyboard_service,
-    ModeSelectionService()
+    mode_selection_service
 ]
 
 
