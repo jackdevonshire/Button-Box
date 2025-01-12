@@ -24,7 +24,8 @@
                         <table width="100%" class="table table-hover dataTable no-footer dtr-inline" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
                            <thead>
                              <th>Id</th>
-                             <th>Description</th>
+                             <th>Name</th>
+                             <th>Integration</th>
                              <th>Key</th>
                              <th>Event</th>
                              <th></th>
@@ -33,6 +34,7 @@
                               {% for button in data['Buttons'] %}
                                  <tr class="odd">
                                     <td>{{button['Id']}}</td>
+                                    <td>{{button['Name']}}</td>
                                     <td>{{button['IntegrationAction']['Integration']['Name']}} | {{button['IntegrationAction']['Name']}}</td>
                                     <td>{{button['PhysicalKey']}}</td>
                                     <td>{{button['EventType']}}</td>
@@ -61,6 +63,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+          <div class="mb-3">
+            <label for="buttonName" class="form-label">Button Name</label>
+           <input type="text" id="buttonName" name="buttonName" placeholder="Button Name" class="form-control" >
+          </div>
+
          <div class="mb-3">
             <label for="physicalButton" class="form-label">Physical Button</label>
             <select id="physicalButton" class="form-control" required="">
@@ -98,6 +105,7 @@
 
 <script>
    async function createButton() {
+      let buttonName = document.getElementById("buttonName").value;
       let physicalButton = document.getElementById("physicalButton").value;
       let eventType = document.getElementById("eventType").value;
       let integrationActionId = document.getElementById("integrationActionId").value;
@@ -113,6 +121,7 @@
             "Content-Type": "application/json"
          },
          body: JSON.stringify({
+            ButtonName: buttonName,
             ConfigurationId: {{data['Id']}},
             PhysicalButton: physicalButton,
             EventType: eventType,

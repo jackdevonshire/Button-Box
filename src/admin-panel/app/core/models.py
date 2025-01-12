@@ -57,6 +57,7 @@ class IntegrationAction(db.Model):
 class ConfigurationButton(db.Model):
     __tablename__ = 'configuration_button'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
     configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'), nullable=False)
     physical_key = db.Column(db.Integer, nullable=False)
     event_type = db.Column(db.Integer, nullable=False)
@@ -71,6 +72,7 @@ class ConfigurationButton(db.Model):
 
         return {
             "Id": self.id,
+            "Name": self.name,
             "PhysicalKey": button,
             "EventType": event_name,
             "IntegrationAction": self.integration_action.to_api_response()

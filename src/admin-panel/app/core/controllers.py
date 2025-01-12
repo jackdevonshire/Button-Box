@@ -43,7 +43,7 @@ def api_remove_configuration():
 def api_create_button():
     data = request.json
     try:
-        return core_service.api_create_button(data["ConfigurationId"], data["PhysicalButton"], data["EventType"], data["IntegrationActionId"])
+        return core_service.api_create_button(data["ConfigurationId"], data["ButtonName"], data["PhysicalButton"], data["EventType"], data["IntegrationActionId"])
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 

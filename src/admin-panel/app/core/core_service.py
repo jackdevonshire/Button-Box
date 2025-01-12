@@ -83,8 +83,8 @@ class CoreService:
         self.db.session.commit()
         return NetworkResponse().get()
 
-    def api_create_button(self, configuration_id, physical_button, event_type, integration_action_id):
-        button = ConfigurationButton(configuration_id=configuration_id, physical_key=physical_button, event_type=event_type, integration_action_id=integration_action_id)
+    def api_create_button(self, configuration_id, button_name, physical_button, event_type, integration_action_id):
+        button = ConfigurationButton(configuration_id=configuration_id, name=button_name, physical_key=physical_button, event_type=event_type, integration_action_id=integration_action_id)
         self.db.session.add(button)
         self.db.session.commit()
         return NetworkResponse().get()
