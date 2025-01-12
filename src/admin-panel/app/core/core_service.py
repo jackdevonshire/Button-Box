@@ -13,7 +13,7 @@ Dashboard:
     View current active configuration name, description
     View current state of buttons
     
-    Change button box IP address
+    Change button box IP address - should also change this in display service and trigger a new API call to the box
     Change active configuration
 
 Configuration:
