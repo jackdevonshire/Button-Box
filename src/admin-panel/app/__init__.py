@@ -20,8 +20,8 @@ from app.core.controllers import core as core
 app.register_blueprint(core)
 
 # Configure integration routes
-from app.integrations.integration_factory import IntegrationFactory
-integration_factory = IntegrationFactory()
+from app.integrations.integration_factory import integration_factory
+
 
 all_integrations = integration_factory.get_all_integrations()
 for integration in all_integrations:

@@ -19,3 +19,6 @@ class IntegrationFactory:
 
     def get_integration_by_id(self, id):
         return self.integrations_by_id[id]
+
+
+integration_factory = IntegrationFactory()
