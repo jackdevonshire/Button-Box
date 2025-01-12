@@ -8,5 +8,13 @@ ALL_INTEGRATIONS = [
 
 
 class IntegrationFactory:
+    def __init__(self):
+        self.integrations_by_id = {}
+        for integration in ALL_INTEGRATIONS:
+            self.integrations_by_id[integration.id] = integration
+
     def get_all_integrations(self):
         return ALL_INTEGRATIONS
+
+    def get_integration_by_id(self, id):
+        return self.integrations_by_id[id]
