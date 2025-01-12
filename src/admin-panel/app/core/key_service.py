@@ -5,12 +5,16 @@ from app import app
 
 class KeyService:
     def __init__(self, db: SQLAlchemy):
+        self.current_configuration_id = None
         self.db = db
+        self.__initialised = False
 
-        # Set current config to default config
-        with app.app_context():
-            first_configuration = Configuration.query.order_by(Configuration.id).first()
-            if not first_configuration:
-                self.current_configuration_id = None
-            else:
-                self.current_configuration_id = first_configuration.id
+    def initialise(self):
+        if not self.__initialised:
+            # Set current config to default config
+            with app.app_context():
+                first_configuration = Configuration.query.order_by(Configuration.id).first()
+                if first_configuration:
+                    self.current_configuration_id = first_configuration.id
+
+            self.__initialised = True

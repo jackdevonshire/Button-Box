@@ -1,16 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
 from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
-from app import app
 
 
 class CoreService:
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self, db: SQLAlchemy, key_service):
         self.db = db
+        self.key_service = key_service
 
     def get_dashboard_data(self):
         ip = Setting.query.filter_by(key="ButtonBoxIP").first().value
-        active_config_id = Setting.query.filter_by(key="CurrentConfigurationId").first().value
-        active_config = Configuration.query.filter_by(id=active_config_id).first()
+        active_config = Configuration.query.filter_by(id=self.key_service.current_configuration_id).first()
         all_configurations = Configuration.query.all()
 
         if ip == "":
@@ -34,7 +33,7 @@ class CoreService:
                 "Name": active_config.name,
                 "Description": active_config.description
             },
-            "All Configurations": [x.to_api_response() for x in all_configurations]
+            "AllConfigurations": [x.to_api_response() for x in all_configurations]
         }
 """
 Dashboard:

@@ -5,8 +5,8 @@ from app.core.key_service import KeyService
 from app import db
 
 core = Blueprint('core', __name__, url_prefix='')
-core_service = CoreService(db)
 key_service = KeyService(db)
+core_service = CoreService(db, key_service)
 
 @core.route("/", methods=["GET"])
 def dashboard():
