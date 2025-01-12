@@ -51,8 +51,15 @@ class NetworkResponse:
 
 
 class EventType(Enum):
-    UP = 0
-    DOWN = 1
+    OFF = 0
+    ON = 1
+
+    @staticmethod
+    def map_from_on_off(value):
+        if value == "On":
+            return EventType.ON
+        else:
+            return EventType.OFF
 
 
 class PhysicalKey(Enum):

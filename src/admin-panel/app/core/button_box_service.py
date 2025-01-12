@@ -12,6 +12,7 @@ class ButtonBoxService:
         self.db = db
         self.__initialised = False
         self.display_service = DisplayService()
+        self.states = {}
 
     def initialise(self):
         if not self.__initialised:
@@ -49,7 +50,11 @@ class ButtonBoxService:
         self.display_service.force_default_message()
         return NetworkResponse().get()
 
-    def api_handle_event(self, button, event):
-        print(f"BUTTON {button} {event}")
+    def api_handle_event(self, switch, event):
+        event = EventType.map_from_on_off(event)
+        switch = PhysicalKey[switch]
 
+        print(f"Event Logged: {switch} - {event}")
+
+        self.states[switch] = event
         return NetworkResponse().get()
