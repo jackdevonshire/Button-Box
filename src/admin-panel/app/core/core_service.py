@@ -6,3 +6,28 @@ from app import app
 class CoreService:
     def __init__(self, db: SQLAlchemy):
         self.db = db
+
+
+"""
+Dashboard:
+    View current active configuration name, description
+    View current state of buttons
+    
+    Change button box IP address
+    Change active configuration
+
+Configuration:
+    View all configurations - with active one highlighted
+    
+    Change default configuration
+    Add new configuration
+    Edit configuration
+    Delete configuration
+    
+    Add button event to configuration
+    Remove button event from configuration
+    
+Integration:
+    Based on individual integrations
+
+"""
