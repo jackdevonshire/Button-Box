@@ -25,7 +25,7 @@ integration_factory = IntegrationFactory()
 
 all_integrations = integration_factory.get_all_integrations()
 for integration in all_integrations:
-    app.register_blueprint(integration.get_blueprint())
+    app.register_blueprint(integration.blueprint)
     print(f"Blueprint for ({integration.name}) successfully loaded")
 
 
@@ -35,5 +35,5 @@ with app.app_context():
 
 # Now create all integrations in database, if they don't already exist
 for integration in all_integrations:
-    integration.initalise()
+    integration.initialise()
     print(f"Integration ({integration.name}) successfully initialised")
