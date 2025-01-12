@@ -53,8 +53,18 @@ with app.app_context():
 
         # Add some demo data
         ksp_config = Configuration(name="Demo KSP Config", description="Configuration for launching rockets in Kerbal Space Program")
-        launch_rocket_action = IntegrationAction(integration_id=1, name="Launch Rocket", description="Launches a rocket in KSP", configuration={"Key": "F1"})
-        abort_rocket_action = IntegrationAction(integration_id=1, name="Abort Rocket", description="Abort the rocket launch in KSP", configuration={"Key": "F2"})
+        launch_rocket_action = IntegrationAction(integration_id=1, name="Launch Rocket", description="Launches a rocket in KSP", configuration={
+            "Keys": ["space"],
+            "Press": True,
+            "PressDuration": 0.5,
+            "Release": False
+        })
+        abort_rocket_action = IntegrationAction(integration_id=1, name="Abort Rocket", description="Abort the rocket launch in KSP", configuration={
+            "Keys": ["shift", "x"],
+            "Press": True,
+            "PressDuration": 0.5,
+            "Release": False
+        })
         db.session.add(ksp_config)
         db.session.add(launch_rocket_action)
         db.session.add(abort_rocket_action)
