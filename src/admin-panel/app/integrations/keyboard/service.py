@@ -1,6 +1,6 @@
 from app.integrations.keyboard.controllers import bp_keyboard as bp_keyboard
 from app.integrations.integration import BaseIntegrationService
-
+from app.core.models import IntegrationAction
 
 class KeyboardService(BaseIntegrationService):
     def __init__(self):
@@ -11,3 +11,6 @@ class KeyboardService(BaseIntegrationService):
         self.is_active = True
         self.configuration = {}
         self.blueprint = bp_keyboard
+
+    def handle_action(self, action:IntegrationAction):
+        pass

@@ -1,7 +1,8 @@
 from app import db, app
 import json
 from flask_sqlalchemy import SQLAlchemy
-from app.core.models import Integration
+from app.core.models import Integration, IntegrationAction
+
 
 class BaseIntegrationService:
     def __init__(self, db: SQLAlchemy):
@@ -30,3 +31,6 @@ class BaseIntegrationService:
 
                 db.session.add(new_integration)
                 db.session.commit()
+
+    def handle_action(self, action:IntegrationAction):
+        pass
