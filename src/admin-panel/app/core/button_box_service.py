@@ -74,8 +74,8 @@ class ButtonBoxService:
         # Now handle the event
         for button in self.current_buttons:
             if button.physical_key == switch.value and button.event_type == event.value:
-                integration_service = self.integration_factory.get_integration_by_id(button.integration_action_id)
-                integration_service.handle_action(button.integration_action, self.display_service)
+                integration_service = self.integration_factory.get_integration_by_id(button.integration_action.integration.id)
+                integration_service.handle_action(button.integration_action, self.display_service, self)
                 return NetworkResponse().get()
 
         print("Button not mapped")
