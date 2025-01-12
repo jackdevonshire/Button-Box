@@ -16,13 +16,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Configure core routes
-from app.core.controllers import core as core
+from app.core.controllers import core, button_box_service, core_service, display_service, integration_factory
 app.register_blueprint(core)
 
 # Configure integration routes
-from app.integrations.integration_factory import integration_factory
-
-
 all_integrations = integration_factory.get_all_integrations()
 for integration in all_integrations:
     app.register_blueprint(integration.blueprint)
@@ -34,7 +31,7 @@ with app.app_context():
 
 # Now create all integrations in database, if they don't already exist
 for integration in all_integrations:
-    integration.initialise()
+    integration.initialise_database()
     print(f"Integration ({integration.name}) successfully initialised")
 
 # Initialise default settings
@@ -72,11 +69,10 @@ with app.app_context():
         db.session.add(ksp_abort_button)
         db.session.commit()
 
-# Get default/first current configuration in the key service
-from app.core.controllers import button_box_service
-button_box_service.initialise()
-
 # Initialise all integrations - allows them to auth with external API's etc
 for integration in all_integrations:
     integration.initialise_service()
     print(f"Integration ({integration.name}) ready to handle events")
+
+# Get default/first current configuration in the key service
+button_box_service.initialise()

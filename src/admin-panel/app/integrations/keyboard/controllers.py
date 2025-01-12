@@ -1,5 +1,4 @@
 from flask import Blueprint
-from app import db
 
 url_prefix = "/integration/keyboard"
 bp_keyboard = Blueprint('bp_keyboard', __name__, url_prefix=url_prefix)

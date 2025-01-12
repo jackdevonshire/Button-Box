@@ -1,11 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-
-from app.core.display_service import DisplayService
-from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
-from app import app
-from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage, PhysicalKey, EventType
-from app.integrations.integration_factory import integration_factory
 from sqlalchemy.orm import joinedload
+
+from app import app
+from app.core.models import Configuration, ConfigurationButton, Setting
+from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey, EventType
+
 
 class ButtonBoxService:
     def __init__(self, db: SQLAlchemy):
@@ -14,11 +13,16 @@ class ButtonBoxService:
 
         self.db = db
         self.__initialised = False
-        self.display_service = DisplayService()
+        self.display_service = None
+        self.integration_factory = None
         self.states = {}
 
     def initialise(self):
         if not self.__initialised:
+            from app import display_service, integration_factory
+            self.display_service = display_service
+            self.integration_factory = integration_factory
+
             # Set current config to default config
             with app.app_context():
                 self.current_configuration = Configuration.query.order_by(Configuration.id).first()
@@ -51,7 +55,9 @@ class ButtonBoxService:
             return NetworkResponse().with_error("Configuration does not exist", HttpStatusCode.NotFound)
 
         self.current_configuration = new_configuration
-        self.current_buttons = self.current_buttons = ConfigurationButton.query.options(joinedload(ConfigurationButton.integration_action)).filter_by(configuration_id=self.current_configuration.id).all()
+        self.current_buttons = self.current_buttons = ConfigurationButton.query.options(
+            joinedload(ConfigurationButton.integration_action)).filter_by(
+            configuration_id=self.current_configuration.id).all()
         self.display_service.set_default_message(["", "Current Mode", self.current_configuration.name, ""])
         self.display_service.force_default_message()
         return NetworkResponse().get()
@@ -68,7 +74,7 @@ class ButtonBoxService:
         # Now handle the event
         for button in self.current_buttons:
             if button.physical_key == switch.value and button.event_type == event.value:
-                integration_service = integration_factory.get_integration_by_id(button.integration_action_id)
+                integration_service = self.integration_factory.get_integration_by_id(button.integration_action_id)
                 integration_service.handle_action(button.integration_action, self.display_service)
                 return NetworkResponse().get()
 

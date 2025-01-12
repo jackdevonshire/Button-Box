@@ -1,12 +1,16 @@
 from flask import Blueprint, render_template, request
 from app.core.core_service import CoreService
 from app.core.button_box_service import ButtonBoxService
+from app.core.display_service import DisplayService
+from app.integrations.integration_factory import IntegrationFactory
 from app import db
 from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage
 
 core = Blueprint('core', __name__, url_prefix='')
+integration_factory = IntegrationFactory()
 button_box_service = ButtonBoxService(db)
-core_service = CoreService(db, button_box_service)
+core_service = CoreService(db, button_box_service, integration_factory)
+display_service = DisplayService()
 
 @core.route("/", methods=["GET"])
 def dashboard_page():

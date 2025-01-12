@@ -1,18 +1,17 @@
 from flask_sqlalchemy import SQLAlchemy
-from app.core.models import Integration, IntegrationAction, Configuration, ConfigurationButton, Setting
-from app.integrations.integration_factory import integration_factory
-from app.core.types import HttpStatusCode, NetworkResponse, ErrorMessage, PhysicalKey, EventType
+from app.core.models import IntegrationAction, Configuration, ConfigurationButton, Setting
+from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey
+
 
 class CoreService:
-    def __init__(self, db: SQLAlchemy, button_box_service):
-        print("HERE")
+    def __init__(self, db: SQLAlchemy, button_box_service, integration_factory):
         self.db = db
-
         self.button_box_service = button_box_service
+        self.integration_factory = integration_factory
 
     def get_nav_links(self):
         nav_links = {}
-        for integration in integration_factory.get_all_integrations():
+        for integration in self.integration_factory.get_all_integrations():
             if integration.is_active:
                 nav_links[integration.name] = integration.url_prefix
         return nav_links

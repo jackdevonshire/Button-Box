@@ -23,7 +23,7 @@ class BaseIntegrationService:
     This initialises the configuration in the database, so that it is available to be seen in the UI if it is active
     """
 
-    def initialise(self):
+    def initialise_database(self):
         with app.app_context():
             existing_integration = Integration.query.filter_by(id=self.id).first()
             if existing_integration:
