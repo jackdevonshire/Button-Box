@@ -1,12 +1,13 @@
 from app import db, app
 import json
 from flask_sqlalchemy import SQLAlchemy
+from app.core.core_service import CoreService
 from app.core.models import Integration, IntegrationAction
 from app.core.display_service import DisplayService
 from app.core.button_box_service import ButtonBoxService
 
 class BaseIntegrationService:
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self):
         # Core details
         self.id = None
         self.name = None
@@ -15,21 +16,25 @@ class BaseIntegrationService:
         self.configuration = None
 
         # Keeps these as None for any integrations that do not require a custom web panel for configuration
-        self.blueprint = None
         self.url_prefix = None
+        self.blueprint = None
 
         # Other setup
-        self.db = db
+        self.db = None
+        self.core_service = None
 
     """
     This initialises the configuration in the database, so that it is available to be seen in the UI if it is active
     """
 
-    def initialise_database(self):
+    def initialise_database(self, db: SQLAlchemy, core_service: CoreService):
+        self.db = db
+        self.core_service = core_service
+
         with app.app_context():
             existing_integration = Integration.query.filter_by(id=self.id).first()
             if existing_integration:
-                existing_integration.active = self.is_active
+                existing_integration.active = self.is_active # TODO in future, add an integration manager so we can delete this and just manage on a web page
             else:
                 new_integration = Integration(
                     id=self.id,
@@ -39,8 +44,8 @@ class BaseIntegrationService:
                     configuration=json.dumps(self.configuration)
                 )
 
-                db.session.add(new_integration)
-            db.session.commit()
+                self.db.session.add(new_integration)
+            self.db.session.commit()
 
     """
     This initialises anything specific to the service. Unlike the database initialise() method,

@@ -32,7 +32,7 @@ with app.app_context():
 
 # Now create all integrations in database, if they don't already exist
 for integration in all_integrations:
-    integration.initialise_database()
+    integration.initialise_database(db, core_service)
     print(f"Integration ({integration.name}) successfully initialised")
 
 # Initialise default settings

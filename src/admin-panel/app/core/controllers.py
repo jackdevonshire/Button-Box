@@ -30,9 +30,9 @@ def configuration_page(id):
 def api_handle_event():
     data = request.json
 
-    if True:
+    try:
         return button_box_service.api_handle_event(data["ButtonReference"], data["Event"])
-    else:
+    except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
 @core.route("/api/configuration/create", methods=["POST"])
