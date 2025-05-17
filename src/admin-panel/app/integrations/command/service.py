@@ -20,9 +20,6 @@ class CommandService(BaseIntegrationService):
         self.url_prefix = "/integration/command"
         self.blueprint = Blueprint('bp_command', __name__, url_prefix=self.url_prefix)
         self.icon = "fas fa-terminal"
-
-        self.held_keys = set()
-
     def initialise_service(self):
         pass
 
