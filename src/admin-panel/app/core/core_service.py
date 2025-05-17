@@ -66,7 +66,7 @@ class CoreService:
         self.db.session.add(new_configuration)
         self.db.session.commit()
         self.button_box_service.refresh_current_configuration()
-        return NetworkResponse().get()
+        return NetworkResponse()
 
     def api_remove_configuration(self, id):
         configuration = Configuration.query.filter_by(id=id).first()
@@ -74,27 +74,27 @@ class CoreService:
             return
 
         if self.button_box_service.current_configuration.id == configuration.id:
-            return NetworkResponse().with_error("You cannot delete an active configuration", HttpStatusCode.BadRequest).get()
+            return NetworkResponse().with_error("You cannot delete an active configuration", HttpStatusCode.BadRequest)
 
         all_configurations = len(Configuration.query.all())
         if all_configurations <= 1:
-            return NetworkResponse().with_error("You must always have at-least one configuration present", HttpStatusCode.BadRequest).get()
+            return NetworkResponse().with_error("You must always have at-least one configuration present", HttpStatusCode.BadRequest)
 
         configuration_buttons = ConfigurationButton.query.filter_by(configuration_id=id).all()
         if len(configuration_buttons) > 0:
-            return NetworkResponse().with_error("Please delete the buttons in this configuration before removing it", HttpStatusCode.BadRequest).get()
+            return NetworkResponse().with_error("Please delete the buttons in this configuration before removing it", HttpStatusCode.BadRequest)
 
         self.db.session.delete(configuration)
         self.db.session.commit()
         self.button_box_service.refresh_current_configuration()
-        return NetworkResponse().get()
+        return NetworkResponse()
 
     def api_create_button(self, configuration_id, button_name, physical_button, event_type, integration_action_id):
         button = ConfigurationButton(configuration_id=configuration_id, name=button_name, physical_key=physical_button, event_type=event_type, integration_action_id=integration_action_id)
         self.db.session.add(button)
         self.db.session.commit()
         self.button_box_service.refresh_current_configuration()
-        return NetworkResponse().get()
+        return NetworkResponse()
 
     def api_remove_button(self, id):
         button = ConfigurationButton.query.filter_by(id=id).first()
@@ -104,7 +104,7 @@ class CoreService:
         self.db.session.delete(button)
         self.db.session.commit()
         self.button_box_service.refresh_current_configuration()
-        return NetworkResponse().get()
+        return NetworkResponse()
 
 """
 Dashboard:

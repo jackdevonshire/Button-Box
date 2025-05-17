@@ -3,6 +3,7 @@ from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction
 from app.core.display_service import DisplayService
 from app.core.button_box_service import ButtonBoxService
+from app.core.types import HttpStatusCode, NetworkResponse
 
 
 class KeyboardService(BaseIntegrationService):

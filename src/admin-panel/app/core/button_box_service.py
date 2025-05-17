@@ -5,7 +5,6 @@ from app import app
 from app.core.models import Configuration, ConfigurationButton, Setting, IntegrationAction
 from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey, EventType
 
-
 class ButtonBoxService:
     def __init__(self, db: SQLAlchemy):
         self.current_configuration = None
@@ -47,7 +46,7 @@ class ButtonBoxService:
         self.db.session.commit()
         self.reconnect()
 
-        return NetworkResponse().get()
+        return NetworkResponse()
 
     def api_change_active_configuration(self, configuration_id):
         new_configuration = Configuration.query.filter_by(id=configuration_id).first()
@@ -60,7 +59,8 @@ class ButtonBoxService:
         ).filter_by(configuration_id=self.current_configuration.id).all()
         self.display_service.set_default_message(["", "Current Mode", self.current_configuration.name, ""])
         self.display_service.force_default_message()
-        return NetworkResponse().get()
+
+        return NetworkResponse()
 
     def api_handle_event(self, switch, event):
         # Convert to our version of the switch and event
@@ -76,11 +76,11 @@ class ButtonBoxService:
             if button.physical_key == switch.value and button.event_type == event.value:
                 integration_service = self.integration_factory.get_integration_by_id(button.integration_action.integration.id)
                 integration_service.handle_action(button.integration_action, self.display_service, self)
-                return NetworkResponse().get()
+                return NetworkResponse()
 
         print("Button not mapped")
 
-        return NetworkResponse().get()
+        return NetworkResponse()
 
     def refresh_current_configuration(self):
         self.api_change_active_configuration(self.current_configuration.id)

@@ -1,6 +1,8 @@
 from app import db
 from sqlalchemy.dialects.sqlite import JSON
 from app.core.types import EventType, PhysicalKey
+import json
+
 class Configuration(db.Model):
     __tablename__ = 'configuration'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

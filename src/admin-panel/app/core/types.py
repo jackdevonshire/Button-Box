@@ -2,7 +2,7 @@ from enum import Enum, IntEnum
 from flask import jsonify, make_response
 
 class ErrorMessage:
-    Generic = "Whoops an error ocurred. Please try again later"
+    Generic = "Whoops an error occurred. Please try again later"
 
 class HttpStatusCode(IntEnum):
     Success = 200

@@ -2,9 +2,10 @@ from app import db, app
 import json
 from flask_sqlalchemy import SQLAlchemy
 from app.core.core_service import CoreService
-from app.core.models import Integration, IntegrationAction
+from app.core.models import Integration, IntegrationAction, ConfigurationButton
 from app.core.display_service import DisplayService
 from app.core.button_box_service import ButtonBoxService
+from app.core.types import HttpStatusCode, NetworkResponse
 
 class BaseIntegrationService:
     def __init__(self):
@@ -62,13 +63,31 @@ class BaseIntegrationService:
         return integration_actions
 
     def add_action(self, name, description, configuration):
-        raise NotImplementedError()  # TODO IN HERE
+        try:
+            action = IntegrationAction(name=name, description=description, configuration=configuration, integration_id=self.id)
+            self.db.session.add(action)
+            self.db.session.commit()
+        except:
+            return NetworkResponse().with_error("Failed to add action", HttpStatusCode.InternalServerError)
+
+        return NetworkResponse()
 
     def edit_action(self, name, description, configuration):
         raise NotImplementedError()  # TODO IN HERE
 
     def remove_action(self, id):
-        raise NotImplementedError()  # TODO IN HERE
+        try:
+            buttons = ConfigurationButton.query.filter_by(integration_action_id=id).all()
+            for button in buttons:
+                self.db.session.delete(button)
+
+            action = IntegrationAction.query.filter_by(id=id).first()
+            self.db.session.delete(action)
+            self.db.session.commit()
+        except:
+            return NetworkResponse().with_error("Failed to remove action", HttpStatusCode.InternalServerError)
+
+        return NetworkResponse()
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         pass

@@ -31,7 +31,7 @@ def api_handle_event():
     data = request.json
 
     try:
-        return button_box_service.api_handle_event(data["ButtonReference"], data["Event"])
+        return button_box_service.api_handle_event(data["ButtonReference"], data["Event"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
@@ -39,7 +39,7 @@ def api_handle_event():
 def api_create_configuration():
     data = request.json
     try:
-        return core_service.api_create_configuration(data["ConfigurationName"], data["ConfigurationDescription"])
+        return core_service.api_create_configuration(data["ConfigurationName"], data["ConfigurationDescription"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
@@ -48,7 +48,7 @@ def api_create_configuration():
 def api_remove_configuration():
     data = request.json
     try:
-        return core_service.api_remove_configuration(data["ConfigurationId"])
+        return core_service.api_remove_configuration(data["ConfigurationId"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
@@ -58,7 +58,7 @@ def api_create_button():
     data = request.json
     try:
         return core_service.api_create_button(data["ConfigurationId"], data["ButtonName"], data["PhysicalButton"],
-                                              data["EventType"], data["IntegrationActionId"])
+                                              data["EventType"], data["IntegrationActionId"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
@@ -67,7 +67,7 @@ def api_create_button():
 def api_remove_button():
     data = request.json
     try:
-        return core_service.api_remove_button(data["ButtonId"])
+        return core_service.api_remove_button(data["ButtonId"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
@@ -76,7 +76,7 @@ def api_remove_button():
 def api_change_ip():
     data = request.json
     try:
-        return button_box_service.api_change_ip(data["ButtonBoxIP"])
+        return button_box_service.api_change_ip(data["ButtonBoxIP"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
@@ -84,7 +84,7 @@ def api_change_ip():
 def api_change_active_configuration():
     data = request.json
     try:
-        return button_box_service.api_change_active_configuration(data["ConfigurationId"])
+        return button_box_service.api_change_active_configuration(data["ConfigurationId"]).get()
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 

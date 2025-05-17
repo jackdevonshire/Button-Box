@@ -33,9 +33,14 @@
                                  <tr class="odd">
                                     <td>{{action['Id']}}</td>
                                     <td>{{action['Name']}}</td>
-                                    <td>{{action['Keys']}}</td>
+                                    <td>
+                                        |
+                                        {% for key in action['Configuration'] %}
+                                            {{key['key']}} ({{key['type']}}) |
+                                        {% endfor %}
+                                    </td>
                                     <td class="text-end">
-                                       <button onclick="removeButton({{action['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
+                                       <button onclick="removeAction({{action['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
                                     </td>
                                  </tr>
                               {% endfor %}
@@ -54,97 +59,251 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Create Action</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Create Keyboard Action</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div class="mb-3">
-            <label for="buttonName" class="form-label">Action Name</label>
-                <input type="text" id="buttonName" name="actionName" placeholder="Action Name" class="form-control" >
+            <label for="actionName" class="form-label">Action Name</label>
+                <input type="text" id="actionName" name="actionName" placeholder="Action Name" class="form-control" >
             </div>
-
+            <div class="mb-3">
+                <label for="actionDescription" class="form-label">Action Description</label>
+                <textarea id="actionDescription" name="actionDescription" placeholder="Action Description" class="form-control"></textarea>
+            </div>
             <table id="newActionTable" width="100%" class="table table-hover dataTable no-footer dtr-inline" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
                <thead>
-                 <th>Type</th> <!-- Key / Wait-->
-                 <th></th> <!-- Key to press, or wait time -->
-                 <th></th> <!-- For Key, whether key is turned on or off -->
-                 <th></th> <!-- Option to delete row -->
+                 <th>Key</th>
+                 <th>Type</th>
                </thead>
                <tbody>
                </tbody>
             </table>
-
-         <div class="mb-3">
-            <label for="eventType" class="form-label">Time Between Keys</label>
-            <select id="eventType" class="form-control" required="">
-                <option value="" selected="selected">Select an event type</option>
-                <option value="0">OFF</option>
-                <option value="1">ON</option>
-            </select>
-         </div>
-
+            <button type="button" class="btn btn-outline-primary btn-rounded" onClick="addKey()"><i class="fas fa-plus-circle"></i> Add Key</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" onClick="createButton()" class="btn btn-primary">Create</button>
+        <button type="button" onClick="createAction()" class="btn btn-primary">Create</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-   async function createButton() {
-      let buttonName = document.getElementById("buttonName").value;
-      let physicalButton = document.getElementById("physicalButton").value;
-      let eventType = document.getElementById("eventType").value;
-      let integrationActionId = document.getElementById("integrationActionId").value;
+async function removeAction(id) {
+    let url = `/integration/keyboard/action/${id}`;
 
-      if (eventType == "" || physicalButton == "" || integrationActionId == "") {
-         alert("Please select a valid event type, button and action")
-         return;
-      }
-
-      let response = await fetch('{{url_for("core.api_create_button")}}', {
-         method: "POST",
-         headers: {
+    let response = await fetch(url, {
+        method: "DELETE",
+        headers: {
             "Content-Type": "application/json"
-         },
-         body: JSON.stringify({
-            ButtonName: buttonName,
-            ConfigurationId: {{data['Id']}},
-            PhysicalButton: physicalButton,
-            EventType: eventType,
-            IntegrationActionId: integrationActionId
-         })
-      });
+        }
+    });
 
-      let result = await response.json();
+    let result = await response.json();
+    if (response.ok) {
+        window.location.reload();
+    } else {
+        alert("Failed to delete action");
+    }
+}
 
-      if (response.ok) {
-         window.location.reload()
-      } else {
-         alert("Failed to create button: " + (result.Message || "Unknown error"));
-      }
-   }
+async function createAction() {
+    // First collate keys and durations
+    const table = document.getElementById("newActionTable");
+    const rows = table.querySelectorAll("tbody tr");
+    const actionKeys = [];
 
-   async function removeButton(id) {
-      let response = await fetch('{{url_for("core.api_remove_button")}}', {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json"
-         },
-         body: JSON.stringify({
-            ButtonId: id
-         })
-      });
+    rows.forEach(row => {
+        const keySelect = row.querySelector(".key-select");
+        const typeSelect = row.querySelector(".type-select");
 
-      let result = await response.json();
+        if (keySelect && typeSelect) {
+            const key = keySelect.value;
+            const type = typeSelect.value;
 
-      if (response.ok) {
-         window.location.reload()
-      } else {
-         alert("Failed to remove button: " + (result.Message || "Unknown error"));
-      }
-   }
+            actionKeys.push({ key, type });
+        }
+    });
+    let actionName = document.getElementById("actionName").value;
+    let actionDescription = document.getElementById("actionDescription").value;
+  if (actionKeys.length === 0 || actionName.length === 0) {
+     alert("Please add a name and some keys first!")
+     return;
+  }
+
+  let response = await fetch('{{url_for("bp_keyboard.api_create_keyboard_action")}}', {
+     method: "POST",
+     headers: {
+        "Content-Type": "application/json"
+     },
+     body: JSON.stringify({
+        Name: actionName,
+        Description: actionDescription,
+        Keys: actionKeys
+     })
+  });
+
+  let result = await response.json();
+
+  if (response.ok) {
+     window.location.reload()
+  } else {
+     alert("Failed to create button: " + (result.Message || "Unknown error"));
+  }
+}
+
+function addKey() {
+    const table = document.getElementById("newActionTable");
+    const row = table.tBodies[0].insertRow(-1);
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+    const cell3 = row.insertCell(2);
+
+    const keySelect = `
+        <select class="form-control key-select" required>
+            <option value="escape">escape</option>
+            <option value="esc">esc</option>
+            <option value="f1">f1</option>
+            <option value="f2">f2</option>
+            <option value="f3">f3</option>
+            <option value="f4">f4</option>
+            <option value="f5">f5</option>
+            <option value="f6">f6</option>
+            <option value="f7">f7</option>
+            <option value="f8">f8</option>
+            <option value="f9">f9</option>
+            <option value="f10">f10</option>
+            <option value="f11">f11</option>
+            <option value="f12">f12</option>
+            <option value="printscreen">printscreen</option>
+            <option value="prntscrn">prntscrn</option>
+            <option value="prtsc">prtsc</option>
+            <option value="prtscr">prtscr</option>
+            <option value="scrolllock">scrolllock</option>
+            <option value="pause">pause</option>
+            <option value="\`">\`</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="0">0</option>
+            <option value="-">-</option>
+            <option value="=">=</option>
+            <option value="backspace">backspace</option>
+            <option value="insert">insert</option>
+            <option value="home">home</option>
+            <option value="pageup">pageup</option>
+            <option value="pagedown">pagedown</option>
+            <option value="numlock">numlock</option>
+            <option value="divide">divide</option>
+            <option value="multiply">multiply</option>
+            <option value="subtract">subtract</option>
+            <option value="add">add</option>
+            <option value="decimal">decimal</option>
+            <option value="numpadenter">numpadenter</option>
+            <option value="numpad1">numpad1</option>
+            <option value="numpad2">numpad2</option>
+            <option value="numpad3">numpad3</option>
+            <option value="numpad4">numpad4</option>
+            <option value="numpad5">numpad5</option>
+            <option value="numpad6">numpad6</option>
+            <option value="numpad7">numpad7</option>
+            <option value="numpad8">numpad8</option>
+            <option value="numpad9">numpad9</option>
+            <option value="numpad0">numpad0</option>
+            <option value="tab">tab</option>
+            <option value="q">q</option>
+            <option value="w">w</option>
+            <option value="e">e</option>
+            <option value="r">r</option>
+            <option value="t">t</option>
+            <option value="y">y</option>
+            <option value="u">u</option>
+            <option value="i">i</option>
+            <option value="o">o</option>
+            <option value="p">p</option>
+            <option value="[">[</option>
+            <option value="]">]</option>
+            <option value="\\">\\</option>
+            <option value="del">del</option>
+            <option value="delete">delete</option>
+            <option value="end">end</option>
+            <option value="capslock">capslock</option>
+            <option value="a">a</option>
+            <option value="s">s</option>
+            <option value="d">d</option>
+            <option value="f">f</option>
+            <option value="g">g</option>
+            <option value="h">h</option>
+            <option value="j">j</option>
+            <option value="k">k</option>
+            <option value="l">l</option>
+            <option value=";">;</option>
+            <option value="'">'</option>
+            <option value="enter">enter</option>
+            <option value="return">return</option>
+            <option value="shift">shift</option>
+            <option value="shiftleft">shiftleft</option>
+            <option value="z">z</option>
+            <option value="x">x</option>
+            <option value="c">c</option>
+            <option value="v">v</option>
+            <option value="b">b</option>
+            <option value="n">n</option>
+            <option value="m">m</option>
+            <option value=",">,</option>
+            <option value=".">.</option>
+            <option value="/">/</option>
+            <option value="shiftright">shiftright</option>
+            <option value="ctrl">ctrl</option>
+            <option value="ctrlleft">ctrlleft</option>
+            <option value="win">win</option>
+            <option value="winleft">winleft</option>
+            <option value="alt">alt</option>
+            <option value="altleft">altleft</option>
+            <option value="space">space</option>
+            <option value="altright">altright</option>
+            <option value="winright">winright</option>
+            <option value="apps">apps</option>
+            <option value="ctrlright">ctrlright</option>
+            <option value="up">up</option>
+            <option value="left">left</option>
+            <option value="down">down</option>
+            <option value="right">right</option>
+        </select>`;
+
+    const typeSelect = `
+        <select class="form-control type-select" required>
+            <option value="off">Off</option>
+            <option value="tap" selected>Tap 0.5s</option>
+            <option value="infinite">Hold until turned off</option>
+        </select>`;
+
+    const removeCell = `
+        <button type="button" class="btn btn-outline-danger btn-rounded" onclick="deleteRow(this)">
+            <i class="fas fa-trash"></i>
+        </button>`;
+
+    cell1.innerHTML = keySelect;
+    cell2.innerHTML = typeSelect;
+    cell3.innerHTML = removeCell;
+}
+
+function deleteRow(button) {
+    // Find the row containing the button and remove it
+    const row = button.closest('tr');
+    if (row) {
+        row.remove();
+    }
+}
+
+addKey()
 </script>
+
 {% endblock %}
