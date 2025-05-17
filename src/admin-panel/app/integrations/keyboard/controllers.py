@@ -30,8 +30,8 @@ def api_create_keyboard_action():
     keys = data.get("Keys")
     description = data.get("Description")
 
-    if not name or keys:
-        return NetworkResponse().with_error("Please provide both Name and Keys", HttpStatusCode.BadRequest).get()
+    if not name or not keys:
+        return NetworkResponse().with_error("Please provide both name and keys", HttpStatusCode.BadRequest).get()
 
     return keyboard_service.add_action(name, description, keys).get()
 
