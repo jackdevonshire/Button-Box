@@ -44,6 +44,13 @@ class KeyboardService(BaseIntegrationService):
                 if key not in self.held_keys:
                     pydirectinput.keyDown(key)
                     self.held_keys.add(key)
+            elif duration == "toggle":
+                if key in self.held_keys:
+                    pydirectinput.keyUp(key)
+                    self.held_keys.remove(key)
+                else:
+                    pydirectinput.keyDown(key)
+                    self.held_keys.add(key)
 
         return NetworkResponse()
 
