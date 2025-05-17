@@ -16,7 +16,7 @@ def home():
         actions.append(action.to_api_response())
     data = {"Actions": actions}
 
-    return render_template("integrations/keyboard/keyboard.html", nav_links=nav_links, data=data)
+    return render_template("integrations/keyboard.html", nav_links=nav_links, data=data)
 
 
 # None standard routes - Any API routes specific for THIS integration
