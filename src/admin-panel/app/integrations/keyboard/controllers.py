@@ -15,7 +15,6 @@ def home():
     for action in action_records:
         actions.append(action.to_api_response())
     data = {"Actions": actions}
-    print(data)
 
     return render_template("integrations/keyboard/keyboard.html", nav_links=nav_links, data=data)
 
