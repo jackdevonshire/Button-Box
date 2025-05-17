@@ -21,9 +21,9 @@
          <ul class="list-unstyled components text-secondary">
             <li><a href="{{url_for('core.dashboard_page')}}"><i class="fas fa-home"></i> Dashboard</a></li>
          </ul>
-          {% for name, link in nav_links.items() %}
-         <ul class="list-unstyled components text-secondary">
-            <li><a href="{{link}}"><i class="fas fa-terminal"></i> {{name}}</a></li>
+          {% for name, nav_data in nav_links.items() %}
+         <ul class="list-unstyled components text-secondary" title="{{ nav_data['description']}}">
+            <li><a href="{{nav_data['url']}}"><i class="{{nav_data['icon']}}"></i> {{name}}</a></li>
          </ul>
           {% endfor %}
 

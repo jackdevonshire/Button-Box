@@ -19,6 +19,7 @@ class KeyboardService(BaseIntegrationService):
 
         self.url_prefix = "/integration/keyboard"
         self.blueprint = Blueprint('bp_keyboard', __name__, url_prefix=self.url_prefix)
+        self.icon = "fas fa-keyboard"
 
         self.held_keys = set()
 

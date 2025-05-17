@@ -15,7 +15,11 @@ class CoreService:
         nav_links = {}
         for integration in self.integration_factory.get_all_integrations():
             if integration.is_active and integration.blueprint is not None and integration.url_prefix is not None:
-                nav_links[integration.name] = integration.url_prefix
+                nav_links[integration.name] = {
+                    "url": integration.url_prefix,
+                    "description": integration.description,
+                    "icon": integration.icon,
+                }
         return nav_links
 
     def get_dashboard_data(self):

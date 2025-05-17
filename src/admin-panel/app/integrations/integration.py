@@ -19,6 +19,7 @@ class BaseIntegrationService:
         # Keeps these as None for any integrations that do not require a custom web panel for configuration
         self.url_prefix = None
         self.blueprint = None
+        self.icon = None
 
         # Other setup
         self.db = None
