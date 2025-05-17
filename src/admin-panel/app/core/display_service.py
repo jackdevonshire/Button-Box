@@ -23,7 +23,7 @@ class DisplayService:
                 "ScreenMessage": message,
                 "AlignCenter": align_center
             }, timeout=0.0000000001)
-        except requests.exceptions.ConnectTimeout:
+        except:
             pass
 
     def force_default_message(self):
@@ -32,7 +32,7 @@ class DisplayService:
                 "ScreenMessage": self.default_message,
                 "AlignCenter": True
             }, timeout=0.0000000001)
-        except requests.exceptions.ConnectTimeout:
+        except:
             pass
 
 
