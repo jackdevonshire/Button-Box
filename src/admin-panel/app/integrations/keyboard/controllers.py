@@ -26,17 +26,12 @@ def api_create_keyboard_action():
     if not data:
         return NetworkResponse().with_error("No data provided", HttpStatusCode.BadRequest).get()
 
-    try:
-        name = data.get("Name")
-        keys = data.get("Keys")
-    except:
-        return NetworkResponse().with_error("Please provide both Name and Keys", HttpStatusCode.BadRequest).get()
+    name = data.get("Name")
+    keys = data.get("Keys")
+    description = data.get("Description")
 
-    description = ""
-    try:
-        description = data.get("Description")
-    except:
-        pass
+    if not name or keys:
+        return NetworkResponse().with_error("Please provide both Name and Keys", HttpStatusCode.BadRequest).get()
 
     return keyboard_service.add_action(name, description, keys).get()
 
