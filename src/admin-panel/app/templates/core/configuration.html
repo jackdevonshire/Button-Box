@@ -90,7 +90,7 @@
          </div>
          <div class="mb-3">
             <label for="integrationActionId" class="form-label">Action</label>
-            <select id="integrationActionId" class="form-control" required="">
+            <select id="integrationActionId" class="form-control" required="" onChange="updateButtonName()">
                 <option value="" selected="selected">Select an action</option>
                 {% for action in data["AvailableActions"] %}
                 <option value="{{action['Id']}}">{{action["Integration"]["Name"]}} | {{action["Name"]}}</option>
@@ -107,6 +107,15 @@
 </div>
 
 <script>
+    function updateButtonName() {
+        let buttonName = document.getElementById("buttonName");
+        let currentAction = document.getElementById("integrationActionId");
+        let currentActionName = currentAction.options[currentAction.selectedIndex].text;
+
+        if (buttonName.value == "") {
+            buttonName.value = currentActionName;
+        }
+    }
     async function startTrainingMode() {
         let response = await fetch('{{url_for("core.api_start_training_mode")}}', {
             method: "GET",
