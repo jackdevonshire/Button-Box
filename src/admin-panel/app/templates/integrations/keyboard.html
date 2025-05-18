@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}Integration - Keyboard {% endblock %}
+
+{% block content %}
+<div class="content">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-12 page-header">
+            <h2>Integration - Keyboard</h2>
+         </div>
+      </div>
+
+      <div class="container">
+         <div class="page-title">
+            <h3>Actions
+               <button class="btn btn-sm btn-outline-primary float-end" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newActionModal"><i class="fas fa-plus-circle"></i> New Action</button>
+            </h3>
+         </div>
+         <div class="box box-primary">
+            <div class="box-body">
+               <div id="dataTables-example_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <table width="100%" class="table table-hover dataTable no-footer dtr-inline" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
+                           <thead>
+                             <th>Id</th>
+                             <th>Name</th>
+                             <th>Keys</th>
+                             <th></th>
+                           </thead>
+                           <tbody>
+                              {% for action in data['Actions'] %}
+                                 <tr class="odd">
+                                    <td>{{action['Id']}}</td>
+                                    <td>{{action['Name']}}</td>
+                                    <td>
+                                        |
+                                        {% for key in action['Configuration'] %}
+                                            {{key['key']}} ({{key['type']}}) |
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-end">
+                                       <button onclick="removeAction({{action['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                 </tr>
+                              {% endfor %}
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div class="modal fade" id="newActionModal" tabindex="-1" aria-labelledby="newActionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Keyboard Action</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label for="actionName" class="form-label">Action Name</label>
+                <input type="text" id="actionName" name="actionName" placeholder="Action Name" class="form-control" >
+            </div>
+            <div class="mb-3">
+                <label for="actionDescription" class="form-label">Action Description</label>
+                <textarea id="actionDescription" name="actionDescription" placeholder="Action Description" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+              <div
+                id="keyCaptureBox"
+                tabindex="0"
+                class="form-control"
+                style="
+                  background-color: #f1f1f1;
+                  height: 40px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  text-align: center;
+                  cursor: text;
+                ">
+                Click here and press a key
+              </div>
+            </div>
+          
+            <table id="newActionTable" width="100%" class="table table-hover dataTable no-footer dtr-inline" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
+               <thead>
+                 <th>Key</th>
+                 <th>Type</th>
+               </thead>
+               <tbody>
+               </tbody>
+            </table>
+            <button type="button" class="btn btn-outline-primary btn-rounded" onClick="addKey()"><i class="fas fa-plus-circle"></i> Add Key</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onClick="createAction()" class="btn btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function removeAction(id) {
+    let url = `/integration/keyboard/action/${id}`;
+
+    let response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    let result = await response.json();
+    if (response.ok) {
+        window.location.reload();
+    } else {
+        alert("Failed to delete action");
+    }
+}
+
+async function createAction() {
+    // First collate keys and durations
+    const table = document.getElementById("newActionTable");
+    const rows = table.querySelectorAll("tbody tr");
+    const actionKeys = [];
+
+    rows.forEach(row => {
+        const keySelect = row.querySelector(".key-select");
+        const typeSelect = row.querySelector(".type-select");
+
+        if (keySelect && typeSelect) {
+            const key = keySelect.value;
+            const type = typeSelect.value;
+
+            actionKeys.push({ key, type });
+        }
+    });
+    let actionName = document.getElementById("actionName").value;
+    let actionDescription = document.getElementById("actionDescription").value;
+  if (actionKeys.length === 0 || actionName.length === 0) {
+     alert("Please add a name and some keys first!")
+     return;
+  }
+
+  let response = await fetch('{{url_for("bp_keyboard.api_create_keyboard_action")}}', {
+     method: "POST",
+     headers: {
+        "Content-Type": "application/json"
+     },
+     body: JSON.stringify({
+        Name: actionName,
+        Description: actionDescription,
+        Keys: actionKeys
+     })
+  });
+
+  let result = await response.json();
+
+  if (response.ok) {
+     window.location.reload()
+  } else {
+     alert("Failed to create action: " + (result.Message || "Unknown error"));
+  }
+}
+
+const keyOptions = [
+    "escape", "esc", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12",
+    "printscreen", "prntscrn", "prtsc", "prtscr", "scrolllock", "pause", "`", "1", "2", "3",
+    "4", "5", "6", "7", "8", "9", "0", "-", "=", "backspace", "insert", "home", "pageup",
+    "pagedown", "numlock", "divide", "multiply", "subtract", "add", "decimal", "numpadenter",
+    "numpad1", "numpad2", "numpad3", "numpad4", "numpad5", "numpad6", "numpad7", "numpad8",
+    "numpad9", "numpad0", "tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]",
+    "\\", "del", "delete", "end", "capslock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";",
+    "'", "enter", "return", "shift", "shiftleft", "z", "x", "c", "v", "b", "n", "m", ",", ".",
+    "/", "shiftright", "ctrl", "ctrlleft", "win", "winleft", "alt", "altleft", "space",
+    "altright", "winright", "apps", "ctrlright", "up", "left", "down", "right"
+];
+
+function addKey() {
+    const table = document.getElementById("newActionTable");
+    const row = table.tBodies[0].insertRow(-1);
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+    const cell3 = row.insertCell(2);
+
+    const keySelect = document.createElement("select");
+    keySelect.className = "form-control key-select";
+    keySelect.required = true;
+
+    keyOptions.forEach(key => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = key;
+        keySelect.appendChild(option);
+    });
+
+    const typeSelect = document.createElement("select");
+    typeSelect.className = "form-control type-select";
+    typeSelect.required = true;
+
+    const typeOptions = [
+        { value: "tap", label: "Tap 0.5s" },
+        { value: "off", label: "Off" },
+        { value: "infinite", label: "Hold until turned off" },
+        { value: "toggle", label: "Toggle On/Off" }
+    ];
+
+    typeOptions.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt.value;
+        option.textContent = opt.label;
+        typeSelect.appendChild(option);
+    });
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "btn btn-outline-danger btn-rounded";
+    removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    removeBtn.onclick = () => row.remove();
+
+    cell1.appendChild(keySelect);
+    cell2.appendChild(typeSelect);
+    cell3.appendChild(removeBtn);
+
+    return keySelect;
+}
+
+
+function deleteRow(button) {
+    // Find the row containing the button and remove it
+    const row = button.closest('tr');
+    if (row) {
+        row.remove();
+    }
+}
+
+let keyboardModalOpen = false;
+
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('newActionModal');
+    const keyCaptureBox = document.getElementById("keyCaptureBox");
+
+    // Track modal open state
+    modal.addEventListener('shown.bs.modal', () => {
+        keyboardModalOpen = true;
+        keyCaptureBox.focus(); // Optional: auto-focus on open
+    });
+
+    modal.addEventListener('hidden.bs.modal', () => {
+        keyboardModalOpen = false;
+        keyCaptureBox.innerText = "Click here and press a key";
+    });
+
+    // Only attach event if element exists
+    if (keyCaptureBox) {
+        keyCaptureBox.addEventListener("keydown", function(event) {
+            event.preventDefault();
+
+            let key = event.code.toLowerCase();
+            const keyMap = {
+                controlleft: 'ctrlleft',
+                controlright: 'ctrlright',
+                shiftleft: 'shiftleft',
+                shiftright: 'shiftright',
+                altleft: 'altleft',
+                altright: 'altright',
+                metaleft: 'winleft',
+                metaright: 'winright',
+                contextmenu: 'apps',
+                space: 'space',
+                escape: 'escape',
+                delete: 'delete',
+                backspace: 'backspace',
+                arrowup: 'up',
+                arrowdown: 'down',
+                arrowleft: 'left',
+                arrowright: 'right',
+                enter: 'enter'
+            };
+
+            const normalizedKey = keyMap[key] || key.replace('key', '').toLowerCase();
+            if (!keyOptions.includes(normalizedKey)) {
+                console.log(`Unsupported key: ${normalizedKey}`);
+                return;
+            }
+
+            const existingKeys = [...document.querySelectorAll('.key-select')].map(sel => sel.value);
+            if (existingKeys.includes(normalizedKey)) {
+                console.log(`Key ${normalizedKey} already added`);
+                return;
+            }
+
+            const newSelect = addKey();
+            newSelect.value = normalizedKey;
+
+            keyCaptureBox.innerText = `Captured: ${normalizedKey}`;
+        });
+    }
+});
+
+
+</script>
+
+{% endblock %}

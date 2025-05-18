@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}Configuration - {{data['Name']}} {% endblock %}
+
+{% block content %}
+<div class="content">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-12 page-header">
+            <h2>Configuration - {{data['Name']}}</h2>
+         </div>
+      </div>
+
+      <div class="container">
+         <div class="page-title">
+            <h3>Buttons
+               <button onclick="startTrainingMode()" class="btn btn-sm btn-outline-primary float-end" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newButtonModal"><i class="fas fa-plus-circle"></i> New Button</button>
+            </h3>
+         </div>
+         <div class="box box-primary">
+            <div class="box-body">
+               <div id="dataTables-example_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <table width="100%" class="table table-hover dataTable no-footer dtr-inline" id="dataTables-example" role="grid" aria-describedby="dataTables-example_info" style="width: 100%;">
+                           <thead>
+                             <th>Id</th>
+                             <th>Name</th>
+                             <th>Integration</th>
+                             <th>Key</th>
+                             <th>Event</th>
+                             <th></th>
+                           </thead>
+                           <tbody>
+                              {% for button in data['Buttons'] %}
+                                 <tr class="odd">
+                                    <td>{{button['Id']}}</td>
+                                    <td>{{button['Name']}}</td>
+                                    <td>{{button['IntegrationAction']['Integration']['Name']}} | {{button['IntegrationAction']['Name']}}</td>
+                                    <td>{{button['PhysicalKey']}}</td>
+                                    <td>{{button['EventType']}}</td>
+                                    <td class="text-end">
+                                       <button onclick="removeButton({{button['Id']}})" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                 </tr>
+                              {% endfor %}
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="newButtonModal" tabindex="-1" aria-labelledby="newButtonModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Button</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <label for="buttonName" class="form-label">Button Name</label>
+            <input type="text" id="buttonName" name="buttonName" placeholder="Button Name" class="form-control">
+          </div>
+
+        <div class="mb-3">
+          <button id="trainingModeButton" type="button" class="btn btn-outline-warning btn-sm" onclick="startTrainingMode()">Start Training Mode</button>
+        </div>
+         <div class="mb-3">
+            <label for="physicalButton" class="form-label">Physical Button</label>
+            <select id="physicalButton" class="form-control" required="">
+                <option value="" selected="selected">Select a button</option>
+                {% for button, value in data["AvailableButtons"].items() %}
+                <option value="{{value}}">{{button}}</option>
+                {% endfor %}
+            </select>
+         </div>
+         <div class="mb-3">
+            <label for="eventType" class="form-label">Event Type</label>
+            <select id="eventType" class="form-control" required="">
+                <option value="" selected="selected">Select an event type</option>
+                <option value="0">OFF</option>
+                <option value="1">ON</option>
+            </select>
+         </div>
+         <div class="mb-3">
+            <label for="integrationActionId" class="form-label">Action</label>
+            <select id="integrationActionId" class="form-control" required="" onChange="updateButtonName()">
+                <option value="" selected="selected">Select an action</option>
+                {% for action in data["AvailableActions"] %}
+                <option value="{{action['Id']}}">{{action["Integration"]["Name"]}} | {{action["Name"]}}</option>
+                {% endfor %}
+            </select>
+         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" onClick="createButton()" class="btn btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    let lastActionName = "";
+    function updateButtonName() {
+        let buttonName = document.getElementById("buttonName");
+        let currentAction = document.getElementById("integrationActionId");
+        let currentActionName = currentAction.options[currentAction.selectedIndex].text;
+
+        if (buttonName.value == "" || buttonName.value == lastActionName) {
+            buttonName.value = currentActionName;
+        }
+
+        lastActionName = currentActionName;
+    }
+    async function startTrainingMode() {
+        let response = await fetch('{{url_for("core.api_start_training_mode")}}', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        let result = await response.json();
+        let trainingButton = document.getElementById("trainingModeButton");
+
+        if (!response.ok) {
+            alert("Failed to start training mode: " + (result.Message || "Unknown error"));
+            return;
+        }
+
+        console.log("TRAINING MODE STARTED");
+
+        // Disable the button and start countdown
+        trainingButton.disabled = true;
+        let seconds = 5;
+        trainingButton.innerText = `Training Mode (${seconds})`;
+
+        const countdown = setInterval(() => {
+            (async () => {
+                seconds--;
+
+                // Poll for the training status
+                let pollResponse = await fetch('{{url_for("core.api_get_trained_event")}}', {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (pollResponse.ok) {
+                    let pollResult = await pollResponse.json();
+                    if (pollResult && pollResult.TrainingModeActive === false) {
+                        console.log("Training Mode ended");
+
+                        if (pollResult.PhysicalKey != null && pollResult.EventType != null) {
+                            document.getElementById("physicalButton").value = pollResult.PhysicalKey;
+                            document.getElementById("eventType").value = pollResult.EventType;
+                        }
+
+                        clearInterval(countdown);
+                        trainingButton.disabled = false;
+                        trainingButton.innerText = "Start Training Mode";
+                        return;
+                    }
+                }
+
+                if (seconds > 0) {
+                    trainingButton.innerText = `Training Mode (${seconds})`;
+                } else {
+                    clearInterval(countdown);
+                    trainingButton.disabled = false;
+                    trainingButton.innerText = "Start Training Mode";
+                }
+            })(); // <-- invoke it here!
+        }, 1000);
+    }
+
+   async function createButton() {
+      let buttonName = document.getElementById("buttonName").value;
+      let physicalButton = document.getElementById("physicalButton").value;
+      let eventType = document.getElementById("eventType").value;
+      let integrationActionId = document.getElementById("integrationActionId").value;
+
+      if (eventType == "" || physicalButton == "" || integrationActionId == "") {
+         alert("Please select a valid event type, button and action")
+         return;
+      }
+
+      let response = await fetch('{{url_for("core.api_create_button")}}', {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+            ButtonName: buttonName,
+            ConfigurationId: {{data['Id']}},
+            PhysicalButton: physicalButton,
+            EventType: eventType,
+            IntegrationActionId: integrationActionId
+         })
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+         window.location.reload()
+      } else {
+         alert("Failed to create button: " + (result.Message || "Unknown error"));
+      }
+   }
+
+   async function removeButton(id) {
+      let response = await fetch('{{url_for("core.api_remove_button")}}', {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+            ButtonId: id
+         })
+      });
+
+      let result = await response.json();
+
+      if (response.ok) {
+         window.location.reload()
+      } else {
+         alert("Failed to remove button: " + (result.Message || "Unknown error"));
+      }
+   }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Re-initialize Select2 when modal opens (to prevent duplicate init)
+        const modal = document.getElementById('newButtonModal');
+        modal.addEventListener('shown.bs.modal', function () {
+            const select = document.getElementById("integrationActionId");
+            if (!select.classList.contains("select2-hidden-accessible")) {
+                $('#integrationActionId').select2({
+                    dropdownParent: $('#newButtonModal'),
+                    width: '100%',
+                    placeholder: 'Select an action',
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}
