@@ -65,7 +65,7 @@
       <div class="modal-body">
           <div class="mb-3">
             <label for="buttonName" class="form-label">Button Name</label>
-           <input type="text" id="buttonName" name="buttonName" placeholder="Button Name" class="form-control" >
+            <input type="text" id="buttonName" name="buttonName" placeholder="Button Name" class="form-control">
           </div>
 
         <div class="mb-3">
@@ -107,14 +107,17 @@
 </div>
 
 <script>
+    let lastActionName = "";
     function updateButtonName() {
         let buttonName = document.getElementById("buttonName");
         let currentAction = document.getElementById("integrationActionId");
         let currentActionName = currentAction.options[currentAction.selectedIndex].text;
 
-        if (buttonName.value == "") {
+        if (buttonName.value == "" || buttonName.value == lastActionName) {
             buttonName.value = currentActionName;
         }
+
+        lastActionName = currentActionName;
     }
     async function startTrainingMode() {
         let response = await fetch('{{url_for("core.api_start_training_mode")}}', {
@@ -233,4 +236,21 @@
       }
    }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Re-initialize Select2 when modal opens (to prevent duplicate init)
+        const modal = document.getElementById('newButtonModal');
+        modal.addEventListener('shown.bs.modal', function () {
+            const select = document.getElementById("integrationActionId");
+            if (!select.classList.contains("select2-hidden-accessible")) {
+                $('#integrationActionId').select2({
+                    dropdownParent: $('#newButtonModal'),
+                    width: '100%',
+                    placeholder: 'Select an action',
+                });
+            }
+        });
+    });
+</script>
+
 {% endblock %}
