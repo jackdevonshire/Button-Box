@@ -1,9 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import joinedload
-
+import datetime
 from app import app
 from app.core.models import Configuration, ConfigurationButton, Setting, IntegrationAction
 from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey, EventType
+
 
 class ButtonBoxService:
     def __init__(self, db: SQLAlchemy):
@@ -15,6 +16,10 @@ class ButtonBoxService:
         self.display_service = None
         self.integration_factory = None
         self.states = {}
+
+        self.training_mode = False
+        self.training_mode_activated = datetime.datetime.now()
+        self.training_event = (None, None) # Button, State
 
     def initialise(self):
         if not self.__initialised:
@@ -71,6 +76,16 @@ class ButtonBoxService:
         print(f"Event Logged: {switch} - {event}")
         self.states[switch] = event
 
+        if self.training_mode:
+            if self.training_mode_activated + datetime.timedelta(seconds=5) > datetime.datetime.now():
+                # If still in training mode, log event and then return so it isn't handled
+                self.training_event = (switch, event)
+                self.training_mode = False
+                self.display_service.display_temporary_message(["", "Button Logged", "", ""], 2)
+                return NetworkResponse()
+            else:
+                self.training_mode = False
+
         # Now handle the event
         for button in self.current_buttons:
             if button.physical_key == switch.value and button.event_type == event.value:
@@ -84,3 +99,38 @@ class ButtonBoxService:
 
     def refresh_current_configuration(self):
         self.api_change_active_configuration(self.current_configuration.id)
+
+    def api_start_training_mode(self):
+        self.training_mode = True
+        self.training_mode_activated = datetime.datetime.now()
+        self.training_event = (None, None)
+        self.display_service.display_temporary_message(["", "Training Mode", "Press a button", ""], 5)
+        return NetworkResponse()
+
+    def api_get_trained_event(self):
+        physical_key = self.training_event[0]
+        event = self.training_event[1]
+
+        if physical_key and event:
+            self.training_mode = False
+            self.training_event = (None, None)
+            return NetworkResponse().with_data({
+                "TrainingModeActive": False,
+                "PhysicalKey": physical_key.value,
+                "EventType": event.value
+            })
+
+        # Check if training mode expired
+        if self.training_mode_activated + datetime.timedelta(seconds=5) < datetime.datetime.now():
+            self.training_mode = False
+            return NetworkResponse().with_data({
+                "TrainingModeActive": False,
+                "PhysicalKey": None,
+                "EventType": None
+            })
+
+        return NetworkResponse().with_data({
+            "TrainingModeActive": True,
+            "PhysicalKey": None,
+            "EventType": None
+        })

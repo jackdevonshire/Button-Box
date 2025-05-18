@@ -13,7 +13,7 @@
       <div class="container">
          <div class="page-title">
             <h3>Buttons
-               <button class="btn btn-sm btn-outline-primary float-end" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newButtonModal"><i class="fas fa-plus-circle"></i> New Button</button>
+               <button onclick="startTrainingMode()" class="btn btn-sm btn-outline-primary float-end" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newButtonModal"><i class="fas fa-plus-circle"></i> New Button</button>
             </h3>
          </div>
          <div class="box box-primary">
@@ -68,6 +68,9 @@
            <input type="text" id="buttonName" name="buttonName" placeholder="Button Name" class="form-control" >
           </div>
 
+        <div class="mb-3">
+          <button id="trainingModeButton" type="button" class="btn btn-outline-warning btn-sm" onclick="startTrainingMode()">Start Training Mode</button>
+        </div>
          <div class="mb-3">
             <label for="physicalButton" class="form-label">Physical Button</label>
             <select id="physicalButton" class="form-control" required="">
@@ -104,6 +107,69 @@
 </div>
 
 <script>
+    async function startTrainingMode() {
+        let response = await fetch('{{url_for("core.api_start_training_mode")}}', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        let result = await response.json();
+        let trainingButton = document.getElementById("trainingModeButton");
+
+        if (!response.ok) {
+            alert("Failed to start training mode: " + (result.Message || "Unknown error"));
+            return;
+        }
+
+        console.log("TRAINING MODE STARTED");
+
+        // Disable the button and start countdown
+        trainingButton.disabled = true;
+        let seconds = 5;
+        trainingButton.innerText = `Training Mode (${seconds})`;
+
+        const countdown = setInterval(() => {
+            (async () => {
+                seconds--;
+
+                // Poll for the training status
+                let pollResponse = await fetch('{{url_for("core.api_get_trained_event")}}', {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (pollResponse.ok) {
+                    let pollResult = await pollResponse.json();
+                    if (pollResult && pollResult.TrainingModeActive === false) {
+                        console.log("Training Mode ended");
+
+                        if (pollResult.PhysicalKey != null && pollResult.EventType != null) {
+                            document.getElementById("physicalButton").value = pollResult.PhysicalKey;
+                            document.getElementById("eventType").value = pollResult.EventType;
+                        }
+
+                        clearInterval(countdown);
+                        trainingButton.disabled = false;
+                        trainingButton.innerText = "Start Training Mode";
+                        return;
+                    }
+                }
+
+                if (seconds > 0) {
+                    trainingButton.innerText = `Training Mode (${seconds})`;
+                } else {
+                    clearInterval(countdown);
+                    trainingButton.disabled = false;
+                    trainingButton.innerText = "Start Training Mode";
+                }
+            })(); // <-- invoke it here!
+        }, 1000);
+    }
+
    async function createButton() {
       let buttonName = document.getElementById("buttonName").value;
       let physicalButton = document.getElementById("physicalButton").value;

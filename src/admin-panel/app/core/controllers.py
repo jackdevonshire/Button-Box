@@ -88,3 +88,17 @@ def api_change_active_configuration():
     except:
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
 
+
+@core.route("/training", methods=["GET"])
+def api_start_training_mode():
+    try:
+        return button_box_service.api_start_training_mode().get()
+    except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+
+@core.route("/training/event", methods=["GET"])
+def api_get_trained_event():
+    try:
+        return button_box_service.api_get_trained_event().get()
+    except:
+        return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
