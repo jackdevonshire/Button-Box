@@ -1,4 +1,3 @@
-from flask import Blueprint
 from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction
 from app.core.display_service import DisplayService
@@ -21,13 +20,10 @@ class KeyboardService(BaseIntegrationService):
         # Core details - must be present for EVERY integration
         self.id = 1
         self.name = "Keyboard"
-        self.description = "An integration to simulate keyboard interactions on the server hosts machine"
-        self.is_active = True  # TODO in future, add an integration manager so we can delete this and just manage on a web page
+        self.description = "Press keys and shortcuts on this PC"
+        self.is_active = True
         self.configuration = {}
 
-        self.url_prefix = "/integration/keyboard"
-        self.blueprint = Blueprint('bp_keyboard', __name__, url_prefix=self.url_prefix)
-        self.icon = "fas fa-keyboard"
         self.ui_icon = "keyboard"
         self.action_editor = "keyboard"
 

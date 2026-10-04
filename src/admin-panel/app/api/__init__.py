@@ -3,9 +3,12 @@ JSON API used by the web UI. Responses are plain JSON with camelCase keys; error
 {"error": "message for the user"}.
 """
 import datetime
+import ipaddress
 import os
 import queue
 import traceback
+
+import desktop
 
 from flask import Blueprint, Response, jsonify, request, stream_with_context
 from sqlalchemy.orm import joinedload
@@ -419,15 +422,35 @@ def clear_activity():
 
 @api.get("/settings")
 def get_settings():
-    return {"buttonBoxIp": db.session.get(Setting, "ButtonBoxIP").value}
+    return {
+        "buttonBoxIp": db.session.get(Setting, "ButtonBoxIP").value,
+        "startWithWindows": desktop.starts_with_windows(),
+        "panelUrl": desktop.PANEL_URL,
+        "logPath": desktop.LOG_PATH,
+        "backupDir": backup_service.backup_dir,
+    }
 
 
 @api.patch("/settings")
 def update_settings():
     data = body()
     if "buttonBoxIp" in data:
-        button_box_service.api_change_ip(str(data["buttonBoxIp"] or ""))
+        ip = str(data["buttonBoxIp"] or "").strip()
+        if ip:
+            try:
+                ipaddress.ip_address(ip)
+            except ValueError:
+                raise ApiError("Enter an IP address, like 192.168.1.50")
+        button_box_service.api_change_ip(ip)
+    if "startWithWindows" in data:
+        desktop.set_start_with_windows(bool(data["startWithWindows"]))
     return get_settings()
+
+
+@api.post("/system/open-log")
+def open_log():
+    desktop.open_log()
+    return {"ok": True}
 
 
 @api.get("/export")

@@ -233,7 +233,7 @@ function ActionPicker({
         <Command>
           <CommandInput placeholder="Search actions" />
           <CommandList>
-            <CommandEmpty>No actions found. Create one on an integration's page.</CommandEmpty>
+            <CommandEmpty>No actions found. Create one from Actions in the sidebar.</CommandEmpty>
             {groups.map(([integrationName, groupActions]) => (
               <CommandGroup key={integrationName} heading={integrationName}>
                 {groupActions.map((action) => {

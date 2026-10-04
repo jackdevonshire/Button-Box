@@ -1,5 +1,3 @@
-from flask import Blueprint
-
 from app.core.types import NetworkResponse
 from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction
@@ -14,13 +12,10 @@ class CommandService(BaseIntegrationService):
         # Core details - must be present for EVERY integration
         self.id = 3
         self.name = "OS Command"
-        self.description = "An integration to run OS commands on windows"
+        self.description = "Run commands and open apps on this PC"
         self.is_active = True
         self.configuration = {}
 
-        self.url_prefix = "/integration/command"
-        self.blueprint = Blueprint('bp_command', __name__, url_prefix=self.url_prefix)
-        self.icon = "fas fa-terminal"
         self.ui_icon = "terminal"
         self.action_editor = "command"
 

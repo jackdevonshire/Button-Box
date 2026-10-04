@@ -1,5 +1,3 @@
-from flask import Blueprint
-
 from app.core.types import NetworkResponse
 from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction
@@ -17,13 +15,10 @@ class ScriptService(BaseIntegrationService):
         # Core details - must be present for EVERY integration
         self.id = 4
         self.name = "Python Script"
-        self.description = "An integration to run Python scripts"
+        self.description = "Run Python code on this PC"
         self.is_active = True
         self.configuration = {}
 
-        self.url_prefix = "/integration/script"
-        self.blueprint = Blueprint('bp_script', __name__, url_prefix=self.url_prefix)
-        self.icon = "fab fa-python"
         self.ui_icon = "code"
         self.action_editor = "script"
 

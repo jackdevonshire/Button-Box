@@ -2,10 +2,9 @@ from app import db, app
 import json
 from flask_sqlalchemy import SQLAlchemy
 from app.core.core_service import CoreService
-from app.core.models import Integration, IntegrationAction, Binding
+from app.core.models import Integration, IntegrationAction
 from app.core.display_service import DisplayService
 from app.core.button_box_service import ButtonBoxService
-from app.core.types import HttpStatusCode, NetworkResponse
 
 class BaseIntegrationService:
     def __init__(self):
@@ -15,11 +14,6 @@ class BaseIntegrationService:
         self.description = None
         self.is_active = None  # Default for first run - after that, whether it's active is stored in the database
         self.configuration = None
-
-        # Keeps these as None for any integrations that do not require a custom web panel for configuration
-        self.url_prefix = None
-        self.blueprint = None
-        self.icon = None
 
         # How the web UI presents this integration
         self.ui_icon = "plug"         # Icon name in the web UI's icon set
@@ -100,45 +94,6 @@ class BaseIntegrationService:
 
     def validate_action_configuration(self, configuration):
         return configuration
-
-    def get_actions(self):
-        integration_actions = IntegrationAction.query.filter_by(integration_id=self.id).all()
-        return integration_actions
-
-    def add_action(self, name, description, configuration):
-        try:
-            action = IntegrationAction(name=name, description=description, configuration=configuration, integration_id=self.id)
-            self.db.session.add(action)
-            self.db.session.commit()
-        except:
-            return NetworkResponse().with_error("Failed to add action", HttpStatusCode.InternalServerError)
-
-        return NetworkResponse().with_data({"Id": action.id})
-
-    def edit_action(self, id, name, description, configuration):
-        action = IntegrationAction.query.filter_by(id=id, integration_id=self.id).first()
-        if not action:
-            return NetworkResponse().with_error("Action does not exist", HttpStatusCode.NotFound)
-
-        action.name = name
-        action.description = description
-        action.configuration = configuration
-        self.db.session.commit()
-        self.core_service.button_box_service.refresh_current_configuration()
-        return NetworkResponse()
-
-    def remove_action(self, id):
-        try:
-            Binding.query.filter_by(integration_action_id=id).delete()
-
-            action = IntegrationAction.query.filter_by(id=id).first()
-            self.db.session.delete(action)
-            self.db.session.commit()
-        except:
-            return NetworkResponse().with_error("Failed to remove action", HttpStatusCode.InternalServerError)
-
-        self.core_service.button_box_service.refresh_current_configuration()
-        return NetworkResponse()
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         pass

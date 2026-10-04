@@ -1,4 +1,4 @@
-import { ExternalLink, Gamepad2, Layers, LayoutGrid, Moon, Sun } from "lucide-react"
+import { Activity, Gamepad2, Layers, LayoutGrid, Moon, Plug, Settings, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { NavLink, useMatch } from "react-router"
 
@@ -17,13 +17,6 @@ import {
 } from "@/components/ui/sidebar"
 import { integrationIcon } from "@/lib/controls"
 import { useIntegrations } from "@/lib/queries"
-
-// Action editors haven't moved to the new UI yet, so these open the original pages
-const legacyActionPages: Record<string, string> = {
-  keyboard: "/integration/keyboard/",
-  command: "/integration/command/",
-  script: "/integration/script/",
-}
 
 export function AppSidebar() {
   const { data: integrations = [] } = useIntegrations()
@@ -65,24 +58,29 @@ export function AppSidebar() {
             <SidebarGroupLabel>Actions</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {editable.map((integration) => {
-                  const Icon = integrationIcon(integration.icon)
-                  return (
-                    <SidebarMenuItem key={integration.id}>
-                      <SidebarMenuButton asChild tooltip={integration.name}>
-                        <a href={legacyActionPages[integration.actionEditor!]}>
-                          <Icon />
-                          <span>{integration.name}</span>
-                          <ExternalLink className="ml-auto size-3 text-muted-foreground" />
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
+                {editable.map((integration) => (
+                  <NavItem
+                    key={integration.id}
+                    to={`/actions/${integration.actionEditor}`}
+                    label={integration.name}
+                    icon={integrationIcon(integration.icon)}
+                  />
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        <SidebarGroup>
+          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <NavItem to="/activity" label="Activity" icon={Activity} />
+              <NavItem to="/integrations" label="Integrations" icon={Plug} />
+              <NavItem to="/settings" label="Settings" icon={Settings} />
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>

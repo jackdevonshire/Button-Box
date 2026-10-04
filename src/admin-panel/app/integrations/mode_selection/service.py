@@ -11,11 +11,9 @@ class ModeSelectionService(BaseIntegrationService):
         # Core details - must be present for EVERY integration
         self.id = 2
         self.name = "Mode Selection"
-        self.description = "An integration to switch between different configurations on the Button Box"
+        self.description = "Switch the box to another configuration"
         self.is_active = True
         self.configuration = {}
-        self.blueprint = None
-        self.url_prefix = None
 
         self.ui_icon = "layers"
         self.user_actions = False  # One action is generated per configuration

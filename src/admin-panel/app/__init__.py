@@ -33,12 +33,7 @@ app.register_blueprint(api)
 from app.web import web
 app.register_blueprint(web)
 
-# Configure integration routes
 all_integrations = integration_factory.get_all_integrations()
-for integration in all_integrations:
-    if integration.blueprint:
-        app.register_blueprint(integration.blueprint)
-        print(f"Blueprint for ({integration.name}) successfully loaded")
 
 # Create the database and tables, then bring older databases up to date
 from app.core.migrations import run_migrations

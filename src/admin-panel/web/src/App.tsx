@@ -5,8 +5,12 @@ import { AppSidebar } from "@/components/layout/app-sidebar"
 import { CommandMenu } from "@/components/layout/command-menu"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { ActionsPage } from "@/pages/actions-page"
+import { ActivityPage } from "@/pages/activity-page"
 import { ConfigurationsPage } from "@/pages/configurations-page"
+import { IntegrationsPage } from "@/pages/integrations-page"
 import { PanelPage } from "@/pages/panel-page"
+import { SettingsPage } from "@/pages/settings-page"
 
 function Layout() {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -43,6 +47,10 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<PanelPage />} />
           <Route path="configurations" element={<ConfigurationsPage />} />
+          <Route path="actions/:editor" element={<ActionsPage />} />
+          <Route path="activity" element={<ActivityPage />} />
+          <Route path="integrations" element={<IntegrationsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

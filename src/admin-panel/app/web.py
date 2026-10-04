@@ -10,12 +10,12 @@ WEB_BUILD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static
 INDEX_PATH = os.path.join(WEB_BUILD_DIR, "index.html")
 
 # Pages handled by the web UI's router
-CLIENT_ROUTES = ["/", "/configurations"]
+CLIENT_ROUTES = ["/", "/configurations", "/actions/<editor>", "/activity", "/integrations", "/settings"]
 
 web = Blueprint("web", __name__)
 
 
-def serve_app():
+def serve_app(**_):
     if not os.path.exists(INDEX_PATH):
         return ("The web UI hasn't been built yet. Run start.bat, or `npm run build` in the web folder.", 503,
                 {"Content-Type": "text/plain"})
@@ -23,5 +23,5 @@ def serve_app():
     return send_file(INDEX_PATH, max_age=0)
 
 
-for route in CLIENT_ROUTES:
-    web.add_url_rule(route, endpoint=f"page{route.replace('/', '_')}", view_func=serve_app)
+for index, route in enumerate(CLIENT_ROUTES):
+    web.add_url_rule(route, endpoint=f"page_{index}", view_func=serve_app)

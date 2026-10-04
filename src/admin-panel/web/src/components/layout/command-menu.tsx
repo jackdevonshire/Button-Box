@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Check, Layers, LayoutGrid, Radar } from "lucide-react"
+import { Activity, Check, Layers, LayoutGrid, Plug, Radar, Settings } from "lucide-react"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
+import { IntegrationIcon } from "@/components/integration-icon"
 import {
   Command,
   CommandDialog,
@@ -14,7 +15,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command"
 import { api } from "@/lib/api"
-import { useConfigurations, useControls, useStatus } from "@/lib/queries"
+import { useConfigurations, useControls, useIntegrations, useStatus } from "@/lib/queries"
 
 export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const navigate = useNavigate()
@@ -22,6 +23,7 @@ export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChang
   const { data: status } = useStatus()
   const { data: configurations = [] } = useConfigurations()
   const { data: controls = [] } = useControls()
+  const { data: integrations = [] } = useIntegrations()
 
   const run = (action: () => void) => {
     onOpenChange(false)
@@ -54,6 +56,30 @@ export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChang
             <CommandItem onSelect={() => run(() => navigate("/configurations"))}>
               <Layers />
               Configurations
+            </CommandItem>
+            {integrations
+              .filter((integration) => integration.actionEditor)
+              .map((integration) => (
+                <CommandItem
+                  key={integration.id}
+                  value={`${integration.name} actions`}
+                  onSelect={() => run(() => navigate(`/actions/${integration.actionEditor}`))}
+                >
+                  <IntegrationIcon icon={integration.icon} />
+                  {integration.name} actions
+                </CommandItem>
+              ))}
+            <CommandItem onSelect={() => run(() => navigate("/activity"))}>
+              <Activity />
+              Activity
+            </CommandItem>
+            <CommandItem onSelect={() => run(() => navigate("/integrations"))}>
+              <Plug />
+              Integrations
+            </CommandItem>
+            <CommandItem onSelect={() => run(() => navigate("/settings"))}>
+              <Settings />
+              Settings
             </CommandItem>
             <CommandItem onSelect={() => run(() => findBox.mutate())}>
               <Radar />

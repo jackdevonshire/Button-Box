@@ -8,9 +8,17 @@ The panel then runs in the background with an icon in the system tray, and opens
 
 Tray menu:
 - **Open panel** (or double-click the icon)
-- **Start with Windows** - starts the panel in the tray when you log in, without opening the browser
+- **Start with Windows** - starts the panel in the tray when you log in, without opening the browser (also in Settings)
 - **Open log** - output is written to `admin-panel.log`
 - **Quit**
+
+In the panel:
+- **Panel** - a live view of the box. Click a control (or use it on the box with "Pick from the box") to see and change its bindings
+- **Configurations** - sets of bindings to switch between, each with an optional custom LCD screen
+- **Actions** - keyboard shortcuts (recorded by pressing them), OS commands and Python scripts for controls to run
+- **Activity** - every press, action, error and connection change
+- **Integrations** - turn whole kinds of action on or off
+- **Settings** - box connection, start with Windows, backup and restore, and the log
 
 The button box's IP is found automatically - it's learned from the box's button presses, and the panel scans your network for the box when it can't reach it.
 
@@ -51,11 +59,8 @@ Used by the web UI. JSON with camelCase keys; errors return an HTTP error status
 | `GET/POST /api/actions`, `GET/PATCH/DELETE /api/actions/<id>` | Manage actions (configuration is validated per integration) |
 | `POST /api/actions/<id>/test` | Run an action now |
 | `GET/DELETE /api/activity` | Activity log (`limit`, `before`, `kind`), clear it |
-| `GET/PATCH /api/settings` | Settings (`buttonBoxIp`) |
+| `GET/PATCH /api/settings` | Settings (`buttonBoxIp`, `startWithWindows`) |
+| `POST /api/system/open-log` | Open the log file on this PC |
 | `POST /api/box/find`, `POST /api/box/display` | Scan the network for the box, preview a message on its screen |
 | `POST/GET /api/learn` | Learn mode - the next control used on the box is reported instead of running its actions |
 | `GET /api/export`, `POST /api/import` | Back up everything / restore from a backup (saves a backup to `app/backups/` first) |
-
-## Credits
-
-Admin Dashboard Template: https://github.com/pro-dev-ph/bootstrap-simple-admin-template

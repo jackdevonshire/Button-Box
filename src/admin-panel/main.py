@@ -9,19 +9,14 @@ import logging
 import os
 import sys
 import threading
-import webbrowser
-import winreg
 
 import requests
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_PATH = os.path.join(BASE_DIR, "admin-panel.log")
+from desktop import (LOG_PATH, PANEL_URL, PORT, STARTUP_VALUE, open_log, open_panel, set_start_with_windows,
+                     starts_with_windows)
+
 MAX_LOG_BYTES = 5 * 1024 * 1024
-PORT = 80  # The button box always sends events to port 80
-PANEL_URL = "http://localhost" if PORT == 80 else f"http://localhost:{PORT}"
 APP_NAME = "Button Box Admin Panel"
-STARTUP_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
-STARTUP_VALUE = "ButtonBoxAdminPanel"
 
 
 class Tee:
@@ -63,42 +58,6 @@ def is_panel_running():
         return False
 
 
-def open_panel():
-    # Prefer Chrome when it's installed, otherwise fall back to the default browser
-    for root in (winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER):
-        try:
-            with winreg.OpenKey(root, r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe") as key:
-                chrome = winreg.QueryValue(key, None)
-            webbrowser.register("chrome", None, webbrowser.BackgroundBrowser(chrome))
-            webbrowser.get("chrome").open(PANEL_URL)
-            return
-        except OSError:
-            continue
-    webbrowser.open(PANEL_URL)
-
-
-def startup_command():
-    pythonw = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
-    return f'"{pythonw}" "{os.path.join(BASE_DIR, "main.py")}" --background'
-
-
-def starts_with_windows():
-    try:
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, STARTUP_KEY) as key:
-            winreg.QueryValueEx(key, STARTUP_VALUE)
-            return True
-    except OSError:
-        return False
-
-
-def toggle_start_with_windows():
-    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, STARTUP_KEY, 0, winreg.KEY_SET_VALUE) as key:
-        if starts_with_windows():
-            winreg.DeleteValue(key, STARTUP_VALUE)
-        else:
-            winreg.SetValueEx(key, STARTUP_VALUE, 0, winreg.REG_SZ, startup_command())
-
-
 def create_icon_image():
     from PIL import Image, ImageDraw
 
@@ -133,9 +92,9 @@ def run_tray(server):
         pystray.MenuItem("Open panel", lambda: open_panel(), default=True),
         pystray.MenuItem(status_text, None, enabled=False),
         pystray.Menu.SEPARATOR,
-        pystray.MenuItem("Start with Windows", lambda: toggle_start_with_windows(),
+        pystray.MenuItem("Start with Windows", lambda: set_start_with_windows(not starts_with_windows()),
                          checked=lambda _: starts_with_windows()),
-        pystray.MenuItem("Open log", lambda: os.startfile(LOG_PATH)),
+        pystray.MenuItem("Open log", lambda: open_log()),
         pystray.MenuItem("Quit", quit_app),
     ))
 
