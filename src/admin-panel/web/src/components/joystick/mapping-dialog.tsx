@@ -260,7 +260,8 @@ function MappingForm({
                 </SelectContent>
               </Select>
               <FieldDescription>
-                For Wardogs, hold Alt - it's the free look key, and the view recentres when you let go.
+                For Wardogs, holding Alt gives free look that recentres when you let go. To keep the view where you
+                leave it, choose Nothing and lock free look first (double-tap Alt).
               </FieldDescription>
             </Field>
 

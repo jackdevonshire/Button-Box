@@ -576,11 +576,11 @@
           "name": "Free look up",
           "output": {
             "direction": null,
-            "holdKey": "alt",
+            "holdKey": "",
             "maxDistance": 0,
             "rampMs": 150,
             "returnOnRelease": false,
-            "speed": 1000
+            "speed": 1500
           },
           "outputType": "mouse"
         },
@@ -592,11 +592,11 @@
           "name": "Free look down",
           "output": {
             "direction": null,
-            "holdKey": "alt",
+            "holdKey": "",
             "maxDistance": 0,
             "rampMs": 150,
             "returnOnRelease": false,
-            "speed": 1000
+            "speed": 1500
           },
           "outputType": "mouse"
         },
@@ -607,12 +607,12 @@
           "inputType": "hat",
           "name": "Free look left",
           "output": {
-            "direction": null,
-            "holdKey": "alt",
+            "direction": "right",
+            "holdKey": "",
             "maxDistance": 0,
             "rampMs": 150,
             "returnOnRelease": false,
-            "speed": 1000
+            "speed": 1500
           },
           "outputType": "mouse"
         },
@@ -623,12 +623,12 @@
           "inputType": "hat",
           "name": "Free look right",
           "output": {
-            "direction": null,
-            "holdKey": "alt",
+            "direction": "left",
+            "holdKey": "",
             "maxDistance": 0,
             "rampMs": 150,
             "returnOnRelease": false,
-            "speed": 1000
+            "speed": 1500
           },
           "outputType": "mouse"
         }
