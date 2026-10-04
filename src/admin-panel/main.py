@@ -58,7 +58,7 @@ def show_error(message):
 def is_panel_running():
     try:
         # 127.0.0.1 rather than localhost - localhost tries IPv6 first, which the server doesn't listen on
-        return "ActiveConfiguration" in requests.get(f"http://127.0.0.1:{PORT}/api/status", timeout=2).json()
+        return "activeConfigurationId" in requests.get(f"http://127.0.0.1:{PORT}/api/status", timeout=2).json()
     except (requests.RequestException, ValueError):
         return False
 

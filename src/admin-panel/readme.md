@@ -16,6 +16,33 @@ The button box's IP is found automatically - it's learned from the box's button 
 
 Requires Python 3 on Windows (the keyboard integration uses PyDirectInput).
 
+## Bindings
+
+A binding maps a control on the box (`BTN_1`-`BTN_10`, `SWITCH_1`-`SWITCH_5`, `PROTECTED_1`-`PROTECTED_4`) turning `on` or `off` to an action. Bindings can have **modifiers** - other controls that must be on at the time. When several bindings match, only the ones with the most modifiers run, so flipping a switch can give buttons a second layer of actions. Several bindings on the same trigger all run, in order.
+
+## JSON API
+
+Used by the web UI. JSON with camelCase keys; errors return an HTTP error status with `{"error": "..."}`.
+
+| | |
+|---|---|
+| `GET /api/status` | Box connection, active configuration, control states, current screen |
+| `GET /api/controls` | The box's controls and where they sit on the panel |
+| `GET /api/events` | Server-sent events: `status`, `press`, `activity`, `configuration`, `learned`, `changed` |
+| `GET/POST /api/configurations` | List / create configurations |
+| `GET/PATCH/DELETE /api/configurations/<id>` | A configuration with its bindings, edit (incl. custom `displayLines`), delete |
+| `POST /api/configurations/<id>/activate` and `/duplicate` | Switch to / copy a configuration |
+| `POST /api/configurations/<id>/bindings` | Add a binding: `control`, `event`, `actionId`, optional `name`, `modifiers`, `enabled` |
+| `PATCH/DELETE /api/bindings/<id>` | Edit / remove a binding |
+| `GET /api/integrations`, `PATCH /api/integrations/<id>` | List integrations (with action editor options), turn on/off |
+| `GET/POST /api/actions`, `GET/PATCH/DELETE /api/actions/<id>` | Manage actions (configuration is validated per integration) |
+| `POST /api/actions/<id>/test` | Run an action now |
+| `GET/DELETE /api/activity` | Activity log (`limit`, `before`, `kind`), clear it |
+| `GET/PATCH /api/settings` | Settings (`buttonBoxIp`) |
+| `POST /api/box/find`, `POST /api/box/display` | Scan the network for the box, preview a message on its screen |
+| `POST/GET /api/learn` | Learn mode - the next control used on the box is reported instead of running its actions |
+| `GET /api/export`, `POST /api/import` | Back up everything / restore from a backup (saves a backup to `app/backups/` first) |
+
 ## Credits
 
 Admin Dashboard Template: https://github.com/pro-dev-ph/bootstrap-simple-admin-template

@@ -12,6 +12,7 @@ PROBE_INTERVAL_SECONDS = 5
 PROBE_TIMEOUT_SECONDS = 1.5
 SCAN_TIMEOUT_SECONDS = 0.6
 SCAN_COOLDOWN_SECONDS = 60
+FAILED_PROBES_BEFORE_OFFLINE = 2  # Ride out a single dropped probe on flaky Wi-Fi
 FAILED_PROBES_BEFORE_SCAN = 3
 
 
@@ -43,18 +44,30 @@ class BoxMonitor:
     it has stopped responding (e.g. it was given a new IP by the router).
     """
 
-    def __init__(self, get_ip, on_box_found):
+    def __init__(self, get_ip, on_box_found, on_status_change=None):
         self.__get_ip = get_ip
         self.__on_box_found = on_box_found
+        self.__on_status_change = on_status_change
         self.__failed_probes = 0
         self.__last_scan = 0
         self.__scan_lock = threading.Lock()
 
-        self.online = False
+        self.__online = None  # Unknown until the first check
         self.latency_ms = None
         self.last_seen = None
         self.last_event = None
         self.scanning = False
+
+    @property
+    def online(self):
+        return bool(self.__online)
+
+    @online.setter
+    def online(self, value):
+        changed = self.__online != value
+        self.__online = value
+        if changed and self.__on_status_change:
+            self.__on_status_change(value)
 
     def start(self):
         threading.Thread(target=self.__run, name="box-monitor", daemon=True).start()
@@ -95,8 +108,9 @@ class BoxMonitor:
                 return
             self.__failed_probes += 1
 
-        self.online = False
-        self.latency_ms = None
+        if not ip or self.__failed_probes >= FAILED_PROBES_BEFORE_OFFLINE:
+            self.online = False
+            self.latency_ms = None
         if not ip or self.__failed_probes >= FAILED_PROBES_BEFORE_SCAN:
             if time.time() - self.__last_scan > SCAN_COOLDOWN_SECONDS:
                 self.scan()

@@ -10,18 +10,27 @@ import subprocess
 
 class CommandService(BaseIntegrationService):
     def __init__(self):
+        super().__init__()
         # Core details - must be present for EVERY integration
         self.id = 3
         self.name = "OS Command"
         self.description = "An integration to run OS commands on windows"
-        self.is_active = True  # TODO in future, add an integration manager so we can delete this and just manage on a web page
+        self.is_active = True
         self.configuration = {}
 
         self.url_prefix = "/integration/command"
         self.blueprint = Blueprint('bp_command', __name__, url_prefix=self.url_prefix)
         self.icon = "fas fa-terminal"
+        self.ui_icon = "terminal"
+        self.action_editor = "command"
+
     def initialise_service(self):
         pass
+
+    def validate_action_configuration(self, configuration):
+        if not isinstance(configuration, str) or not configuration.strip():
+            raise ValueError("Enter a command to run")
+        return configuration.strip()
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         display.display_temporary_message(["", action.name, "", ""], 2)

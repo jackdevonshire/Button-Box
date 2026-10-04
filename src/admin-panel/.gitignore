@@ -1,2 +1,3 @@
 *.db
 admin-panel.log*
+app/backups/

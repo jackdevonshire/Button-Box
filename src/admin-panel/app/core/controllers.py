@@ -37,15 +37,6 @@ def api_handle_event():
     except:
         traceback.print_exc()
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
-
-@core.route("/api/status", methods=["GET"])
-def api_get_status():
-    return button_box_service.api_get_status().get()
-
-@core.route("/api/find-box", methods=["POST"])
-def api_find_box():
-    return button_box_service.api_find_box().get()
-
 @core.route("/api/configuration/create", methods=["POST"])
 def api_create_configuration():
     data = request.json

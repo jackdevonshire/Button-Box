@@ -223,15 +223,15 @@
 
    async function refreshStatus() {
       try {
-         let status = await (await fetch('{{url_for("core.api_get_status")}}')).json();
-         let text = status.Scanning ? "Searching network..."
-            : status.Online ? `Online (${status.LatencyMs ?? "?"} ms)`
-            : status.ButtonBoxIP ? "Offline" : "Not found yet";
+         let status = await (await fetch('{{url_for("api.get_status")}}')).json();
+         let text = status.scanning ? "Searching network..."
+            : status.online ? `Online (${status.latencyMs ?? "?"} ms)`
+            : status.buttonBoxIp ? "Offline" : "Not found yet";
          document.getElementById("boxStatus").innerText = text;
 
          let ipInput = document.getElementById("ip");
-         if (document.activeElement !== ipInput && status.ButtonBoxIP && ipInput.value !== status.ButtonBoxIP) {
-            ipInput.value = status.ButtonBoxIP;
+         if (document.activeElement !== ipInput && status.buttonBoxIp && ipInput.value !== status.buttonBoxIp) {
+            ipInput.value = status.buttonBoxIp;
          }
       } catch {
          document.getElementById("boxStatus").innerText = "Panel server not responding";
@@ -243,13 +243,13 @@
       button.disabled = true;
       button.innerText = "Searching...";
 
-      let response = await fetch('{{url_for("core.api_find_box")}}', { method: "POST" });
+      let response = await fetch('{{url_for("api.find_box")}}', { method: "POST" });
       let result = await response.json();
 
       button.disabled = false;
       button.innerText = "Find box";
       if (!response.ok) {
-         alert(result.Message || "Couldn't find the button box");
+         alert(result.error || "Couldn't find the button box");
       }
       refreshStatus();
    }

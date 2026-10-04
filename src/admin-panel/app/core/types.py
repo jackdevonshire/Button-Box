@@ -88,3 +88,39 @@ class PhysicalKey(Enum):
     @classmethod
     def to_dict(cls):
         return {key.name: key.value for key in cls}
+
+
+class Gesture(Enum):
+    SINGLE = "single"
+    # Planned: LONG = "long", DOUBLE = "double"
+
+
+class ControlKind(Enum):
+    BUTTON = "button"        # Momentary push button - on while held
+    TOGGLE = "toggle"        # Toggle switch - stays on or off
+    PROTECTED = "protected"  # Toggle switch under a flip-up safety cover
+
+
+# Where each control sits on the physical panel, as a grid of 4 rows. Columns 1-5 are the main area and columns 7-8
+# the right-hand cluster. The LCD occupies columns 2-5 of rows 1-2.
+CONTROLS = [
+    {"id": "BTN_1", "kind": ControlKind.BUTTON, "label": "Button 1", "row": 1, "column": 1},
+    {"id": "BTN_2", "kind": ControlKind.BUTTON, "label": "Button 2", "row": 1, "column": 7},
+    {"id": "BTN_3", "kind": ControlKind.BUTTON, "label": "Button 3", "row": 1, "column": 8},
+    {"id": "BTN_4", "kind": ControlKind.BUTTON, "label": "Button 4", "row": 2, "column": 7},
+    {"id": "BTN_5", "kind": ControlKind.BUTTON, "label": "Button 5", "row": 2, "column": 8},
+    {"id": "BTN_6", "kind": ControlKind.BUTTON, "label": "Button 6", "row": 3, "column": 1},
+    {"id": "BTN_7", "kind": ControlKind.BUTTON, "label": "Button 7", "row": 3, "column": 2},
+    {"id": "BTN_8", "kind": ControlKind.BUTTON, "label": "Button 8", "row": 3, "column": 3},
+    {"id": "BTN_9", "kind": ControlKind.BUTTON, "label": "Button 9", "row": 3, "column": 4},
+    {"id": "BTN_10", "kind": ControlKind.BUTTON, "label": "Button 10", "row": 3, "column": 5},
+    {"id": "SWITCH_1", "kind": ControlKind.TOGGLE, "label": "Switch 1", "row": 4, "column": 1},
+    {"id": "SWITCH_2", "kind": ControlKind.TOGGLE, "label": "Switch 2", "row": 4, "column": 2},
+    {"id": "SWITCH_3", "kind": ControlKind.TOGGLE, "label": "Switch 3", "row": 4, "column": 3},
+    {"id": "SWITCH_4", "kind": ControlKind.TOGGLE, "label": "Switch 4", "row": 4, "column": 4},
+    {"id": "SWITCH_5", "kind": ControlKind.TOGGLE, "label": "Switch 5", "row": 4, "column": 5},
+    {"id": "PROTECTED_1", "kind": ControlKind.PROTECTED, "label": "Protected 1", "row": 3, "column": 7},
+    {"id": "PROTECTED_2", "kind": ControlKind.PROTECTED, "label": "Protected 2", "row": 3, "column": 8},
+    {"id": "PROTECTED_3", "kind": ControlKind.PROTECTED, "label": "Protected 3", "row": 4, "column": 7},
+    {"id": "PROTECTED_4", "kind": ControlKind.PROTECTED, "label": "Protected 4", "row": 4, "column": 8},
+]
