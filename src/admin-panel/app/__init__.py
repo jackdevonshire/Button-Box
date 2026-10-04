@@ -45,6 +45,13 @@ with app.app_context():
         db.session.add(ip_setting)
         db.session.commit()
 
+    # The button box always needs an active configuration, so create one on first run
+    if Configuration.query.count() < 1:
+        print("No configurations found. Creating default configuration")
+        default_configuration = Configuration(name="Default", description="Default configuration")
+        db.session.add(default_configuration)
+        db.session.commit()
+
 # Initialise all integrations - allows them to auth with external API's etc
 for integration in all_integrations:
     integration.initialise_service()
