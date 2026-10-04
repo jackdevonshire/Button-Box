@@ -34,6 +34,14 @@ if errorlevel 1 (
     copy /y requirements.txt "%STAMP%" >nul
 )
 
+rem Rebuild the web UI if its source has changed (quick no-op otherwise)
+"%PY%" build_web.py
+if errorlevel 1 (
+    echo Building the web UI failed.
+    pause
+    exit /b 1
+)
+
 rem Run without a console window - the panel lives in the system tray and opens in the browser.
 rem If it's already running, this just opens the panel again.
 start "" "%VENV%\Scripts\pythonw.exe" main.py %*

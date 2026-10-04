@@ -12,6 +12,7 @@ from sqlalchemy.orm import joinedload
 
 from app import db
 from app.core.backup_service import BackupService, BackupError
+from app.core.button_box_service import LEARN_SECONDS
 from app.core.controllers import button_box_service, core_service, display_service, integration_factory
 from app.core.display_service import DisplayService, LCD_COLS, LCD_ROWS
 from app.core.events import event_bus, format_sse
@@ -129,19 +130,13 @@ def preview_display():
 
 @api.post("/learn")
 def start_learning():
-    button_box_service.api_start_training_mode()
-    return {"ok": True, "seconds": 5}
+    button_box_service.start_learning()
+    return {"ok": True, "seconds": LEARN_SECONDS}
 
 
 @api.get("/learn")
 def get_learned():
-    result = button_box_service.api_get_trained_event().get_json()
-    control = result["PhysicalKey"]
-    return {
-        "active": result["TrainingModeActive"],
-        "control": PhysicalKey(control).name if control is not None else None,
-        "event": EventType(result["EventType"]).name.lower() if result["EventType"] is not None else None,
-    }
+    return button_box_service.get_learned()
 
 # endregion
 

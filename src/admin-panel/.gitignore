@@ -1,3 +1,5 @@
 *.db
 admin-panel.log*
 app/backups/
+app/static/web/
+web/node_modules/

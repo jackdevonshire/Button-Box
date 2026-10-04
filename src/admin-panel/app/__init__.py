@@ -29,6 +29,10 @@ app.register_blueprint(core)
 from app.api import api
 app.register_blueprint(api)
 
+# Serve the web UI
+from app.web import web
+app.register_blueprint(web)
+
 # Configure integration routes
 all_integrations = integration_factory.get_all_integrations()
 for integration in all_integrations:

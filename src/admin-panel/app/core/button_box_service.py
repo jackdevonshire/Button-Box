@@ -114,20 +114,11 @@ class ButtonBoxService:
         event_bus.log("system", "Button box online" if online else "Button box offline")
         event_bus.publish("status", self.get_status())
 
-    def api_find_box(self):
-        ip = self.monitor.scan(wait=True)
-        if not ip:
-            return NetworkResponse().with_error("Couldn't find the button box on your network", HttpStatusCode.NotFound)
-        return NetworkResponse().with_data({"ButtonBoxIP": ip})
-
     def get_status(self):
         status = self.monitor.get_status()
         status["ActiveConfiguration"] = self.current_configuration.to_api_response()
         status["States"] = {key.name: event.name for key, event in self.states.items()}
         return status
-
-    def api_get_status(self):
-        return NetworkResponse().with_data(self.get_status())
 
     # endregion
 
@@ -233,39 +224,22 @@ class ButtonBoxService:
 
     # region Learn mode - the next button pressed is reported instead of running its actions
 
-    def api_start_training_mode(self):
+    def start_learning(self):
         self.training_mode = True
         self.training_mode_activated = datetime.datetime.now()
         self.training_event = (None, None)
         self.display_service.display_temporary_message(["", "Training Mode", "Press a button", ""], LEARN_SECONDS)
-        return NetworkResponse()
 
-    def api_get_trained_event(self):
-        physical_key = self.training_event[0]
-        event = self.training_event[1]
-
-        if physical_key and event:
+    def get_learned(self):
+        """Returns the control learned (if any) and whether learn mode is still waiting for one"""
+        control, event = self.training_event
+        if control and event:
             self.training_mode = False
             self.training_event = (None, None)
-            return NetworkResponse().with_data({
-                "TrainingModeActive": False,
-                "PhysicalKey": physical_key.value,
-                "EventType": event.value
-            })
+            return {"active": False, "control": control.name, "event": event.name.lower()}
 
-        # Check if training mode expired
         if self.training_mode_activated + datetime.timedelta(seconds=LEARN_SECONDS) < datetime.datetime.now():
             self.training_mode = False
-            return NetworkResponse().with_data({
-                "TrainingModeActive": False,
-                "PhysicalKey": None,
-                "EventType": None
-            })
-
-        return NetworkResponse().with_data({
-            "TrainingModeActive": True,
-            "PhysicalKey": None,
-            "EventType": None
-        })
+        return {"active": self.training_mode, "control": None, "event": None}
 
     # endregion

@@ -14,7 +14,20 @@ Tray menu:
 
 The button box's IP is found automatically - it's learned from the box's button presses, and the panel scans your network for the box when it can't reach it.
 
-Requires Python 3 on Windows (the keyboard integration uses PyDirectInput).
+Requires Python 3 on Windows (the keyboard integration uses PyDirectInput), and Node.js to build the web UI.
+
+## Web UI
+
+The UI is a React app in `web/` (Vite, TypeScript, Tailwind and shadcn/ui), built into `app/static/web` and served by Flask. `start.bat` rebuilds it automatically when anything in `web/` has changed.
+
+To work on it with hot reload, keep the panel running and start the dev server, which forwards API calls to it:
+
+```
+cd web
+npm run dev
+```
+
+Then open http://localhost:5173/static/web/.
 
 ## Bindings
 
