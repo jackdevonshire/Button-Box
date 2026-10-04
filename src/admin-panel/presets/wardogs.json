@@ -1,0 +1,664 @@
+{
+  "actions": [
+    {
+      "configuration": [
+        {
+          "key": "left",
+          "type": "infinite"
+        }
+      ],
+      "description": "Wardogs camera left view (hold Left Arrow)",
+      "integrationId": 1,
+      "name": "Look left",
+      "ref": 3
+    },
+    {
+      "configuration": [
+        {
+          "key": "left",
+          "type": "off"
+        }
+      ],
+      "description": "Release Left Arrow",
+      "integrationId": 1,
+      "name": "Look left end",
+      "ref": 4
+    },
+    {
+      "configuration": [
+        {
+          "key": "right",
+          "type": "infinite"
+        }
+      ],
+      "description": "Wardogs camera right view (hold Right Arrow)",
+      "integrationId": 1,
+      "name": "Look right",
+      "ref": 5
+    },
+    {
+      "configuration": [
+        {
+          "key": "right",
+          "type": "off"
+        }
+      ],
+      "description": "Release Right Arrow",
+      "integrationId": 1,
+      "name": "Look right end",
+      "ref": 6
+    },
+    {
+      "configuration": [
+        {
+          "key": "down",
+          "type": "infinite"
+        }
+      ],
+      "description": "Wardogs camera rear view (hold Down Arrow)",
+      "integrationId": 1,
+      "name": "Look behind",
+      "ref": 7
+    },
+    {
+      "configuration": [
+        {
+          "key": "down",
+          "type": "off"
+        }
+      ],
+      "description": "Release Down Arrow",
+      "integrationId": 1,
+      "name": "Look behind end",
+      "ref": 8
+    },
+    {
+      "configuration": [
+        {
+          "key": "c",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs toggle camera mode (C)",
+      "integrationId": 1,
+      "name": "Camera mode",
+      "ref": 9
+    },
+    {
+      "configuration": [
+        {
+          "key": "v",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs activate countermeasures (V)",
+      "integrationId": 1,
+      "name": "Countermeasures",
+      "ref": 10
+    },
+    {
+      "configuration": [
+        {
+          "key": "z",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs vehicle cycle weapons (Z)",
+      "integrationId": 1,
+      "name": "Cycle weapons",
+      "ref": 11
+    },
+    {
+      "configuration": [
+        {
+          "key": "b",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs cycle fire mode (B)",
+      "integrationId": 1,
+      "name": "Fire mode",
+      "ref": 12
+    },
+    {
+      "configuration": [
+        {
+          "key": "9",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs previous seat (9)",
+      "integrationId": 1,
+      "name": "Previous seat",
+      "ref": 13
+    },
+    {
+      "configuration": [
+        {
+          "key": "0",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs next seat (0)",
+      "integrationId": 1,
+      "name": "Next seat",
+      "ref": 14
+    },
+    {
+      "configuration": [
+        {
+          "key": "j",
+          "type": "infinite"
+        }
+      ],
+      "description": "Wardogs squad push-to-talk (hold J)",
+      "integrationId": 1,
+      "name": "Squad radio on",
+      "ref": 15
+    },
+    {
+      "configuration": [
+        {
+          "key": "j",
+          "type": "off"
+        }
+      ],
+      "description": "Release J",
+      "integrationId": 1,
+      "name": "Squad radio off",
+      "ref": 16
+    },
+    {
+      "configuration": [
+        {
+          "key": "k",
+          "type": "infinite"
+        }
+      ],
+      "description": "Wardogs proximity push-to-talk (hold K)",
+      "integrationId": 1,
+      "name": "Proximity voice on",
+      "ref": 17
+    },
+    {
+      "configuration": [
+        {
+          "key": "k",
+          "type": "off"
+        }
+      ],
+      "description": "Release K",
+      "integrationId": 1,
+      "name": "Proximity voice off",
+      "ref": 18
+    },
+    {
+      "configuration": [
+        {
+          "key": "l",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs lock/unlock vehicle (L)",
+      "integrationId": 1,
+      "name": "Lock vehicle",
+      "ref": 19
+    },
+    {
+      "configuration": [
+        {
+          "key": "m",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs tactical map (M)",
+      "integrationId": 1,
+      "name": "Tactical map",
+      "ref": 20
+    },
+    {
+      "configuration": [
+        {
+          "key": "g",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs deploy supply crate (G)",
+      "integrationId": 1,
+      "name": "Supply crate",
+      "ref": 21
+    },
+    {
+      "configuration": [
+        {
+          "key": "b",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs buy ammo / supplies (B)",
+      "integrationId": 1,
+      "name": "Buy ammo",
+      "ref": 22
+    },
+    {
+      "configuration": [
+        {
+          "key": "h",
+          "type": "infinite"
+        }
+      ],
+      "description": "Wardogs horn (hold H)",
+      "integrationId": 1,
+      "name": "Horn",
+      "ref": 23
+    },
+    {
+      "configuration": [
+        {
+          "key": "h",
+          "type": "off"
+        }
+      ],
+      "description": "Release H",
+      "integrationId": 1,
+      "name": "Horn end",
+      "ref": 24
+    },
+    {
+      "configuration": [
+        {
+          "key": "f",
+          "type": "tap"
+        }
+      ],
+      "description": "Wardogs interact (F)",
+      "integrationId": 1,
+      "name": "Exit / interact",
+      "ref": 25
+    },
+    {
+      "configuration": "import time\nimport pydirectinput\n\n# Wardogs locks or unlocks free look when Alt is double-tapped\nfor _ in range(2):\n    pydirectinput.keyDown(\"alt\", _pause=False)\n    time.sleep(0.05)\n    pydirectinput.keyUp(\"alt\", _pause=False)\n    time.sleep(0.08)\n",
+      "description": "Double-taps Alt to lock or unlock Wardogs free look",
+      "integrationId": 4,
+      "name": "Free look lock",
+      "ref": 26
+    }
+  ],
+  "configurations": [
+    {
+      "active": false,
+      "bindings": [
+        {
+          "control": "BTN_1",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Wardogs mode",
+          "switchTo": 2
+        }
+      ],
+      "description": "Default configuration",
+      "displayLines": null,
+      "joystickMappings": [],
+      "name": "Default",
+      "ref": 1
+    },
+    {
+      "active": true,
+      "bindings": [
+        {
+          "control": "BTN_1",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Default mode",
+          "switchTo": 1
+        },
+        {
+          "action": 3,
+          "control": "BTN_2",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Look left"
+        },
+        {
+          "action": 4,
+          "control": "BTN_2",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Look left"
+        },
+        {
+          "action": 5,
+          "control": "BTN_3",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Look right"
+        },
+        {
+          "action": 6,
+          "control": "BTN_3",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Look right"
+        },
+        {
+          "action": 7,
+          "control": "BTN_4",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Look behind"
+        },
+        {
+          "action": 8,
+          "control": "BTN_4",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Look behind"
+        },
+        {
+          "action": 9,
+          "control": "BTN_5",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Camera mode"
+        },
+        {
+          "action": 10,
+          "control": "BTN_6",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Flares"
+        },
+        {
+          "action": 11,
+          "control": "BTN_7",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Weapons"
+        },
+        {
+          "action": 12,
+          "control": "BTN_8",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Fire mode"
+        },
+        {
+          "action": 13,
+          "control": "BTN_9",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Prev seat"
+        },
+        {
+          "action": 14,
+          "control": "BTN_10",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Next seat"
+        },
+        {
+          "action": 15,
+          "control": "SWITCH_1",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Squad radio"
+        },
+        {
+          "action": 16,
+          "control": "SWITCH_1",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Squad radio"
+        },
+        {
+          "action": 17,
+          "control": "SWITCH_2",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Proximity"
+        },
+        {
+          "action": 18,
+          "control": "SWITCH_2",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Proximity"
+        },
+        {
+          "action": 26,
+          "control": "SWITCH_3",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Free look lock"
+        },
+        {
+          "action": 26,
+          "control": "SWITCH_3",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Free look lock"
+        },
+        {
+          "action": 19,
+          "control": "SWITCH_4",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Lock vehicle"
+        },
+        {
+          "action": 19,
+          "control": "SWITCH_4",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Lock vehicle"
+        },
+        {
+          "action": 20,
+          "control": "SWITCH_5",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Map"
+        },
+        {
+          "action": 20,
+          "control": "SWITCH_5",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Map"
+        },
+        {
+          "action": 21,
+          "control": "PROTECTED_1",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Supply crate"
+        },
+        {
+          "action": 22,
+          "control": "PROTECTED_2",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Buy ammo"
+        },
+        {
+          "action": 23,
+          "control": "PROTECTED_3",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Horn"
+        },
+        {
+          "action": 24,
+          "control": "PROTECTED_3",
+          "enabled": true,
+          "event": "off",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Horn"
+        },
+        {
+          "action": 25,
+          "control": "PROTECTED_4",
+          "enabled": true,
+          "event": "on",
+          "gesture": "single",
+          "modifiers": [],
+          "name": "Exit"
+        }
+      ],
+      "description": "",
+      "displayLines": [
+        "",
+        "WARDOGS",
+        "FLIGHT MODE",
+        ""
+      ],
+      "joystickMappings": [
+        {
+          "device": "044F:0406",
+          "enabled": true,
+          "input": "up",
+          "inputType": "hat",
+          "name": "Free look up",
+          "output": {
+            "direction": null,
+            "holdKey": "alt",
+            "maxDistance": 0,
+            "rampMs": 150,
+            "returnOnRelease": false,
+            "speed": 1000
+          },
+          "outputType": "mouse"
+        },
+        {
+          "device": "044F:0406",
+          "enabled": true,
+          "input": "down",
+          "inputType": "hat",
+          "name": "Free look down",
+          "output": {
+            "direction": null,
+            "holdKey": "alt",
+            "maxDistance": 0,
+            "rampMs": 150,
+            "returnOnRelease": false,
+            "speed": 1000
+          },
+          "outputType": "mouse"
+        },
+        {
+          "device": "044F:0406",
+          "enabled": true,
+          "input": "left",
+          "inputType": "hat",
+          "name": "Free look left",
+          "output": {
+            "direction": null,
+            "holdKey": "alt",
+            "maxDistance": 0,
+            "rampMs": 150,
+            "returnOnRelease": false,
+            "speed": 1000
+          },
+          "outputType": "mouse"
+        },
+        {
+          "device": "044F:0406",
+          "enabled": true,
+          "input": "right",
+          "inputType": "hat",
+          "name": "Free look right",
+          "output": {
+            "direction": null,
+            "holdKey": "alt",
+            "maxDistance": 0,
+            "rampMs": 150,
+            "returnOnRelease": false,
+            "speed": 1000
+          },
+          "outputType": "mouse"
+        }
+      ],
+      "name": "Wardogs Flight",
+      "ref": 2
+    }
+  ],
+  "format": "button-box-backup",
+  "integrations": [
+    {
+      "active": true,
+      "id": 1
+    },
+    {
+      "active": true,
+      "id": 2
+    },
+    {
+      "active": true,
+      "id": 3
+    },
+    {
+      "active": true,
+      "id": 4
+    },
+    {
+      "active": true,
+      "id": 5
+    }
+  ],
+  "version": 2
+}
