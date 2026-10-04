@@ -218,7 +218,7 @@ function MappingForm({
               </div>
               <Slider
                 min={100}
-                max={3000}
+                max={5000}
                 step={50}
                 value={[mouse.speed]}
                 onValueChange={([speed]) => setMouse({ ...mouse, speed })}

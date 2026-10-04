@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 
+import { HatLookCard } from "@/components/joystick/hat-look-card"
 import { MappingDialog, type MappingTarget } from "@/components/joystick/mapping-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -147,6 +148,15 @@ export function JoystickView({ configuration }: { configuration: Configuration }
             </div>
           </CardContent>
         </Card>
+
+        {device.hasHat && (
+          <HatLookCard
+            configurationId={configuration.id}
+            device={device}
+            mappings={deviceMappings}
+            held={state?.hat ?? []}
+          />
+        )}
 
         <Card size="sm">
           <CardHeader>
