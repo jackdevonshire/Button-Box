@@ -7,44 +7,48 @@ from app import db
 
 class ModeSelectionService(BaseIntegrationService):
     def __init__(self):
+        super().__init__()
         # Core details - must be present for EVERY integration
         self.id = 2
         self.name = "Mode Selection"
-        self.description = "An integration to switch between different configurations on the Button Box"
+        self.description = "Switch the box to another configuration"
         self.is_active = True
         self.configuration = {}
-        self.blueprint = None
-        self.url_prefix = None
+
+        self.ui_icon = "layers"
+        self.user_actions = False  # One action is generated per configuration
 
     def initialise_service(self):
         pass
 
-    def get_actions(self):
-        all_available_configurations = Configuration.query.all()
-        all_available_configuration_ids = [x.id for x in all_available_configurations]
-        current_integration_actions = IntegrationAction.query.filter_by(integration_id=self.id).all()
+    def describe(self):
+        description = super().describe()
+        description["note"] = "Creates a “switch to” action for each configuration automatically."
+        return description
 
-        # Delete buttons that map to any deleted configurations
-        for integration_action in current_integration_actions:
-            action_config_id = integration_action.configuration["ConfigurationId"]
-            if action_config_id not in all_available_configuration_ids:
-                ConfigurationButton.query.filter_by(integration_action_id=integration_action.id).delete()
-                IntegrationAction.query.filter_by(id=integration_action.id).delete()
-                db.session.commit()
+    def sync_actions(self):
+        configurations = {configuration.id: configuration for configuration in Configuration.query.all()}
+        actions_by_configuration = {}
 
-        # Ensure we have an integration action available for all current configurations
-        for configuration in all_available_configurations:
-            if configuration.id not in [x.configuration["ConfigurationId"] for x in current_integration_actions]:
-                new_integration_action = IntegrationAction(integration_id=self.id,
-                                                           name=configuration.name,
-                                                           description=f"Switch current configuration to {configuration.name}",
-                                                           configuration={
-                                                               "ConfigurationId": configuration.id
-                                                           })
-                db.session.add(new_integration_action)
-                db.session.commit()
+        for action in IntegrationAction.query.filter_by(integration_id=self.id).all():
+            configuration_id = action.configuration["ConfigurationId"]
+            if configuration_id not in configurations or configuration_id in actions_by_configuration:
+                # Remove actions (and the buttons using them) for deleted configurations, and any duplicates
+                ConfigurationButton.query.filter_by(integration_action_id=action.id).delete()
+                db.session.delete(action)
+            else:
+                actions_by_configuration[configuration_id] = action
 
-        return IntegrationAction.query.filter_by(integration_id=self.id).all()
+        # Ensure every configuration has an action to switch to it, named after the configuration
+        for configuration_id, configuration in configurations.items():
+            action = actions_by_configuration.get(configuration_id)
+            if action is None:
+                action = IntegrationAction(integration_id=self.id, configuration={"ConfigurationId": configuration_id})
+                db.session.add(action)
+            action.name = configuration.name
+            action.description = f"Switch current configuration to {configuration.name}"
+
+        db.session.commit()
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         configuration_id = action.configuration["ConfigurationId"]

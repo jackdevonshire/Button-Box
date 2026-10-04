@@ -1,15 +1,17 @@
 # Import integration services
-from app.integrations.keyboard.controllers import keyboard_service
-from app.integrations.mode_selection.controllers import mode_selection_service
-from app.integrations.command.controllers import command_service
-from app.integrations.script.controllers import script_service
+from app.integrations.keyboard.service import KeyboardService
+from app.integrations.mode_selection.service import ModeSelectionService
+from app.integrations.command.service import CommandService
+from app.integrations.script.service import ScriptService
+from app.integrations.joystick.service import JoystickService
 
 # List all integrations here
 ALL_INTEGRATIONS = [
-    keyboard_service,
-    mode_selection_service,
-    command_service,
-    script_service
+    KeyboardService(),
+    ModeSelectionService(),
+    CommandService(),
+    ScriptService(),
+    JoystickService(),
 ]
 
 
