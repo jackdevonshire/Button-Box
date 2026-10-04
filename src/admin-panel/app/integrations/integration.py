@@ -36,7 +36,7 @@ class BaseIntegrationService:
         with app.app_context():
             existing_integration = Integration.query.filter_by(id=self.id).first()
             if existing_integration:
-                existing_integration.active = self.is_active # TODO in future, add an integration manager so we can delete this and just manage on a web page
+                existing_integration.is_active = self.is_active # TODO in future, add an integration manager so we can delete this and just manage on a web page
             else:
                 new_integration = Integration(
                     id=self.id,
@@ -57,6 +57,14 @@ class BaseIntegrationService:
     """
 
     def initialise_service(self):
+        pass
+
+    """
+    Called whenever data this integration's actions depend on changes (e.g. configurations being added or removed),
+    so integrations that generate their actions automatically can keep them up to date.
+    """
+
+    def sync_actions(self):
         pass
 
     def get_actions(self):

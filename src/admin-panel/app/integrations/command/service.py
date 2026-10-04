@@ -5,7 +5,7 @@ from app.integrations.integration import BaseIntegrationService
 from app.core.models import IntegrationAction
 from app.core.display_service import DisplayService
 from app.core.button_box_service import ButtonBoxService
-import os
+import subprocess
 
 
 class CommandService(BaseIntegrationService):
@@ -27,6 +27,8 @@ class CommandService(BaseIntegrationService):
         display.display_temporary_message(["", action.name, "", ""], 2)
 
         print("Command Service - Running Command: " + action.configuration)
-        os.system(action.configuration)
+        # Popen doesn't wait for the command to finish, so e.g. launching an app doesn't hold up other buttons
+        # CREATE_NO_WINDOW stops a console flashing up for the shell itself - apps it launches still show normally
+        subprocess.Popen(action.configuration, shell=True, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
 
         return NetworkResponse()

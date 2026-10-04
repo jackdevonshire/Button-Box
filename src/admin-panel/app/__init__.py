@@ -52,6 +52,9 @@ with app.app_context():
         db.session.add(default_configuration)
         db.session.commit()
 
+    # Bring any auto-generated integration actions in line with the current configurations
+    core_service.sync_integration_actions()
+
 # Initialise all integrations - allows them to auth with external API's etc
 for integration in all_integrations:
     integration.initialise_service()

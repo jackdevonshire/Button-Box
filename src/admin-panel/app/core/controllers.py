@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+import traceback
 from app.core.core_service import CoreService
 from app.core.button_box_service import ButtonBoxService
 from app.core.display_service import DisplayService
@@ -31,9 +32,19 @@ def api_handle_event():
     data = request.json
 
     try:
+        button_box_service.note_box_address(request.remote_addr)
         return button_box_service.api_handle_event(data["ButtonReference"], data["Event"]).get()
     except:
+        traceback.print_exc()
         return NetworkResponse().with_error(ErrorMessage.Generic, HttpStatusCode.InternalServerError).get()
+
+@core.route("/api/status", methods=["GET"])
+def api_get_status():
+    return button_box_service.api_get_status().get()
+
+@core.route("/api/find-box", methods=["POST"])
+def api_find_box():
+    return button_box_service.api_find_box().get()
 
 @core.route("/api/configuration/create", methods=["POST"])
 def api_create_configuration():

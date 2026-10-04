@@ -19,7 +19,7 @@ class ModeSelectionService(BaseIntegrationService):
     def initialise_service(self):
         pass
 
-    def get_actions(self):
+    def sync_actions(self):
         all_available_configurations = Configuration.query.all()
         all_available_configuration_ids = [x.id for x in all_available_configurations]
         current_integration_actions = IntegrationAction.query.filter_by(integration_id=self.id).all()
@@ -43,8 +43,6 @@ class ModeSelectionService(BaseIntegrationService):
                                                            })
                 db.session.add(new_integration_action)
                 db.session.commit()
-
-        return IntegrationAction.query.filter_by(integration_id=self.id).all()
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         configuration_id = action.configuration["ConfigurationId"]

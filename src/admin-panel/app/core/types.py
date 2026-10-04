@@ -15,10 +15,11 @@ class HttpStatusCode(IntEnum):
 
 
 class NetworkResponse:
-    has_error = False
-    message = ""
-    data = {}
-    status_code = 200
+    def __init__(self):
+        self.has_error = False
+        self.message = ""
+        self.data = {}
+        self.status_code = 200
 
     def with_data(self, data):
         self.data = data
@@ -27,6 +28,7 @@ class NetworkResponse:
     def with_error(self, message, code: HttpStatusCode):
         self.has_error = True
         self.message = message
+        self.status_code = code.value
         return self
 
     def with_status_code(self, code: HttpStatusCode):

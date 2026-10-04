@@ -34,13 +34,6 @@ if errorlevel 1 (
     copy /y requirements.txt "%STAMP%" >nul
 )
 
-set "URL=http://localhost"
-
-rem Open the panel in Chrome (or the default browser) once the server responds
-set "BROWSER=chrome"
-reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe" >nul 2>nul || reg query "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe" >nul 2>nul || set "BROWSER="
-start "" /b cmd /q /c "for /l %%i in (1,1,30) do (curl -s -o nul %URL% && (start %BROWSER% %URL% & exit) || ping -n 2 127.0.0.1 >nul)"
-
-echo Starting admin panel on %URL% ...
-"%PY%" main.py
-pause
+rem Run without a console window - the panel lives in the system tray and opens in the browser.
+rem If it's already running, this just opens the panel again.
+start "" "%VENV%\Scripts\pythonw.exe" main.py %*

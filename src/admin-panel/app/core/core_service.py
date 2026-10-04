@@ -27,9 +27,6 @@ class CoreService:
         active_config = self.button_box_service.current_configuration
         all_configurations = Configuration.query.all()
 
-        if ip == "":
-            ip = "Enter IP Here"
-
         return {
             "ButtonBoxIP": ip,
             "ActiveConfiguration": {
@@ -65,17 +62,22 @@ class CoreService:
             "AvailableButtons": PhysicalKey.to_dict()
         }
 
+    def sync_integration_actions(self):
+        for integration in self.integration_factory.get_all_integrations():
+            integration.sync_actions()
+
     def api_create_configuration(self, name, description):
         new_configuration = Configuration(name=name, description=description)
         self.db.session.add(new_configuration)
         self.db.session.commit()
+        self.sync_integration_actions()
         self.button_box_service.refresh_current_configuration()
         return NetworkResponse()
 
     def api_remove_configuration(self, id):
         configuration = Configuration.query.filter_by(id=id).first()
         if not configuration:
-            return
+            return NetworkResponse().with_error("Configuration does not exist", HttpStatusCode.NotFound)
 
         if self.button_box_service.current_configuration.id == configuration.id:
             return NetworkResponse().with_error("You cannot delete an active configuration", HttpStatusCode.BadRequest)
@@ -90,6 +92,7 @@ class CoreService:
 
         self.db.session.delete(configuration)
         self.db.session.commit()
+        self.sync_integration_actions()
         self.button_box_service.refresh_current_configuration()
         return NetworkResponse()
 
@@ -103,7 +106,7 @@ class CoreService:
     def api_remove_button(self, id):
         button = ConfigurationButton.query.filter_by(id=id).first()
         if not button:
-            return
+            return NetworkResponse().with_error("Button does not exist", HttpStatusCode.NotFound)
 
         self.db.session.delete(button)
         self.db.session.commit()
