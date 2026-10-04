@@ -1,11 +1,9 @@
-import { Activity, Gamepad2, Layers, LayoutGrid, Moon, Plug, Settings, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
+import { Activity, Gamepad2, Layers, LayoutGrid, Plug, Settings } from "lucide-react"
 import { NavLink, useMatch } from "react-router"
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,7 +18,6 @@ import { useIntegrations } from "@/lib/queries"
 
 export function AppSidebar() {
   const { data: integrations = [] } = useIntegrations()
-  const { resolvedTheme, setTheme } = useTheme()
   const editable = integrations.filter((integration) => integration.actionEditor && integration.active)
 
   return (
@@ -83,19 +80,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Toggle theme"
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            >
-              {resolvedTheme === "dark" ? <Sun /> : <Moon />}
-              <span>{resolvedTheme === "dark" ? "Light mode" : "Dark mode"}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

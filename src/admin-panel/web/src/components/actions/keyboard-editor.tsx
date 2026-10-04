@@ -22,10 +22,12 @@ interface KeyboardEditorProps {
   onChange: (steps: KeyStep[]) => void
   keys: string[]
   types: { value: string; label: string }[]
+  /** Hide the tap/hold/release choice, for places where keys are simply held */
+  showTypes?: boolean
 }
 
 /** Builds a key sequence: record keys by pressing them, or pick ones the keyboard doesn't have */
-export function KeyboardEditor({ value, onChange, keys, types }: KeyboardEditorProps) {
+export function KeyboardEditor({ value, onChange, keys, types, showTypes = true }: KeyboardEditorProps) {
   const [recording, setRecording] = useState(false)
   const [problem, setProblem] = useState<string | null>(null)
   const supported = new Set(keys)
@@ -73,23 +75,27 @@ export function KeyboardEditor({ value, onChange, keys, types }: KeyboardEditorP
             <li key={index} className="flex items-center gap-3 px-3 py-2">
               <span className="w-5 text-xs text-muted-foreground tabular-nums">{index + 1}</span>
               <Kbd className="min-w-12 justify-center">{keyLabel(step.key)}</Kbd>
-              <Select
-                value={step.type}
-                onValueChange={(type) => onChange(value.map((s, i) => (i === index ? { ...s, type } : s)))}
-              >
-                <SelectTrigger size="sm" className="ml-auto w-44" aria-label={`What to do with ${keyLabel(step.key)}`}>
-                  {/* Just the label - the items also show a hint, which shouldn't repeat in the trigger */}
-                  <SelectValue>{types.find((type) => type.value === step.type)?.label}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {types.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      <span>{type.label}</span>
-                      <span className="text-xs text-muted-foreground">{typeHints[type.value]}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {showTypes ? (
+                <Select
+                  value={step.type}
+                  onValueChange={(type) => onChange(value.map((s, i) => (i === index ? { ...s, type } : s)))}
+                >
+                  <SelectTrigger size="sm" className="ml-auto w-44" aria-label={`What to do with ${keyLabel(step.key)}`}>
+                    {/* Just the label - the items also show a hint, which shouldn't repeat in the trigger */}
+                    <SelectValue>{types.find((type) => type.value === step.type)?.label}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {types.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        <span>{type.label}</span>
+                        <span className="text-xs text-muted-foreground">{typeHints[type.value]}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <span className="ml-auto" />
+              )}
               <Button
                 type="button"
                 size="icon-sm"

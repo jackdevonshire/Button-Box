@@ -1,16 +1,18 @@
 import { useMutation } from "@tanstack/react-query"
-import { Radar, ScanLine, WifiOff } from "lucide-react"
+import { Box, Gamepad2, Radar, ScanLine, WifiOff } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 
 import { ActivityFeed } from "@/components/activity-feed"
+import { JoystickView } from "@/components/joystick/joystick-view"
 import { ControlInspector } from "@/components/panel/control-inspector"
 import { PanelView } from "@/components/panel/panel-view"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api } from "@/lib/api"
 import { useLive } from "@/lib/live"
 import { useActivity, useConfiguration, useControls, useStatus } from "@/lib/queries"
@@ -37,77 +39,104 @@ export function PanelPage() {
     )
   }
 
+  const view = searchParams.get("view") === "joystick" ? "joystick" : "box"
+  const setView = (next: string) => setSearchParams(next === "joystick" ? { view: "joystick" } : {})
+  const mappingCount = configuration.joystickMappings?.length ?? 0
+
   return (
-    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="flex min-w-0 flex-col gap-4">
-        {!status.online && <OfflineNotice scanning={status.scanning} />}
+    <div className="flex flex-col gap-4">
+      {view === "box" && !status.online && <OfflineNotice scanning={status.scanning} />}
 
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h1 className="text-xl font-semibold">{configuration.name}</h1>
-            <p className="text-sm text-muted-foreground">
-              {configuration.description || "Select a control to see or change what it does."}
-            </p>
-          </div>
-          <Button variant="outline" onClick={learning.start} disabled={learning.active}>
-            <ScanLine data-icon="inline-start" />
-            {learning.active ? `Use a control on the box… ${learning.secondsLeft}` : "Pick from the box"}
-          </Button>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold">{configuration.name}</h1>
+          <p className="text-sm text-muted-foreground">
+            {configuration.description || "Select a control to see or change what it does."}
+          </p>
         </div>
-
-        <PanelView
-          controls={controls}
-          states={status.states}
-          bindings={bindings}
-          display={status.display}
-          lastPressed={lastPressed}
-          selected={selectedId}
-          onSelect={(control) => setSearchParams({ control })}
-        />
-
-        <Card size="sm">
-          <CardHeader>
-            <CardTitle>Recent activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ActivityFeed entries={activity.slice(0, 8)} />
-          </CardContent>
-        </Card>
+        <div className="flex flex-wrap items-center gap-2">
+          {view === "box" && (
+            <Button variant="outline" onClick={learning.start} disabled={learning.active}>
+              <ScanLine data-icon="inline-start" />
+              {learning.active ? `Use a control on the box… ${learning.secondsLeft}` : "Pick from the box"}
+            </Button>
+          )}
+          <Tabs value={view} onValueChange={setView}>
+            <TabsList>
+              <TabsTrigger value="box">
+                <Box />
+                Button box
+              </TabsTrigger>
+              <TabsTrigger value="joystick">
+                <Gamepad2 />
+                Joystick
+                {mappingCount > 0 && <span className="text-xs text-muted-foreground tabular-nums">{mappingCount}</span>}
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
-      <div className="lg:sticky lg:top-4">
-        {selected ? (
-          <ControlInspector
-            control={selected}
-            state={status.states[selected.id]}
-            bindings={bindings.filter((binding) => binding.control === selected.id)}
-            configurationId={configuration.id}
-          />
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Choose a control</CardTitle>
-              <CardDescription>
-                Click a control on the panel, or use "Pick from the box" and press it for real.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Empty className="border border-dashed">
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <Radar />
-                  </EmptyMedia>
-                  <EmptyTitle>Nothing selected</EmptyTitle>
-                  <EmptyDescription>
-                    Each control can do something when it's pressed or switched on, and when it's released or switched
-                    off.
-                  </EmptyDescription>
-                </EmptyHeader>
-              </Empty>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      {view === "joystick" ? (
+        <JoystickView configuration={configuration} />
+      ) : (
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <div className="flex min-w-0 flex-col gap-4">
+            <PanelView
+              controls={controls}
+              states={status.states}
+              bindings={bindings}
+              display={status.display}
+              lastPressed={lastPressed}
+              selected={selectedId}
+              onSelect={(control) => setSearchParams({ control })}
+            />
+
+            <Card size="sm">
+              <CardHeader>
+                <CardTitle>Recent activity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ActivityFeed entries={activity.slice(0, 8)} />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="lg:sticky lg:top-4">
+            {selected ? (
+              <ControlInspector
+                control={selected}
+                state={status.states[selected.id]}
+                bindings={bindings.filter((binding) => binding.control === selected.id)}
+                configurationId={configuration.id}
+              />
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Choose a control</CardTitle>
+                  <CardDescription>
+                    Click a control on the panel, or use "Pick from the box" and press it for real.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Empty className="border border-dashed">
+                    <EmptyHeader>
+                      <EmptyMedia variant="icon">
+                        <Radar />
+                      </EmptyMedia>
+                      <EmptyTitle>Nothing selected</EmptyTitle>
+                      <EmptyDescription>
+                        Each control can do something when it's pressed or switched on, and when it's released or
+                        switched off.
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

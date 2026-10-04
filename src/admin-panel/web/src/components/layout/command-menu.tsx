@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Activity, Check, Layers, LayoutGrid, Plug, Radar, Settings } from "lucide-react"
+import { Activity, Check, Gamepad2, Layers, LayoutGrid, Moon, Plug, Radar, Settings, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
@@ -24,6 +25,7 @@ export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChang
   const { data: configurations = [] } = useConfigurations()
   const { data: controls = [] } = useControls()
   const { data: integrations = [] } = useIntegrations()
+  const { resolvedTheme, setTheme } = useTheme()
 
   const run = (action: () => void) => {
     onOpenChange(false)
@@ -53,7 +55,11 @@ export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChang
               <LayoutGrid />
               Panel
             </CommandItem>
-            <CommandItem onSelect={() => run(() => navigate("/configurations"))}>
+            <CommandItem onSelect={() => run(() => navigate("/?view=joystick"))}>
+            <Gamepad2 />
+            Joystick mappings
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate("/configurations"))}>
               <Layers />
               Configurations
             </CommandItem>
@@ -80,6 +86,10 @@ export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChang
             <CommandItem onSelect={() => run(() => navigate("/settings"))}>
               <Settings />
               Settings
+            </CommandItem>
+            <CommandItem onSelect={() => run(() => setTheme(resolvedTheme === "dark" ? "light" : "dark"))}>
+              {resolvedTheme === "dark" ? <Sun /> : <Moon />}
+              Switch to {resolvedTheme === "dark" ? "light" : "dark"} mode
             </CommandItem>
             <CommandItem onSelect={() => run(() => findBox.mutate())}>
               <Radar />

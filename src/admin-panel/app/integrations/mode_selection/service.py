@@ -21,6 +21,11 @@ class ModeSelectionService(BaseIntegrationService):
     def initialise_service(self):
         pass
 
+    def describe(self):
+        description = super().describe()
+        description["note"] = "Creates a “switch to” action for each configuration automatically."
+        return description
+
     def sync_actions(self):
         configurations = {configuration.id: configuration for configuration in Configuration.query.all()}
         actions_by_configuration = {}

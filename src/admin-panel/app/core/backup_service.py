@@ -1,5 +1,6 @@
 """
-Export and import of everything you've set up - configurations, bindings, actions and which integrations are on.
+Export and import of everything you've set up - configurations, bindings, joystick mappings, actions and which
+integrations are on.
 
 Exports use references instead of database ids, so they can be imported into any panel. Mode selection actions aren't
 exported (they're generated per configuration) - bindings to them are saved as "switch to configuration X" instead.
@@ -9,11 +10,11 @@ import datetime
 import json
 import os
 
-from app.core.models import Configuration, Binding, IntegrationAction, Integration
+from app.core.models import Configuration, Binding, IntegrationAction, Integration, JoystickMapping
 from app.core.types import PhysicalKey, Gesture
 
 BACKUP_FORMAT = "button-box-backup"
-BACKUP_VERSION = 1
+BACKUP_VERSION = 2  # 2 added joystick mappings
 MODE_SELECTION_INTEGRATION_ID = 2
 
 
@@ -33,15 +34,16 @@ class BackupService:
         actions = IntegrationAction.query.filter(IntegrationAction.integration_id != MODE_SELECTION_INTEGRATION_ID).all()
         active_id = self.button_box_service.current_configuration.id
 
+        def action_reference(action):
+            if action.integration_id == MODE_SELECTION_INTEGRATION_ID:
+                return {"switchTo": action.configuration["ConfigurationId"]}
+            return {"action": action.id}
+
         configurations = []
         for configuration in Configuration.query.order_by(Configuration.id).all():
             bindings = []
             for binding in Binding.query.filter_by(configuration_id=configuration.id).order_by(Binding.id).all():
-                action = binding.integration_action
-                if action.integration_id == MODE_SELECTION_INTEGRATION_ID:
-                    target = {"switchTo": action.configuration["ConfigurationId"]}
-                else:
-                    target = {"action": action.id}
+                target = action_reference(binding.integration_action)
                 bindings.append({
                     "name": binding.name or "",
                     "control": PhysicalKey(binding.physical_key).name,
@@ -58,6 +60,9 @@ class BackupService:
                 "displayLines": configuration.display_lines,
                 "active": configuration.id == active_id,
                 "bindings": bindings,
+                "joystickMappings": [self.__export_mapping(mapping, action_reference) for mapping in
+                                     JoystickMapping.query.filter_by(configuration_id=configuration.id)
+                                     .order_by(JoystickMapping.id)],
             })
 
         return {
@@ -75,6 +80,15 @@ class BackupService:
             "configurations": configurations,
         }
 
+    def __export_mapping(self, mapping, action_reference):
+        output = dict(mapping.output)
+        if mapping.output_type == "action":
+            action = self.db.session.get(IntegrationAction, output.pop("actionId"))
+            output.update(action_reference(action))
+        return {"name": mapping.name, "device": mapping.device, "inputType": mapping.input_type,
+                "input": mapping.input, "outputType": mapping.output_type, "output": output,
+                "enabled": mapping.enabled}
+
     def save_backup_file(self, reason):
         os.makedirs(self.backup_dir, exist_ok=True)
         stamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -89,6 +103,7 @@ class BackupService:
         backup_path = self.save_backup_file("before-import")
 
         session = self.db.session
+        JoystickMapping.query.delete()
         Binding.query.delete()
         IntegrationAction.query.delete()
         Configuration.query.delete()
@@ -136,6 +151,23 @@ class BackupService:
                     modifiers=binding["modifiers"],
                     gesture=binding["gesture"],
                     enabled=binding["enabled"],
+                ))
+            for mapping in item["joystickMappings"]:
+                output = {key: value for key, value in mapping["output"].items() if key not in ("action", "switchTo")}
+                if mapping["outputType"] == "action":
+                    if "switchTo" in mapping["output"]:
+                        output["actionId"] = switch_actions[configuration_ids[mapping["output"]["switchTo"]]]
+                    else:
+                        output["actionId"] = action_ids[mapping["output"]["action"]]
+                session.add(JoystickMapping(
+                    configuration_id=configuration_ids[item["ref"]],
+                    name=mapping.get("name") or "",
+                    device=mapping["device"],
+                    input_type=mapping["inputType"],
+                    input=str(mapping["input"]),
+                    output_type=mapping["outputType"],
+                    output=output,
+                    enabled=mapping.get("enabled", True),
                 ))
         session.commit()
 
@@ -192,6 +224,17 @@ class BackupService:
                 binding.setdefault("modifiers", [])
                 binding.setdefault("gesture", "single")
                 binding.setdefault("enabled", True)
+            for mapping in item.setdefault("joystickMappings", []):
+                if mapping.get("inputType") not in ("hat", "button") or mapping.get("outputType") not in (
+                        "mouse", "keys", "action") or not isinstance(mapping.get("output"), dict) or not mapping.get("device"):
+                    raise BackupError(f"A joystick mapping in '{name}' isn't valid")
+                if mapping["outputType"] == "action":
+                    target = mapping["output"]
+                    if "switchTo" in target:
+                        if target["switchTo"] not in configuration_refs:
+                            raise BackupError(f"A joystick mapping in '{name}' switches to a configuration that isn't in the backup")
+                    elif target.get("action") not in action_refs:
+                        raise BackupError(f"A joystick mapping in '{name}' uses an action that isn't in the backup")
             item["name"] = name
             item["description"] = item.get("description") or ""
             item.setdefault("displayLines", None)

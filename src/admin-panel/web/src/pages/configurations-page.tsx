@@ -141,6 +141,8 @@ function ConfigurationCard({
       <CardFooter className="justify-between gap-2">
         <span className="text-sm text-muted-foreground">
           {count === 1 ? "1 binding" : `${count} bindings`}
+          {(configuration.joystickMappingCount ?? 0) > 0 &&
+            ` · ${configuration.joystickMappingCount} joystick`}
         </span>
         {configuration.active ? (
           <div className="flex items-center gap-2">

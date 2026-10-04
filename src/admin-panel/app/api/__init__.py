@@ -9,6 +9,7 @@ import queue
 import traceback
 
 import desktop
+import pydirectinput
 
 from flask import Blueprint, Response, jsonify, request, stream_with_context
 from sqlalchemy.orm import joinedload
@@ -19,7 +20,7 @@ from app.core.button_box_service import LEARN_SECONDS
 from app.core.controllers import button_box_service, core_service, display_service, integration_factory
 from app.core.display_service import DisplayService, LCD_COLS, LCD_ROWS
 from app.core.events import event_bus, format_sse
-from app.core.models import ActivityEntry, Binding, Configuration, IntegrationAction, Setting
+from app.core.models import ActivityEntry, Binding, Configuration, IntegrationAction, JoystickMapping, Setting
 from app.core.types import CONTROLS, EventType, Gesture, PhysicalKey
 
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -153,8 +154,11 @@ def configuration_json(configuration, include_bindings=False):
             joinedload(Binding.integration_action).joinedload(IntegrationAction.integration)
         ).filter_by(configuration_id=configuration.id).order_by(Binding.id).all()
         data["bindings"] = [binding.to_json() for binding in bindings]
+        mappings = JoystickMapping.query.filter_by(configuration_id=configuration.id).order_by(JoystickMapping.id)
+        data["joystickMappings"] = [mapping.to_json() for mapping in mappings]
     else:
         data["bindingCount"] = Binding.query.filter_by(configuration_id=configuration.id).count()
+        data["joystickMappingCount"] = JoystickMapping.query.filter_by(configuration_id=configuration.id).count()
     return data
 
 
@@ -206,9 +210,11 @@ def delete_configuration(id):
         raise ApiError("You need at least one configuration")
 
     Binding.query.filter_by(configuration_id=id).delete()
+    JoystickMapping.query.filter_by(configuration_id=id).delete()
     db.session.delete(configuration)
     db.session.commit()
     core_service.sync_integration_actions()
+    prune_joystick_mappings()  # Any that switched to this configuration
     refresh_after_change()
     return {"ok": True}
 
@@ -232,6 +238,11 @@ def duplicate_configuration(id):
         db.session.add(Binding(configuration_id=copy.id, name=binding.name, physical_key=binding.physical_key,
                                event_type=binding.event_type, integration_action_id=binding.integration_action_id,
                                modifiers=binding.modifiers, gesture=binding.gesture, enabled=binding.enabled))
+    for mapping in JoystickMapping.query.filter_by(configuration_id=id).all():
+        db.session.add(JoystickMapping(configuration_id=copy.id, name=mapping.name, device=mapping.device,
+                                       input_type=mapping.input_type, input=mapping.input,
+                                       output_type=mapping.output_type, output=mapping.output,
+                                       enabled=mapping.enabled))
     db.session.commit()
     core_service.sync_integration_actions()
     refresh_after_change()
@@ -295,6 +306,132 @@ def update_binding(id):
 @api.delete("/bindings/<int:id>")
 def delete_binding(id):
     db.session.delete(get_or_404(Binding, id, "Binding"))
+    db.session.commit()
+    refresh_after_change()
+    return {"ok": True}
+
+# endregion
+
+# region Joystick
+
+JOYSTICK_HAT_DIRECTIONS = {"up", "down", "left", "right"}
+JOYSTICK_MAX_BUTTONS = 32
+
+
+def joystick_service():
+    return integration_factory.get_integration_by_id(5)
+
+
+def prune_joystick_mappings():
+    """Removes mappings that run an action which no longer exists"""
+    existing = {action_id for (action_id,) in db.session.query(IntegrationAction.id)}
+    for mapping in JoystickMapping.query.filter_by(output_type="action").all():
+        if mapping.output.get("actionId") not in existing:
+            db.session.delete(mapping)
+    db.session.commit()
+
+
+def validated_mapping_output(output_type, output):
+    if not isinstance(output, dict):
+        raise ApiError("Choose what the input does")
+
+    if output_type == "mouse":
+        def number(key, low, high, default):
+            value = output.get(key, default)
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not low <= value <= high:
+                raise ApiError(f"{key} must be between {low} and {high}")
+            return value
+
+        direction = output.get("direction")
+        if direction is not None and direction not in JOYSTICK_HAT_DIRECTIONS:
+            raise ApiError("Choose which way to move the mouse")
+        hold_key = output.get("holdKey") or ""
+        if hold_key and hold_key not in pydirectinput.KEYBOARD_MAPPING:
+            raise ApiError(f"'{hold_key}' isn't a key that can be held")
+        return {
+            "direction": direction,
+            "speed": number("speed", 50, 5000, 800),
+            "rampMs": number("rampMs", 0, 2000, 150),
+            "maxDistance": number("maxDistance", 0, 20000, 0),
+            "holdKey": hold_key,
+            "returnOnRelease": bool(output.get("returnOnRelease", False)),
+        }
+
+    if output_type == "keys":
+        keys = output.get("keys")
+        if not isinstance(keys, list) or not keys:
+            raise ApiError("Add at least one key to hold")
+        for key in keys:
+            if key not in pydirectinput.KEYBOARD_MAPPING:
+                raise ApiError(f"'{key}' isn't a key that can be held")
+        return {"keys": list(dict.fromkeys(keys))}
+
+    if output_type == "action":
+        get_or_404(IntegrationAction, output.get("actionId"), "Action")
+        when = output.get("when", "press")
+        if when not in ("press", "release"):
+            raise ApiError("Choose when the action runs")
+        return {"actionId": output["actionId"], "when": when}
+
+    raise ApiError("Choose what the input does")
+
+
+def apply_mapping_fields(mapping, data, partial):
+    if not partial or "device" in data:
+        if not isinstance(data.get("device"), str) or not data["device"]:
+            raise ApiError("Choose a joystick")
+        mapping.device = data["device"]
+    if not partial or "inputType" in data or "input" in data:
+        input_type = data.get("inputType", mapping.input_type)
+        value = str(data.get("input", mapping.input))
+        if input_type == "hat":
+            if value not in JOYSTICK_HAT_DIRECTIONS:
+                raise ApiError("Choose a hat direction")
+        elif input_type == "button":
+            if not value.isdigit() or not 1 <= int(value) <= JOYSTICK_MAX_BUTTONS:
+                raise ApiError(f"Choose a button from 1 to {JOYSTICK_MAX_BUTTONS}")
+        else:
+            raise ApiError("Choose a hat direction or button")
+        mapping.input_type, mapping.input = input_type, value
+    if not partial or "outputType" in data or "output" in data:
+        output_type = data.get("outputType", mapping.output_type)
+        mapping.output = validated_mapping_output(output_type, data.get("output", mapping.output))
+        mapping.output_type = output_type
+    if "name" in data:
+        mapping.name = (data.get("name") or "").strip()
+    if "enabled" in data:
+        mapping.enabled = bool(data["enabled"])
+
+
+@api.get("/joystick")
+def get_joystick():
+    service = joystick_service()
+    return {"active": bool(service.is_active), **service.engine.snapshot()}
+
+
+@api.post("/configurations/<int:configuration_id>/joystick-mappings")
+def create_joystick_mapping(configuration_id):
+    get_or_404(Configuration, configuration_id, "Configuration")
+    mapping = JoystickMapping(configuration_id=configuration_id, name="", enabled=True)
+    apply_mapping_fields(mapping, body(), partial=False)
+    db.session.add(mapping)
+    db.session.commit()
+    refresh_after_change()
+    return mapping.to_json(), 201
+
+
+@api.patch("/joystick-mappings/<int:id>")
+def update_joystick_mapping(id):
+    mapping = get_or_404(JoystickMapping, id, "Mapping")
+    apply_mapping_fields(mapping, body(), partial=True)
+    db.session.commit()
+    refresh_after_change()
+    return mapping.to_json()
+
+
+@api.delete("/joystick-mappings/<int:id>")
+def delete_joystick_mapping(id):
+    db.session.delete(get_or_404(JoystickMapping, id, "Mapping"))
     db.session.commit()
     refresh_after_change()
     return {"ok": True}
@@ -387,6 +524,7 @@ def delete_action(id):
     removed_bindings = Binding.query.filter_by(integration_action_id=id).delete()
     db.session.delete(action)
     db.session.commit()
+    prune_joystick_mappings()
     refresh_after_change()
     return {"ok": True, "removedBindings": removed_bindings}
 

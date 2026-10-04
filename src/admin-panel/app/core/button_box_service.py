@@ -12,6 +12,7 @@ from app.core.types import HttpStatusCode, NetworkResponse, PhysicalKey, EventTy
 
 CONTROL_LABELS = {control["id"]: control["label"] for control in CONTROLS}
 LEARN_SECONDS = 5
+ACTIVE_CONFIGURATION_KEY = "ActiveConfigurationId"
 
 
 def find_matching_bindings(bindings, control, event, states):
@@ -60,15 +61,22 @@ class ButtonBoxService:
         self.training_mode_activated = datetime.datetime.now()
         self.training_event = (None, None) # Button, State
 
+        # Called with the configuration whenever it's (re)loaded, so other inputs (like joysticks) can follow it
+        self.configuration_listeners = []
+
     def initialise(self):
         if not self.__initialised:
             from app import display_service, integration_factory
             self.display_service = display_service
             self.integration_factory = integration_factory
 
-            # Set current config to default config
+            # Carry on with the configuration that was active last time, falling back to the first one
             with app.app_context():
-                self.__load_configuration(Configuration.query.order_by(Configuration.id).first())
+                saved = self.db.session.get(Setting, ACTIVE_CONFIGURATION_KEY)
+                configuration = None
+                if saved and saved.value.isdigit():
+                    configuration = self.db.session.get(Configuration, int(saved.value))
+                self.__load_configuration(configuration or Configuration.query.order_by(Configuration.id).first())
                 # Now initiate communication with Button Box
                 self.reconnect()
 
@@ -130,6 +138,8 @@ class ButtonBoxService:
             joinedload(Binding.integration_action).joinedload(IntegrationAction.integration)
         ).filter_by(configuration_id=configuration.id).all()
         self.display_service.set_default_message(configuration.get_display_lines())
+        for listener in self.configuration_listeners:
+            listener(configuration)
 
     def api_change_active_configuration(self, configuration_id):
         new_configuration = Configuration.query.filter_by(id=configuration_id).first()
@@ -141,10 +151,19 @@ class ButtonBoxService:
         self.display_service.force_default_message()
 
         if changed:
+            self.__save_active_configuration(new_configuration.id)
             event_bus.log("system", f"Switched to {new_configuration.name}")
             event_bus.publish("configuration", {"activeConfigurationId": new_configuration.id})
 
         return NetworkResponse()
+
+    def __save_active_configuration(self, configuration_id):
+        setting = self.db.session.get(Setting, ACTIVE_CONFIGURATION_KEY)
+        if setting is None:
+            setting = Setting(key=ACTIVE_CONFIGURATION_KEY, value="", visible=False)
+            self.db.session.add(setting)
+        setting.value = str(configuration_id)
+        self.db.session.commit()
 
     def refresh_current_configuration(self):
         self.api_change_active_configuration(self.current_configuration.id)
@@ -193,7 +212,11 @@ class ButtonBoxService:
 
         return NetworkResponse()
 
-    def __run_action(self, action_id, integration_id):
+    def queue_action(self, action_id):
+        """Runs an action in the background, in order with the box's own actions"""
+        self.__action_worker.submit(self.__run_action, action_id)
+
+    def __run_action(self, action_id, integration_id=None):
         with app.app_context():
             action_name = f"Action {action_id}"
             try:
@@ -201,6 +224,7 @@ class ButtonBoxService:
                 if action is None:
                     return
                 action_name = action.name
+                integration_id = integration_id or action.integration_id
 
                 integration_service = self.integration_factory.get_integration_by_id(integration_id)
                 if not integration_service.is_active:

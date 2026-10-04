@@ -3,6 +3,7 @@ from app.integrations.keyboard.service import KeyboardService
 from app.integrations.mode_selection.service import ModeSelectionService
 from app.integrations.command.service import CommandService
 from app.integrations.script.service import ScriptService
+from app.integrations.joystick.service import JoystickService
 
 # List all integrations here
 ALL_INTEGRATIONS = [
@@ -10,6 +11,7 @@ ALL_INTEGRATIONS = [
     ModeSelectionService(),
     CommandService(),
     ScriptService(),
+    JoystickService(),
 ]
 
 

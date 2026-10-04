@@ -3,6 +3,7 @@ import { Download, FileText, Radar, Upload } from "lucide-react"
 import { useRef, useState } from "react"
 import { toast } from "sonner"
 
+import { ThemeToggleGroup } from "@/components/layout/theme-menu"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +36,7 @@ export function SettingsPage() {
       {settings ? (
         <>
           <BoxSettings settings={settings} />
+          <AppearanceSettings />
           <StartupSettings settings={settings} />
           <BackupSettings settings={settings} />
           <TroubleshootingSettings settings={settings} />
@@ -109,6 +111,20 @@ function BoxSettings({ settings }: { settings: Settings }) {
         </form>
         {error && <p className="-mt-2 text-sm text-destructive">{error}</p>}
         <p className="text-sm text-muted-foreground">{connection}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function AppearanceSettings() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Appearance</CardTitle>
+        <CardDescription>System follows your Windows light or dark setting.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ThemeToggleGroup />
       </CardContent>
     </Card>
   )

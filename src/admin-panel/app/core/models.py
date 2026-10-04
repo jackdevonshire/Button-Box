@@ -141,6 +141,37 @@ class Setting(db.Model):
     value = db.Column(db.String, nullable=False)
     visible = db.Column(db.Boolean, nullable=False)
 
+class JoystickMapping(db.Model):
+    """
+    Maps a joystick input (a hat direction or a button) to something to do while the configuration is active:
+    move the mouse to look around, hold keys, or run an action.
+    """
+    __tablename__ = 'joystick_mapping'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'), nullable=False)
+    name = db.Column(db.String, nullable=False, default="")
+    device = db.Column(db.String, nullable=False)       # Vendor:product id, e.g. "044F:0406"
+    input_type = db.Column(db.String, nullable=False)   # "hat" or "button"
+    input = db.Column(db.String, nullable=False)        # Hat direction (up/down/left/right) or button number
+    output_type = db.Column(db.String, nullable=False)  # "mouse", "keys" or "action"
+    output = db.Column(JSON, nullable=False)
+    enabled = db.Column(db.Boolean, nullable=False, default=True)
+
+    configuration = db.relationship('Configuration', backref=db.backref('joystick_mappings', lazy=True))
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "configurationId": self.configuration_id,
+            "name": self.name or "",
+            "device": self.device,
+            "inputType": self.input_type,
+            "input": self.input,
+            "outputType": self.output_type,
+            "output": self.output,
+            "enabled": self.enabled,
+        }
+
 class ActivityEntry(db.Model):
     __tablename__ = 'activity'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

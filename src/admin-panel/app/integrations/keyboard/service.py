@@ -56,8 +56,10 @@ class KeyboardService(BaseIntegrationService):
         return cleaned
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
-        display.display_temporary_message(["", action.name, "", ""], 2)
         config = action.configuration
+        # Letting go of held keys (e.g. when a button is released) isn't worth flashing up on the screen
+        if any(key_duration["type"] != "off" for key_duration in config):
+            display.display_temporary_message(["", action.name, "", ""], 2)
 
         for key_duration in config:
             key = key_duration["key"]

@@ -67,6 +67,7 @@ class BaseIntegrationService:
             "actionEditor": self.action_editor,
             "userActions": self.user_actions,
             "actionCount": IntegrationAction.query.filter_by(integration_id=self.id).count(),
+            "note": None,  # Optional summary shown instead of the action count
         }
 
     """

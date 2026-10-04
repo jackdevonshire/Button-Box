@@ -63,9 +63,7 @@ function IntegrationCard({ integration }: { integration: Integration }) {
         </CardAction>
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">
-        {integration.userActions
-          ? count === 1 ? "1 action" : `${count} actions`
-          : "Creates a “switch to” action for each configuration automatically."}
+        {integration.note ?? (count === 1 ? "1 action" : `${count} actions`)}
       </CardContent>
       {integration.actionEditor && (
         <CardFooter>

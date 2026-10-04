@@ -3,6 +3,7 @@ import { Search } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { ThemeMenu } from "@/components/layout/theme-menu"
 import { Kbd } from "@/components/ui/kbd"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
@@ -58,6 +59,7 @@ export function SiteHeader({ onSearch }: { onSearch: () => void }) {
           <span className="hidden lg:inline">Search</span>
           <Kbd className="hidden lg:inline-flex">Ctrl K</Kbd>
         </Button>
+        <ThemeMenu />
       </div>
     </header>
   )
