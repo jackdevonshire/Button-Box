@@ -46,13 +46,13 @@ sounds ─────────┘
            └──────► your headphones (sounds only, so you hear them too)
 ```
 
-- **Soundboard** - drop in WAV, MP3, OGG or FLAC files and click to play them. Each sound is also an action, so box and joystick buttons can play them, and there's a "Stop all sounds" action. Pressing a sound again can restart it, stop it or play another copy over it. Files are kept in `app/sounds/` (not included in backups)
+- **Soundboard** - drop in WAV, MP3, M4A, OGG or FLAC files (M4A and AAC are converted to FLAC when added) and click to play them. Each sound is also an action, so box and joystick buttons can play them, and there's a "Stop all sounds" action. Pressing a sound again can restart it, stop it or play another copy over it. Files are kept in `app/sounds/` (not included in backups)
 - **Voice activation** - talk in game without holding push-to-talk yourself, in one of two ways:
   - **Press a key** - holds the game's push-to-talk key (K for Wardogs, or any key) while you talk and/or while a sound plays. Your voice can be delayed slightly so the key is already down when your first word reaches the game, and the key can be limited to when the game is the app in front, so it isn't typed into Discord
   - **Mic gate** - presses nothing: your voice only goes through to the game while you're talking, and the game is set to open mic. For games where simulated key presses are a worry
   
   Talking is anything louder than a threshold set against a live mic meter.
-- **Devices** - your mic, where to send it (the virtual cable) and where to hear sounds, with a volume for each
+- **Devices** - your mic, where to send it (the virtual cable) and where to hear sounds, with a volume for each. **Hear what the game hears** plays the cable's output in your headphones, to check what's getting through
 
 Sending sound into games needs a virtual audio cable: install [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) (free), restart the panel, choose **CABLE Input** as "Send to game" and set the game's microphone to **CABLE Output**. Push-to-talk's key mode works without it, using your mic directly; the mic gate needs it. Push-to-talk and joystick mappings share held keys, so a joystick button mapped to the same key won't let go of it while you're talking.
 
@@ -102,6 +102,7 @@ Used by the web UI. JSON with camelCase keys; errors return an HTTP error status
 | `GET /api/sound`, `PATCH /api/sound/settings` | Sound devices, settings, sounds and live state (also sent as `sound` events: mic level, talking, key held, sounds playing) |
 | `POST /api/sound/clips` (multipart `files`), `PATCH/DELETE /api/sound/clips/<id>` | Add, edit and remove sounds |
 | `POST /api/sound/clips/<id>/play`, `POST /api/sound/stop` | Play (or stop) a sound, stop all sounds |
+| `POST /api/sound/listen` | `listening`: play what the game hears (the cable's output) in your headphones, or stop |
 | `GET /api/sound/apps` | Apps with a window open, for limiting push-to-talk to the game |
 | `POST /api/box/find`, `POST /api/box/display` | Scan the network for the box, preview a message on its screen |
 | `POST/GET /api/learn` | Learn mode - the next control used on the box is reported instead of running its actions |

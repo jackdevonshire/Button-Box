@@ -192,6 +192,8 @@ export interface SoundLiveState {
   level: number | null
   talking: boolean
   keyHeld: boolean
+  /** Whether what the game hears is being played in your headphones */
+  listening: boolean
   /** In mic gate mode, whether your voice is being let through */
   gateOpen: boolean
   focusOk: boolean
@@ -203,7 +205,7 @@ export interface SoundState extends SoundLiveState {
   errors: Partial<Record<SoundStream, string>>
 }
 
-export type SoundStream = "mic" | "game" | "monitor"
+export type SoundStream = "mic" | "game" | "monitor" | "listen"
 
 export interface SoundSnapshot {
   active: boolean

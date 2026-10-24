@@ -38,7 +38,7 @@ CLIP_TAIL_MS = 150              # And kept held this long after it ends
 CABLE_SECONDS = 0.1             # Roughly how long audio takes to come out of a virtual cable (measured with VB-Cable)
 SILENCE_DB = -100
 PTT_HOLDER = ("sound", "push-to-talk")
-STREAMS = ("mic", "game", "monitor")
+STREAMS = ("mic", "game", "monitor", "listen")
 
 DEFAULT_SETTINGS = {
     "micDevice": None,       # Your microphone
@@ -153,13 +153,16 @@ class SoundEngine:
         self.__enabled = False
         self.__lock = threading.RLock()  # Guards starting and stopping streams, and the list of clips playing
 
-        self.__streams = {}          # "mic" / "game" / "monitor" -> open stream
+        self.__streams = {}          # "mic" / "game" / "monitor" / "listen" -> open stream
         self.__stream_devices = {}   # The device name each stream should be using (None when it shouldn't run)
         self.__errors = {}           # Stream -> a problem to show, like a device not being connected
         self.__last_retry = 0.0
 
         self.__mic_buffer = _RingBuffer(SAMPLE_RATE * 2)
         self.__priming = True        # Building the mic delay back up before sending the mic to the game
+        self.__listening = False     # Playing the cable's output in your headphones, to hear what the game hears
+        self.__listen_buffer = _RingBuffer(SAMPLE_RATE * 2)
+        self.__listen_priming = True
         self.__voices = ()           # Clips playing - replaced, never changed in place, so callbacks can read it freely
 
         self.__level_db = SILENCE_DB
@@ -195,11 +198,21 @@ class SoundEngine:
         ptt = settings["pushToTalk"]
         # The mic is only needed when sending it to the game, or listening for talking
         mic_needed = settings["gameDevice"] or (ptt["enabled"] and ptt["onVoice"])
+        listen = None
+        if self.__listening and settings["gameDevice"] and settings["monitorDevice"]:
+            listen = devices.recording_side(settings["gameDevice"]) or f"The recording side of {settings['gameDevice']}"
         return {
             "mic": settings["micDevice"] if mic_needed else None,
             "game": settings["gameDevice"],
             "monitor": settings["monitorDevice"],
+            "listen": listen,
         }
+
+    def set_listening(self, listening):
+        """Plays what comes out of the cable - what the game hears - in your headphones, or stops"""
+        with self.__lock:
+            self.__listening = listening
+            self.__apply_streams()
 
     def __apply_streams(self, retry_only=False):
         for name, device in self.__desired_devices().items():
@@ -215,7 +228,7 @@ class SoundEngine:
                 self.__open(name, device)
 
     def __open(self, name, device):
-        kind = "input" if name == "mic" else "output"
+        kind = "input" if name in ("mic", "listen") else "output"
         index = devices.find_device(device, kind)
         if index is None:
             self.__errors[name] = f"{device} isn't connected"
@@ -227,6 +240,10 @@ class SoundEngine:
                 stream = sd.InputStream(channels=1, callback=self.__mic_callback, **options)
                 self.__mic_buffer.clear()
                 self.__priming = True
+            elif name == "listen":
+                stream = sd.InputStream(channels=1, callback=self.__listen_callback, **options)
+                self.__listen_buffer.clear()
+                self.__listen_priming = True
             else:
                 callback = self.__game_callback if name == "game" else self.__monitor_callback
                 stream = sd.OutputStream(channels=devices.output_channels(index), callback=callback, **options)
@@ -323,11 +340,32 @@ class SoundEngine:
 
     def __monitor_callback(self, outdata, frames, time_info, status):
         mix = np.zeros(frames, np.float32)
-        for voice in self.__voices:
-            voice.mix_into("monitor", mix)
+        if "listen" in self.__streams:
+            # Hearing the cable already includes the clips, so they're not played directly as well
+            if self.__listen_priming and self.__listen_buffer.available >= JITTER_SAMPLES + frames:
+                self.__listen_priming = False
+            if not self.__listen_priming:
+                heard = self.__listen_buffer.read(frames)
+                if heard is None:
+                    self.__listen_priming = True
+                else:
+                    mix += heard
+                    excess = self.__listen_buffer.available - JITTER_SAMPLES * 2
+                    if excess > BLOCK:
+                        self.__listen_buffer.drop(excess)
+            # Clips still move along here, so they finish
+            unheard = np.zeros(frames, np.float32)
+            for voice in self.__voices:
+                voice.mix_into("monitor", unheard)
+        else:
+            for voice in self.__voices:
+                voice.mix_into("monitor", mix)
         mix *= self.__settings["monitorVolume"]
         np.clip(mix, -1, 1, out=mix)
         outdata[:] = mix[:, None]
+
+    def __listen_callback(self, indata, frames, time_info, status):
+        self.__listen_buffer.write(indata[:, 0].copy())
 
     # endregion
 
@@ -436,6 +474,7 @@ class SoundEngine:
             "level": round(self.__level_db, 1) if "mic" in self.__streams else None,
             "talking": talking,
             "keyHeld": self.__key is not None,
+            "listening": "listen" in self.__streams,
             "gateOpen": self.__gating() and "game" in self.__streams and self.__gate_gain > 0,
             "focusOk": self.__focus_ok,
             "playing": sorted({voice.action_id for voice in playing}),

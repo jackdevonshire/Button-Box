@@ -135,6 +135,7 @@ export const api = {
 
   sound: () => get<SoundSnapshot>("/sound"),
   updateSoundSettings: (input: SoundSettingsInput) => patch<SoundSnapshot>("/sound/settings", input),
+  setSoundListening: (listening: boolean) => post<SoundSnapshot>("/sound/listen", { listening }),
   soundApps: () => get<RunningApp[]>("/sound/apps"),
   uploadClips: (files: File[]) => {
     const form = new FormData()

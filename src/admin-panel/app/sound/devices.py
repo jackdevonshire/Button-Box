@@ -45,6 +45,18 @@ def find_device(name, kind):
     return None
 
 
+def recording_side(name):
+    """
+    The input a virtual cable's output comes back out of - what the game hears - e.g. "CABLE Input (VB-Audio Virtual
+    Cable)" comes out of "CABLE Output (VB-Audio Virtual Cable)". None if there isn't one.
+    """
+    inputs = {device["name"] for device in list_devices()["inputs"]}
+    for candidate in (name.replace("Input", "Output"), name.replace("input", "output")):
+        if candidate != name and candidate in inputs:
+            return candidate
+    return None
+
+
 def output_channels(index):
     return max(1, min(2, sd.query_devices(index)["max_output_channels"]))
 

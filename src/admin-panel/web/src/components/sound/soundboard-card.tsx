@@ -18,7 +18,7 @@ import { api } from "@/lib/api"
 import type { SoundClip, SoundSnapshot } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
-const ACCEPT = ".wav,.mp3,.ogg,.flac,audio/wav,audio/mpeg,audio/ogg,audio/flac"
+const ACCEPT = ".wav,.mp3,.m4a,.aac,.ogg,.flac,audio/wav,audio/mpeg,audio/mp4,audio/aac,audio/ogg,audio/flac"
 
 /** The sounds: click one to play it, drop files on to add them */
 export function SoundboardCard({ sound }: { sound: SoundSnapshot }) {
@@ -101,7 +101,7 @@ export function SoundboardCard({ sound }: { sound: SoundSnapshot }) {
                 <FileAudio />
               </EmptyMedia>
               <EmptyTitle>No sounds yet</EmptyTitle>
-              <EmptyDescription>Drop WAV, MP3, OGG or FLAC files here, or choose some.</EmptyDescription>
+              <EmptyDescription>Drop WAV, MP3, M4A, OGG or FLAC files here, or choose some.</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Button size="sm" variant="outline" onClick={() => input.current?.click()}>

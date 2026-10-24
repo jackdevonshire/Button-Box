@@ -1,12 +1,17 @@
-import { CircleAlert, ExternalLink } from "lucide-react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { CircleAlert, ExternalLink, HeadphoneOff, Headphones } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 import { useSoundSettings } from "@/components/sound/use-sound-settings"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
+import { api } from "@/lib/api"
+import { queryKeys } from "@/lib/queries"
 import type { SoundDevice, SoundSnapshot, SoundStream } from "@/lib/types"
 
 const NONE = "none"
@@ -61,15 +66,25 @@ export function DevicesCard({ sound }: { sound: SoundSnapshot }) {
         </div>
 
         {settings.gameDevice && (
-          <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-            {gameIsCable ? (
-              <>
-                In the game (and Discord, if you like), set your microphone to{" "}
-                <span className="font-medium text-foreground">{cableOutputName(settings.gameDevice)}</span>.
-              </>
-            ) : (
-              <>That isn't a virtual cable, so the game won't be able to use it as a microphone.</>
-            )}
+          <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/50 px-3 py-2">
+            <p className="min-w-48 flex-1 text-sm text-muted-foreground">
+              {gameIsCable ? (
+                <>
+                  In the game (and Discord, if you like), set your microphone to{" "}
+                  <span className="font-medium text-foreground">{cableOutputName(settings.gameDevice)}</span>.
+                </>
+              ) : (
+                <>That isn't a virtual cable, so the game won't be able to use it as a microphone.</>
+              )}
+            </p>
+            {gameIsCable && <ListenButton sound={sound} />}
+          </div>
+        )}
+        {state.errors.listen && <p className="-mt-2 text-xs text-destructive">{state.errors.listen}</p>}
+        {state.listening && (
+          <p className="-mt-2 text-xs text-muted-foreground">
+            Playing what the game hears in {settings.monitorDevice}, a little delayed. Turn it off when you're done, or
+            you'll keep hearing yourself.
           </p>
         )}
 
@@ -87,7 +102,7 @@ export function DevicesCard({ sound }: { sound: SoundSnapshot }) {
             onCommit={(clipVolume) => save.mutate({ clipVolume })}
           />
           <VolumeField
-            label="Sounds in your headphones"
+            label="In your headphones"
             key={settings.monitorVolume}
             value={settings.monitorVolume}
             onCommit={(monitorVolume) => save.mutate({ monitorVolume })}
@@ -95,6 +110,29 @@ export function DevicesCard({ sound }: { sound: SoundSnapshot }) {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+/** Plays the cable's output - exactly what the game hears - in your headphones */
+function ListenButton({ sound }: { sound: SoundSnapshot }) {
+  const queryClient = useQueryClient()
+  const listening = sound.state.listening
+  const toggle = useMutation({
+    mutationFn: () => api.setSoundListening(!listening),
+    onSuccess: (updated) => queryClient.setQueryData(queryKeys.sound, updated),
+    onError: (e: Error) => toast.error(e.message),
+  })
+  return (
+    <Button
+      size="sm"
+      variant={listening ? "default" : "outline"}
+      onClick={() => toggle.mutate()}
+      disabled={toggle.isPending || !sound.settings.monitorDevice}
+      title={sound.settings.monitorDevice ? undefined : "Choose where to hear sounds first"}
+    >
+      {listening ? <HeadphoneOff data-icon="inline-start" /> : <Headphones data-icon="inline-start" />}
+      {listening ? "Stop listening" : "Hear what the game hears"}
+    </Button>
   )
 }
 

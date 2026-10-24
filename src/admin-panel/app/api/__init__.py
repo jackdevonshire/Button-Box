@@ -7,7 +7,6 @@ import ipaddress
 import os
 import queue
 import traceback
-import uuid
 
 import desktop
 import pydirectinput
@@ -467,6 +466,21 @@ def update_sound_settings():
     return get_sound()
 
 
+@api.post("/sound/listen")
+def set_sound_listening():
+    """Plays what the game hears (the cable's output) in your headphones, or stops. Not saved - it's for checking."""
+    data = body()
+    service = sound_service()
+    settings = service.load_settings()
+    listening = bool(data.get("listening"))
+    if listening and not settings["gameDevice"]:
+        raise ApiError("Choose a device to send to the game first")
+    if listening and not settings["monitorDevice"]:
+        raise ApiError("Choose where to hear sounds first")
+    service.engine.set_listening(listening)
+    return get_sound()
+
+
 @api.get("/sound/apps")
 def list_sound_apps():
     return jsonify(sound_apps.running_apps())
@@ -481,20 +495,15 @@ def upload_clips():
     if not uploads:
         raise ApiError("Choose a sound file")
 
-    os.makedirs(sound_clips.SOUNDS_DIR, exist_ok=True)
     created = []
     for upload in uploads:
         stem, extension = os.path.splitext(upload.filename or "")
         extension = extension.lower()
-        if extension not in sound_clips.EXTENSIONS:
-            raise ApiError(f"{upload.filename} isn't a WAV, MP3, OGG or FLAC file")
-        file = f"{uuid.uuid4().hex}{extension}"
-        path = sound_clips.path_for(file)
-        upload.save(path)
+        if extension not in sound_clips.UPLOAD_EXTENSIONS:
+            raise ApiError(f"{upload.filename} isn't a WAV, MP3, M4A, OGG or FLAC file")
         try:
-            sound_clips.check(path)
+            file = sound_clips.save_upload(upload, extension)
         except ValueError as e:
-            os.remove(path)
             raise ApiError(f"{upload.filename}: {e}")
         action = IntegrationAction(integration_id=SOUND_INTEGRATION_ID, name=stem.strip() or "Sound",
                                    description="", configuration={"file": file, "volume": 1.0, "again": "restart"})
