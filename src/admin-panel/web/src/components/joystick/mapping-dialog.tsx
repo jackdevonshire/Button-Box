@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Keyboard, Mouse, Play } from "lucide-react"
+import { Keyboard, Play } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -14,30 +14,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { api } from "@/lib/api"
-import {
-  defaultMouseOutput,
-  directionLabels,
-  hatDirections,
-  holdKeyOptions,
-  inputKey,
-  inputLabel,
-} from "@/lib/joystick"
+import { hatDirections, inputKey, inputLabel } from "@/lib/joystick"
 import { useActions, useIntegrations } from "@/lib/queries"
-import type {
-  ActionOutput,
-  HatDirection,
-  JoystickDevice,
-  JoystickMapping,
-  KeysOutput,
-  MouseOutput,
-} from "@/lib/types"
+import type { ActionOutput, JoystickDevice, JoystickMapping, KeysOutput } from "@/lib/types"
 
 export interface MappingTarget {
   inputType: "hat" | "button"
@@ -89,13 +74,9 @@ function MappingForm({
   const initialInput = mapping ? { inputType: mapping.inputType, input: mapping.input } : (target ?? { inputType: "hat" as const, input: "up" })
   const [input, setInput] = useState(inputKey(initialInput.inputType, initialInput.input))
   const [inputType, inputValue] = input.split(":") as ["hat" | "button", string]
-  const hatDirection = inputType === "hat" ? (inputValue as HatDirection) : null
 
   const [name, setName] = useState(mapping?.name ?? "")
-  const [outputType, setOutputType] = useState<OutputType>(mapping?.outputType ?? "mouse")
-  const [mouse, setMouse] = useState<MouseOutput>(
-    mapping?.outputType === "mouse" ? (mapping.output as MouseOutput) : defaultMouseOutput(null)
-  )
+  const [outputType, setOutputType] = useState<OutputType>(mapping?.outputType ?? "keys")
   const [keys, setKeys] = useState<string[]>(mapping?.outputType === "keys" ? (mapping.output as KeysOutput).keys : [])
   const [action, setAction] = useState<ActionOutput | null>(
     mapping?.outputType === "action" ? (mapping.output as ActionOutput) : null
@@ -103,17 +84,9 @@ function MappingForm({
   const [enabled, setEnabled] = useState(mapping?.enabled ?? true)
   const [error, setError] = useState<string | null>(null)
 
-  // A hat direction looks that way by default; a button has to be told which way
-  const lookDirection = mouse.direction ?? hatDirection ?? "right"
-
   const save = useMutation({
     mutationFn: () => {
-      const output =
-        outputType === "mouse"
-          ? { ...mouse, direction: mouse.direction === hatDirection ? null : mouse.direction }
-          : outputType === "keys"
-            ? { keys }
-            : action
+      const output = outputType === "keys" ? { keys } : action
       const body = { name, device: device.id, inputType, input: inputValue, outputType, output: output!, enabled }
       return mapping ? api.updateJoystickMapping(mapping.id, body) : api.createJoystickMapping(configurationId, body)
     },
@@ -177,10 +150,6 @@ function MappingForm({
             }}
             className="w-full"
           >
-            <ToggleGroupItem value="mouse" className="flex-1 gap-1.5">
-              <Mouse />
-              Look around
-            </ToggleGroupItem>
             <ToggleGroupItem value="keys" className="flex-1 gap-1.5">
               <Keyboard />
               Hold keys
@@ -191,108 +160,6 @@ function MappingForm({
             </ToggleGroupItem>
           </ToggleGroup>
         </Field>
-
-        {outputType === "mouse" && (
-          <>
-            <Field>
-              <FieldLabel>Look</FieldLabel>
-              <ToggleGroup
-                type="single"
-                variant="outline"
-                value={lookDirection}
-                onValueChange={(value) => value && setMouse({ ...mouse, direction: value as HatDirection })}
-                className="w-full"
-              >
-                {hatDirections.map((direction) => (
-                  <ToggleGroupItem key={direction} value={direction} className="flex-1">
-                    {directionLabels[direction]}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </Field>
-
-            <Field>
-              <div className="flex items-center justify-between">
-                <FieldLabel>Speed</FieldLabel>
-                <span className="text-sm text-muted-foreground tabular-nums">{mouse.speed} px/s</span>
-              </div>
-              <Slider
-                min={100}
-                max={5000}
-                step={50}
-                value={[mouse.speed]}
-                onValueChange={([speed]) => setMouse({ ...mouse, speed })}
-                aria-label="Speed"
-              />
-              <FieldDescription>How fast the view turns while held.</FieldDescription>
-            </Field>
-
-            <Field>
-              <div className="flex items-center justify-between">
-                <FieldLabel>Ramp up</FieldLabel>
-                <span className="text-sm text-muted-foreground tabular-nums">
-                  {mouse.rampMs === 0 ? "Instant" : `${mouse.rampMs} ms`}
-                </span>
-              </div>
-              <Slider
-                min={0}
-                max={1000}
-                step={25}
-                value={[mouse.rampMs]}
-                onValueChange={([rampMs]) => setMouse({ ...mouse, rampMs })}
-                aria-label="Ramp up"
-              />
-              <FieldDescription>Starts slower and builds to full speed, so quick taps make small adjustments.</FieldDescription>
-            </Field>
-
-            <Field>
-              <FieldLabel>Hold while looking</FieldLabel>
-              <Select value={mouse.holdKey || "none"} onValueChange={(value) => setMouse({ ...mouse, holdKey: value === "none" ? "" : value })}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {holdKeyOptions.map((option) => (
-                    <SelectItem key={option.value || "none"} value={option.value || "none"}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FieldDescription>
-                For Wardogs, holding Alt gives free look that recentres when you let go. To keep the view where you
-                leave it, choose Nothing and lock free look first (double-tap Alt).
-              </FieldDescription>
-            </Field>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field>
-                <FieldLabel htmlFor="max-distance">Stop after</FieldLabel>
-                <Input
-                  id="max-distance"
-                  type="number"
-                  min={0}
-                  max={20000}
-                  step={50}
-                  value={mouse.maxDistance}
-                  onChange={(e) => setMouse({ ...mouse, maxDistance: Math.max(0, Number(e.target.value) || 0) })}
-                />
-                <FieldDescription>Pixels. 0 keeps turning while held.</FieldDescription>
-              </Field>
-              <Field orientation="horizontal" className="self-start sm:pt-6">
-                <Switch
-                  id="return-on-release"
-                  checked={mouse.returnOnRelease}
-                  onCheckedChange={(returnOnRelease) => setMouse({ ...mouse, returnOnRelease })}
-                />
-                <FieldContent>
-                  <FieldLabel htmlFor="return-on-release">Return when let go</FieldLabel>
-                  <FieldDescription>For games that don't recentre themselves.</FieldDescription>
-                </FieldContent>
-              </Field>
-            </div>
-          </>
-        )}
 
         {outputType === "keys" && (
           <Field>
@@ -349,7 +216,7 @@ function MappingForm({
 
         <Field>
           <FieldLabel htmlFor="mapping-name">Label</FieldLabel>
-          <Input id="mapping-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Free look" />
+          <Input id="mapping-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Snap view left" />
           <FieldDescription>Optional. Shown on the joystick view.</FieldDescription>
         </Field>
 

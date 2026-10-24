@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 
-import { HatLookCard } from "@/components/joystick/hat-look-card"
+import { ButtonKeysCard } from "@/components/joystick/button-keys-card"
 import { MappingDialog, type MappingTarget } from "@/components/joystick/mapping-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -149,14 +149,12 @@ export function JoystickView({ configuration }: { configuration: Configuration }
           </CardContent>
         </Card>
 
-        {device.hasHat && (
-          <HatLookCard
-            configurationId={configuration.id}
-            device={device}
-            mappings={deviceMappings}
-            held={state?.hat ?? []}
-          />
-        )}
+        <ButtonKeysCard
+          configurationId={configuration.id}
+          device={device}
+          mappings={deviceMappings}
+          held={state?.buttons ?? []}
+        />
 
         <Card size="sm">
           <CardHeader>
@@ -207,8 +205,8 @@ export function JoystickView({ configuration }: { configuration: Configuration }
             <CardHeader>
               <CardTitle>Choose an input</CardTitle>
               <CardDescription>
-                Click a hat direction or button, or use "Pick from the stick" and press it. Each can look around with the
-                mouse, hold keys, or run an action.
+                Click a hat direction or button, or use "Pick from the stick" and press it. Each can hold keys or run an
+                action.
               </CardDescription>
             </CardHeader>
           </Card>

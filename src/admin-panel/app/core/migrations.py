@@ -24,8 +24,14 @@ def migration_1_bindings(db):
     add_column_if_missing(db, "configuration", "display_lines", "JSON")
 
 
+def migration_2_remove_mouse_mappings(db):
+    # Simulated mouse movement was removed from the joystick integration
+    db.session.execute(text("DELETE FROM joystick_mapping WHERE output_type = 'mouse'"))
+
+
 MIGRATIONS = [
     migration_1_bindings,
+    migration_2_remove_mouse_mappings,
 ]
 
 

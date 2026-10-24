@@ -15,8 +15,8 @@ def input_label(mapping):
 
 class JoystickService(BaseIntegrationService):
     """
-    Lets a joystick plugged into this PC do things, like Joystick Gremlin: hat directions and buttons can move the
-    mouse to look around, hold keys, or run actions. Mappings belong to a configuration and only apply while it's
+    Lets a joystick plugged into this PC do things, like Joystick Gremlin: hat directions and buttons can hold
+    keys or run actions. Mappings belong to a configuration and only apply while it's
     active. Unlike other integrations it has no actions of its own - it's another input, alongside the box.
     """
 
@@ -25,7 +25,7 @@ class JoystickService(BaseIntegrationService):
         # Core details - must be present for EVERY integration
         self.id = 5
         self.name = "Joystick"
-        self.description = "Use a joystick's hat and buttons to look around, hold keys or run actions"
+        self.description = "Use a joystick's hat and buttons to hold keys or run actions"
         self.is_active = True
         self.configuration = {}
 

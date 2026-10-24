@@ -567,72 +567,7 @@
         "FLIGHT MODE",
         ""
       ],
-      "joystickMappings": [
-        {
-          "device": "044F:0406",
-          "enabled": true,
-          "input": "up",
-          "inputType": "hat",
-          "name": "Free look up",
-          "output": {
-            "direction": "down",
-            "holdKey": "",
-            "maxDistance": 0,
-            "rampMs": 150,
-            "returnOnRelease": false,
-            "speed": 2200
-          },
-          "outputType": "mouse"
-        },
-        {
-          "device": "044F:0406",
-          "enabled": true,
-          "input": "down",
-          "inputType": "hat",
-          "name": "Free look down",
-          "output": {
-            "direction": "up",
-            "holdKey": "",
-            "maxDistance": 0,
-            "rampMs": 150,
-            "returnOnRelease": false,
-            "speed": 2200
-          },
-          "outputType": "mouse"
-        },
-        {
-          "device": "044F:0406",
-          "enabled": true,
-          "input": "left",
-          "inputType": "hat",
-          "name": "Free look left",
-          "output": {
-            "direction": "right",
-            "holdKey": "",
-            "maxDistance": 0,
-            "rampMs": 150,
-            "returnOnRelease": false,
-            "speed": 2200
-          },
-          "outputType": "mouse"
-        },
-        {
-          "device": "044F:0406",
-          "enabled": true,
-          "input": "right",
-          "inputType": "hat",
-          "name": "Free look right",
-          "output": {
-            "direction": "left",
-            "holdKey": "",
-            "maxDistance": 0,
-            "rampMs": 150,
-            "returnOnRelease": false,
-            "speed": 2200
-          },
-          "outputType": "mouse"
-        }
-      ],
+      "joystickMappings": [],
       "name": "Wardogs Flight",
       "ref": 2
     }

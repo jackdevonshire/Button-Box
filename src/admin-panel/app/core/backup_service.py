@@ -224,9 +224,12 @@ class BackupService:
                 binding.setdefault("modifiers", [])
                 binding.setdefault("gesture", "single")
                 binding.setdefault("enabled", True)
-            for mapping in item.setdefault("joystickMappings", []):
+            # Mouse look mappings from older backups are no longer supported, so they're left out
+            item["joystickMappings"] = [mapping for mapping in item.get("joystickMappings", [])
+                                        if mapping.get("outputType") != "mouse"]
+            for mapping in item["joystickMappings"]:
                 if mapping.get("inputType") not in ("hat", "button") or mapping.get("outputType") not in (
-                        "mouse", "keys", "action") or not isinstance(mapping.get("output"), dict) or not mapping.get("device"):
+                        "keys", "action") or not isinstance(mapping.get("output"), dict) or not mapping.get("device"):
                     raise BackupError(f"A joystick mapping in '{name}' isn't valid")
                 if mapping["outputType"] == "action":
                     target = mapping["output"]
