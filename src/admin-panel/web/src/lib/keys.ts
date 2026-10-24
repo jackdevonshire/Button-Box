@@ -56,7 +56,8 @@ export function keyFromEvent(event: KeyboardEvent | React.KeyboardEvent): string
   if (code in codeToKey) return codeToKey[code]
   if (/^Key[A-Z]$/.test(code)) return code.slice(3).toLowerCase()
   if (/^Digit[0-9]$/.test(code)) return code.slice(5)
-  if (/^F([1-9]|1[0-2])$/.test(code)) return code.toLowerCase()
+  if (/^F([1-9]|1\d|2[0-4])$/.test(code)) return code.toLowerCase()
+  if (/^Numpad[0-9]$/.test(code)) return `num${code.slice(6)}`
   return null
 }
 
@@ -108,9 +109,22 @@ const keyLabels: Record<string, string> = {
   decimal: "Num .",
 }
 
+const shortcutModifiers: Record<string, string> = {
+  ctrl: "Ctrl", ctrlleft: "Ctrl", ctrlright: "Ctrl",
+  shift: "Shift", shiftleft: "Shift", shiftright: "Shift",
+  alt: "Alt", altleft: "Alt", altright: "Alt",
+  win: "Win", winleft: "Win", winright: "Win",
+}
+
+/** A readable keyboard shortcut, e.g. ["ctrlleft", "num5"] -> "Ctrl+Num 5" */
+export function shortcutLabel(keys: string[]) {
+  return keys.map((key) => shortcutModifiers[key] ?? keyLabel(key)).join("+")
+}
+
 /** A readable name for a key, e.g. "ctrlleft" -> "Left Ctrl" */
 export function keyLabel(key: string) {
   if (keyLabels[key]) return keyLabels[key]
   if (/^f\d+$/.test(key)) return key.toUpperCase()
+  if (/^num\d$/.test(key)) return `Num ${key.slice(3)}`
   return key.length === 1 ? key.toUpperCase() : key
 }

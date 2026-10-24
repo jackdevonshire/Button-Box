@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
 import { Box, Gamepad2, Radar, ScanLine, WifiOff } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 
@@ -13,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useLearnMode } from "@/hooks/use-learn-mode"
 import { api } from "@/lib/api"
 import { useLive } from "@/lib/live"
 import { useActivity, useConfiguration, useControls, useStatus } from "@/lib/queries"
@@ -163,47 +163,3 @@ function OfflineNotice({ scanning }: { scanning: boolean }) {
 }
 
 /** Learn mode: the next control used on the box is reported (and its actions skipped) */
-function useLearnMode(onLearned: (control: string) => void) {
-  const { onLearned: subscribe } = useLive()
-  const [deadline, setDeadline] = useState<number | null>(null)
-  const [now, setNow] = useState(() => Date.now())
-  const onLearnedRef = useRef(onLearned)
-  useEffect(() => {
-    onLearnedRef.current = onLearned
-  })
-
-  useEffect(() => {
-    if (deadline === null) return
-    const unsubscribe = subscribe((control) => {
-      setDeadline(null)
-      onLearnedRef.current(control)
-    })
-    const timer = setInterval(() => {
-      setNow(Date.now())
-      if (Date.now() > deadline) {
-        setDeadline(null)
-        toast("Nothing was pressed on the box")
-      }
-    }, 250)
-    return () => {
-      unsubscribe()
-      clearInterval(timer)
-    }
-  }, [deadline, subscribe])
-
-  const start = async () => {
-    try {
-      const { seconds } = await api.startLearning()
-      setNow(Date.now())
-      setDeadline(Date.now() + seconds * 1000)
-    } catch (e) {
-      toast.error((e as Error).message)
-    }
-  }
-
-  return {
-    active: deadline !== null,
-    secondsLeft: deadline === null ? 0 : Math.max(0, Math.ceil((deadline - now) / 1000)),
-    start,
-  }
-}

@@ -185,6 +185,10 @@ export interface SoundClip extends Action {
   again?: ClipAgain
   /** Seconds, or null if the file is missing */
   duration?: number | null
+  /** Keyboard shortcut that plays it from any app, e.g. ["ctrlleft", "f1"] */
+  hotkey?: string[] | null
+  /** Why the shortcut isn't working, e.g. another app already uses it */
+  hotkeyError?: string | null
 }
 
 export interface SoundLiveState {
@@ -192,6 +196,8 @@ export interface SoundLiveState {
   level: number | null
   talking: boolean
   keyHeld: boolean
+  /** How loud what comes out of the virtual cable is, in dB - what the game hears. Null when not sending to a cable */
+  cableLevel: number | null
   /** Whether what the game hears is being played in your headphones */
   listening: boolean
   /** In mic gate mode, whether your voice is being let through */
@@ -212,6 +218,8 @@ export interface SoundSnapshot {
   settings: SoundSettings
   devices: { inputs: SoundDevice[]; outputs: SoundDevice[] }
   clips: SoundClip[]
+  /** Keys that can be used in shortcuts */
+  hotkeyKeys: string[]
   state: SoundState
 }
 

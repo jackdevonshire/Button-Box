@@ -163,6 +163,7 @@ class SoundEngine:
         self.__listening = False     # Playing the cable's output in your headphones, to hear what the game hears
         self.__listen_buffer = _RingBuffer(SAMPLE_RATE * 2)
         self.__listen_priming = True
+        self.__cable_level_db = SILENCE_DB  # How loud what comes out of the cable is - what the game hears
         self.__voices = ()           # Clips playing - replaced, never changed in place, so callbacks can read it freely
 
         self.__level_db = SILENCE_DB
@@ -198,9 +199,11 @@ class SoundEngine:
         ptt = settings["pushToTalk"]
         # The mic is only needed when sending it to the game, or listening for talking
         mic_needed = settings["gameDevice"] or (ptt["enabled"] and ptt["onVoice"])
-        listen = None
-        if self.__listening and settings["gameDevice"] and settings["monitorDevice"]:
-            listen = devices.recording_side(settings["gameDevice"]) or f"The recording side of {settings['gameDevice']}"
+        # The cable's output is always read when sending to a cable, for its level meter - and played in your
+        # headphones while listening
+        listen = devices.recording_side(settings["gameDevice"]) if settings["gameDevice"] else None
+        if listen is None and self.__listening:
+            listen = f"The recording side of {settings['gameDevice']}"
         return {
             "mic": settings["micDevice"] if mic_needed else None,
             "game": settings["gameDevice"],
@@ -211,6 +214,9 @@ class SoundEngine:
     def set_listening(self, listening):
         """Plays what comes out of the cable - what the game hears - in your headphones, or stops"""
         with self.__lock:
+            if listening and not self.__listening:
+                self.__listen_buffer.clear()  # Start from now, not from what built up while not listening
+                self.__listen_priming = True
             self.__listening = listening
             self.__apply_streams()
 
@@ -340,7 +346,7 @@ class SoundEngine:
 
     def __monitor_callback(self, outdata, frames, time_info, status):
         mix = np.zeros(frames, np.float32)
-        if "listen" in self.__streams:
+        if self.__listening and "listen" in self.__streams:
             # Hearing the cable already includes the clips, so they're not played directly as well
             if self.__listen_priming and self.__listen_buffer.available >= JITTER_SAMPLES + frames:
                 self.__listen_priming = False
@@ -365,7 +371,11 @@ class SoundEngine:
         outdata[:] = mix[:, None]
 
     def __listen_callback(self, indata, frames, time_info, status):
-        self.__listen_buffer.write(indata[:, 0].copy())
+        samples = indata[:, 0].copy()
+        rms = float(np.sqrt(np.mean(samples * samples))) if frames else 0.0
+        self.__cable_level_db = 20 * math.log10(rms) if rms > 1e-5 else SILENCE_DB
+        if self.__listening:
+            self.__listen_buffer.write(samples)
 
     # endregion
 
@@ -474,7 +484,8 @@ class SoundEngine:
             "level": round(self.__level_db, 1) if "mic" in self.__streams else None,
             "talking": talking,
             "keyHeld": self.__key is not None,
-            "listening": "listen" in self.__streams,
+            "listening": self.__listening and "listen" in self.__streams,
+            "cableLevel": round(self.__cable_level_db, 1) if "listen" in self.__streams else None,
             "gateOpen": self.__gating() and "game" in self.__streams and self.__gate_gain > 0,
             "focusOk": self.__focus_ok,
             "playing": sorted({voice.action_id for voice in playing}),

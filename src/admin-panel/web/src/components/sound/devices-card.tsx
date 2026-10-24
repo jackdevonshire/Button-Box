@@ -3,6 +3,7 @@ import { CircleAlert, ExternalLink, HeadphoneOff, Headphones } from "lucide-reac
 import { useState } from "react"
 import { toast } from "sonner"
 
+import { CableMeter } from "@/components/sound/cable-meter"
 import { useSoundSettings } from "@/components/sound/use-sound-settings"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -78,6 +79,7 @@ export function DevicesCard({ sound }: { sound: SoundSnapshot }) {
               )}
             </p>
             {gameIsCable && <ListenButton sound={sound} />}
+            <CableMeter level={state.cableLevel} className="w-full" />
           </div>
         )}
         {state.errors.listen && <p className="-mt-2 text-xs text-destructive">{state.errors.listen}</p>}

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { toast } from "sonner"
 
+import { ClipTriggers } from "@/components/sound/clip-triggers"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 import { Slider } from "@/components/ui/slider"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { api } from "@/lib/api"
@@ -27,7 +29,7 @@ const againOptions: { value: ClipAgain; label: string; hint: string }[] = [
 export function ClipDialog({ clip, onOpenChange }: { clip: SoundClip | null; onOpenChange: (open: boolean) => void }) {
   return (
     <Dialog open={clip !== null} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         {/* Remounts for each clip, so the form starts from its saved values */}
         {clip && <ClipForm key={clip.id} clip={clip} onDone={() => onOpenChange(false)} />}
       </DialogContent>
@@ -98,6 +100,9 @@ function ClipForm({ clip, onDone }: { clip: SoundClip; onDone: () => void }) {
         </Field>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
+
+        <Separator />
+        <ClipTriggers clip={clip} />
       </FieldGroup>
 
       <DialogFooter>

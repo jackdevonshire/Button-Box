@@ -10,7 +10,7 @@ from app.core.events import event_bus
 from app.core.models import IntegrationAction, Setting
 from app.core.types import NetworkResponse
 from app.integrations.integration import BaseIntegrationService
-from app.sound import clips, devices
+from app.sound import clips, devices, hotkeys
 from app.sound.engine import DEFAULT_SETTINGS, SoundEngine
 
 SETTINGS_KEY = "Sound"
@@ -36,15 +36,48 @@ class SoundService(BaseIntegrationService):
 
         self.ui_icon = "volume"
         self.engine = None
+        self.hotkeys = None
 
     def initialise_service(self):
         self.engine = SoundEngine(event_bus)
         self.engine.start()
         self.engine.configure(self.load_settings(), bool(self.is_active))
+        self.hotkeys = hotkeys.HotkeyListener(self.__on_hotkey)
+        self.hotkeys.start()
+        self.refresh_hotkeys()
 
     def set_active(self, is_active):
         super().set_active(is_active)
         self.engine.configure(self.load_settings(), bool(is_active))
+        self.refresh_hotkeys()
+
+    # region Keyboard shortcuts
+
+    def refresh_hotkeys(self):
+        """Registers every sound's shortcut with Windows (none while Sound is turned off)"""
+        if self.hotkeys is None:
+            return
+        shortcuts = {}
+        if self.is_active:
+            with app.app_context():
+                for action in IntegrationAction.query.filter_by(integration_id=self.id):
+                    if action.configuration.get("hotkey"):
+                        shortcuts[action.id] = action.configuration["hotkey"]
+        self.hotkeys.set(shortcuts)
+
+    def hotkey_error(self, action_id):
+        return self.hotkeys.errors.get(action_id) if self.hotkeys else None
+
+    def __on_hotkey(self, action_id):
+        with app.app_context():
+            action = db.session.get(IntegrationAction, action_id)
+            if action is None:
+                return
+            shortcut = hotkeys.label(action.configuration["hotkey"])
+            event_bus.log("press", f"{shortcut} → {action.name}")
+        self.core_service.button_box_service.queue_action(action_id)
+
+    # endregion
 
     def describe(self):
         description = super().describe()
@@ -119,17 +152,21 @@ class SoundService(BaseIntegrationService):
     # region Actions - one per clip, plus "stop all sounds"
 
     def sync_actions(self):
-        if not any(action.configuration == STOP_ALL for action in
+        if not any(action.configuration.get("stopAll") for action in
                    IntegrationAction.query.filter_by(integration_id=self.id)):
             db.session.add(IntegrationAction(integration_id=self.id, name="Stop all sounds",
                                              description="Stops every sound that's playing", configuration=STOP_ALL))
             db.session.commit()
+        self.refresh_hotkeys()  # Sounds may have been restored from a backup
 
     def validate_action_configuration(self, configuration):
-        if configuration == STOP_ALL:
-            return STOP_ALL
         if not isinstance(configuration, dict):
             raise ValueError("Choose a sound")
+        hotkey = configuration.get("hotkey") or None
+        if hotkey is not None:
+            hotkeys.parse(hotkey)  # Raises ValueError if it isn't a usable shortcut
+        if configuration.get("stopAll"):
+            return {**STOP_ALL, "hotkey": hotkey}
         try:
             clips.path_for(configuration.get("file"))
         except ValueError as e:
@@ -138,7 +175,7 @@ class SoundService(BaseIntegrationService):
         if again not in AGAIN_OPTIONS:
             raise ValueError("Choose what pressing it again does")
         return {"file": configuration["file"], "volume": _number(configuration.get("volume", 1.0), 0, 2, "Volume"),
-                "again": again}
+                "again": again, "hotkey": hotkey}
 
     def handle_action(self, action: IntegrationAction, display: DisplayService, button_box: ButtonBoxService):
         config = action.configuration

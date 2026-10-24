@@ -3,9 +3,11 @@ import { FileAudio, MoreHorizontal, Pencil, Play, Square, Trash2, Upload } from 
 import { useRef, useState } from "react"
 import { toast } from "sonner"
 
+import { CableMeter } from "@/components/sound/cable-meter"
 import { ClipDialog } from "@/components/sound/clip-dialog"
+import { ShortcutSlot } from "@/components/sound/clip-triggers"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { api } from "@/lib/api"
+import { shortcutLabel } from "@/lib/keys"
 import type { SoundClip, SoundSnapshot } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
@@ -25,9 +28,12 @@ export function SoundboardCard({ sound }: { sound: SoundSnapshot }) {
   const queryClient = useQueryClient()
   const input = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
-  const [editing, setEditing] = useState<SoundClip | null>(null)
+  const [editingId, setEditingId] = useState<number | null>(null)
 
   const clips = sound.clips.filter((clip) => !clip.stopAll)
+  const stopAllClip = sound.clips.find((clip) => clip.stopAll)
+  // Looked up each time, so the dialog shows changes made from it (like a new shortcut)
+  const editing = clips.find((clip) => clip.id === editingId) ?? null
   const playing = new Set(sound.state.playing)
 
   const upload = useMutation({
@@ -93,7 +99,8 @@ export function SoundboardCard({ sound }: { sound: SoundSnapshot }) {
           />
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-3">
+        <CableMeter level={sound.state.cableLevel} className="rounded-lg border px-3 py-2" />
         {clips.length === 0 ? (
           <Empty className="border border-dashed">
             <EmptyHeader>
@@ -113,13 +120,22 @@ export function SoundboardCard({ sound }: { sound: SoundSnapshot }) {
         ) : (
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
             {clips.map((clip) => (
-              <ClipTile key={clip.id} clip={clip} playing={playing.has(clip.id)} onEdit={() => setEditing(clip)} />
+              <ClipTile key={clip.id} clip={clip} playing={playing.has(clip.id)} onEdit={() => setEditingId(clip.id)} />
             ))}
           </ul>
         )}
       </CardContent>
 
-      <ClipDialog clip={editing} onOpenChange={(open) => !open && setEditing(null)} />
+      {stopAllClip && clips.length > 0 && (
+        <CardFooter className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t">
+          <span className="text-sm text-muted-foreground">Stop all sounds with</span>
+          <div className="min-w-48 flex-1">
+            <ShortcutSlot clip={stopAllClip} />
+          </div>
+        </CardFooter>
+      )}
+
+      <ClipDialog clip={editing} onOpenChange={(open) => !open && setEditingId(null)} />
     </Card>
   )
 }
@@ -197,6 +213,7 @@ function ClipTile({ clip, playing, onEdit }: { clip: SoundClip; playing: boolean
 
 function clipDetails(clip: SoundClip) {
   const parts = [formatDuration(clip.duration ?? 0)]
+  if (clip.hotkey) parts.push(shortcutLabel(clip.hotkey))
   if (clip.volume !== undefined && clip.volume !== 1) parts.push(`${Math.round(clip.volume * 100)}%`)
   if (clip.bindingCount > 0) parts.push(`${clip.bindingCount} binding${clip.bindingCount === 1 ? "" : "s"}`)
   return parts.join(" · ")
