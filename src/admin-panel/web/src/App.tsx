@@ -11,6 +11,7 @@ import { ConfigurationsPage } from "@/pages/configurations-page"
 import { IntegrationsPage } from "@/pages/integrations-page"
 import { PanelPage } from "@/pages/panel-page"
 import { SettingsPage } from "@/pages/settings-page"
+import { SoundPage } from "@/pages/sound-page"
 
 function Layout() {
   const [searchOpen, setSearchOpen] = useState(false)
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="activity" element={<ActivityPage />} />
           <Route path="integrations" element={<IntegrationsPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="sound" element={<SoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

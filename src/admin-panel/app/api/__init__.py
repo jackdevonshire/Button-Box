@@ -7,6 +7,7 @@ import ipaddress
 import os
 import queue
 import traceback
+import uuid
 
 import desktop
 import pydirectinput
@@ -22,6 +23,8 @@ from app.core.display_service import DisplayService, LCD_COLS, LCD_ROWS
 from app.core.events import event_bus, format_sse
 from app.core.models import ActivityEntry, Binding, Configuration, IntegrationAction, JoystickMapping, Setting
 from app.core.types import CONTROLS, EventType, Gesture, PhysicalKey
+from app.sound import apps as sound_apps, clips as sound_clips, devices as sound_devices
+from app.sound.engine import SoundError
 
 api = Blueprint("api", __name__, url_prefix="/api")
 backup_service = BackupService(db, integration_factory, button_box_service, core_service,
@@ -335,28 +338,6 @@ def validated_mapping_output(output_type, output):
     if not isinstance(output, dict):
         raise ApiError("Choose what the input does")
 
-    if output_type == "mouse":
-        def number(key, low, high, default):
-            value = output.get(key, default)
-            if isinstance(value, bool) or not isinstance(value, (int, float)) or not low <= value <= high:
-                raise ApiError(f"{key} must be between {low} and {high}")
-            return value
-
-        direction = output.get("direction")
-        if direction is not None and direction not in JOYSTICK_HAT_DIRECTIONS:
-            raise ApiError("Choose which way to move the mouse")
-        hold_key = output.get("holdKey") or ""
-        if hold_key and hold_key not in pydirectinput.KEYBOARD_MAPPING:
-            raise ApiError(f"'{hold_key}' isn't a key that can be held")
-        return {
-            "direction": direction,
-            "speed": number("speed", 50, 5000, 800),
-            "rampMs": number("rampMs", 0, 2000, 150),
-            "maxDistance": number("maxDistance", 0, 20000, 0),
-            "holdKey": hold_key,
-            "returnOnRelease": bool(output.get("returnOnRelease", False)),
-        }
-
     if output_type == "keys":
         keys = output.get("keys")
         if not isinstance(keys, list) or not keys:
@@ -434,6 +415,156 @@ def delete_joystick_mapping(id):
     db.session.delete(get_or_404(JoystickMapping, id, "Mapping"))
     db.session.commit()
     refresh_after_change()
+    return {"ok": True}
+
+# endregion
+
+# region Sound
+
+SOUND_INTEGRATION_ID = 6
+MAX_UPLOAD_BYTES = 50 * 1024 * 1024
+
+
+def sound_service():
+    return integration_factory.get_integration_by_id(SOUND_INTEGRATION_ID)
+
+
+def clip_json(action):
+    data = action.to_json()
+    config = action.configuration
+    if config.get("stopAll"):
+        return {**data, "stopAll": True}
+    return {**data, "stopAll": False, "file": config["file"], "volume": config["volume"], "again": config["again"],
+            "duration": sound_clips.describe(config["file"])}
+
+
+def get_clip(id):
+    action = get_or_404(IntegrationAction, id, "Sound")
+    if action.integration_id != SOUND_INTEGRATION_ID or action.configuration.get("stopAll"):
+        raise ApiError("That isn't a sound", 404)
+    return action
+
+
+@api.get("/sound")
+def get_sound():
+    service = sound_service()
+    actions = IntegrationAction.query.filter_by(integration_id=SOUND_INTEGRATION_ID).order_by(IntegrationAction.id)
+    return {
+        "active": bool(service.is_active),
+        "settings": service.load_settings(),
+        "devices": sound_devices.list_devices(),
+        "clips": [clip_json(action) for action in actions],
+        "state": service.engine.status(),
+    }
+
+
+@api.patch("/sound/settings")
+def update_sound_settings():
+    try:
+        sound_service().update_settings(body())
+    except ValueError as e:
+        raise ApiError(str(e))
+    return get_sound()
+
+
+@api.get("/sound/apps")
+def list_sound_apps():
+    return jsonify(sound_apps.running_apps())
+
+
+@api.post("/sound/clips")
+def upload_clips():
+    """Adds uploaded sound files (multipart, as "files") as sounds"""
+    if (request.content_length or 0) > MAX_UPLOAD_BYTES:
+        raise ApiError(f"Sounds can be up to {MAX_UPLOAD_BYTES // (1024 * 1024)} MB")
+    uploads = request.files.getlist("files")
+    if not uploads:
+        raise ApiError("Choose a sound file")
+
+    os.makedirs(sound_clips.SOUNDS_DIR, exist_ok=True)
+    created = []
+    for upload in uploads:
+        stem, extension = os.path.splitext(upload.filename or "")
+        extension = extension.lower()
+        if extension not in sound_clips.EXTENSIONS:
+            raise ApiError(f"{upload.filename} isn't a WAV, MP3, OGG or FLAC file")
+        file = f"{uuid.uuid4().hex}{extension}"
+        path = sound_clips.path_for(file)
+        upload.save(path)
+        try:
+            sound_clips.check(path)
+        except ValueError as e:
+            os.remove(path)
+            raise ApiError(f"{upload.filename}: {e}")
+        action = IntegrationAction(integration_id=SOUND_INTEGRATION_ID, name=stem.strip() or "Sound",
+                                   description="", configuration={"file": file, "volume": 1.0, "again": "restart"})
+        db.session.add(action)
+        created.append(action)
+    db.session.commit()
+    event_bus.publish("changed")
+    return jsonify([clip_json(action) for action in created]), 201
+
+
+@api.patch("/sound/clips/<int:id>")
+def update_clip(id):
+    action = get_clip(id)
+    data = body()
+    if "name" in data:
+        action.name = require_text(data, "name", "name")
+    configuration = dict(action.configuration)
+    for key in ("volume", "again"):
+        if key in data:
+            configuration[key] = data[key]
+    try:
+        action.configuration = sound_service().validate_action_configuration(configuration)
+    except ValueError as e:
+        raise ApiError(str(e))
+    db.session.commit()
+    refresh_after_change()
+    return clip_json(action)
+
+
+@api.delete("/sound/clips/<int:id>")
+def delete_clip(id):
+    action = get_clip(id)
+    file = action.configuration["file"]
+    sound_service().engine.stop(action.id)
+    removed_bindings = Binding.query.filter_by(integration_action_id=id).delete()
+    db.session.delete(action)
+    db.session.commit()
+    prune_joystick_mappings()
+    # The file may be shared with an action restored from a backup, so only remove it once nothing uses it
+    if not any(a.configuration.get("file") == file for a in
+               IntegrationAction.query.filter_by(integration_id=SOUND_INTEGRATION_ID)):
+        sound_clips.forget(file)
+        if sound_clips.exists(file):
+            os.remove(sound_clips.path_for(file))
+    refresh_after_change()
+    return {"ok": True, "removedBindings": removed_bindings}
+
+
+@api.post("/sound/clips/<int:id>/play")
+def play_clip(id):
+    """Plays a sound now, or stops it if it's playing"""
+    action = get_clip(id)
+    service = sound_service()
+    if not service.is_active:
+        raise ApiError("Sound is turned off on the Integrations page")
+    if action.id in service.engine.live_state()["playing"]:
+        service.engine.stop(action.id)
+        return {"playing": False}
+    if not sound_clips.exists(action.configuration["file"]):
+        raise ApiError("This sound's file is missing")
+    try:
+        service.engine.play(action.id, action.configuration["file"], action.configuration["volume"], "restart")
+    except SoundError as e:
+        raise ApiError(str(e))
+    return {"playing": True}
+
+
+@api.post("/sound/stop")
+def stop_sounds():
+    sound_service().engine.stop()
     return {"ok": True}
 
 # endregion

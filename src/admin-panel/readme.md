@@ -15,6 +15,7 @@ Tray menu:
 In the panel:
 - **Panel** - a live view of the box. Click a control (or use it on the box with "Pick from the box") to see and change its bindings. The **Joystick** tab does the same for a joystick plugged into this PC
 - **Configurations** - sets of bindings to switch between, each with an optional custom LCD screen
+- **Sound** - a soundboard that plays into the game alongside your voice, and voice-activated push-to-talk
 - **Actions** - keyboard shortcuts (recorded by pressing them), OS commands and Python scripts for controls to run
 - **Activity** - every press, action, error and connection change
 - **Integrations** - turn whole kinds of action on or off
@@ -28,15 +29,36 @@ Requires Python 3 on Windows (the keyboard integration uses PyDirectInput), and 
 
 Like Joystick Gremlin, the panel can give a joystick's hat and buttons new jobs while a configuration is active:
 
-- **Look around** - moves the mouse while held, optionally holding a key like Alt (Wardogs' free look) so the view recentres when you let go. Speed, ramp-up, a stop distance and return-to-start are adjustable
 - **Hold keys** - holds keys for as long as the input is held, e.g. arrow keys for snap views
 - **Run action** - runs any action when pressed or released
 
+The **Buttons to keys** card is the quick way to give buttons keyboard keys: click a button's slot and press a key (or a combination like Ctrl+F). Buttons left on "In game" go straight to the game to bind there. The game still sees the buttons you give keys, so leave those unbound in game.
+
 Joysticks are read through Windows' built-in joystick API, so no drivers (like vJoy) are needed. Mappings belong to a configuration, so they only apply while it's active, and the whole thing can be turned off on the Integrations page.
+
+## Sound
+
+The Sound page puts the panel between your microphone and the game:
+
+```
+mic ──► panel ──┬──► virtual cable ══► the game's microphone
+sounds ─────────┘
+           └──────► your headphones (sounds only, so you hear them too)
+```
+
+- **Soundboard** - drop in WAV, MP3, OGG or FLAC files and click to play them. Each sound is also an action, so box and joystick buttons can play them, and there's a "Stop all sounds" action. Pressing a sound again can restart it, stop it or play another copy over it. Files are kept in `app/sounds/` (not included in backups)
+- **Voice activation** - talk in game without holding push-to-talk yourself, in one of two ways:
+  - **Press a key** - holds the game's push-to-talk key (K for Wardogs, or any key) while you talk and/or while a sound plays. Your voice can be delayed slightly so the key is already down when your first word reaches the game, and the key can be limited to when the game is the app in front, so it isn't typed into Discord
+  - **Mic gate** - presses nothing: your voice only goes through to the game while you're talking, and the game is set to open mic. For games where simulated key presses are a worry
+  
+  Talking is anything louder than a threshold set against a live mic meter.
+- **Devices** - your mic, where to send it (the virtual cable) and where to hear sounds, with a volume for each
+
+Sending sound into games needs a virtual audio cable: install [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) (free), restart the panel, choose **CABLE Input** as "Send to game" and set the game's microphone to **CABLE Output**. Push-to-talk's key mode works without it, using your mic directly; the mic gate needs it. Push-to-talk and joystick mappings share held keys, so a joystick button mapped to the same key won't let go of it while you're talking.
 
 ## Presets
 
-`presets/wardogs.json` is a ready-made setup for Wardogs helicopter flying: box bindings for snap views, camera, countermeasures, weapons, seats, voice chat, free look lock and more, plus free look on the joystick hat. Load it from Settings > Restore from file. Restoring replaces your current setup, which is backed up first.
+`presets/wardogs.json` is a ready-made setup for Wardogs helicopter flying: box bindings for snap views, camera, countermeasures, weapons, seats, voice chat, free look lock and more. Load it from Settings > Restore from file. Restoring replaces your current setup, which is backed up first.
 
 ## Web UI
 
@@ -63,7 +85,7 @@ Used by the web UI. JSON with camelCase keys; errors return an HTTP error status
 |---|---|
 | `GET /api/status` | Box connection, active configuration, control states, current screen |
 | `GET /api/controls` | The box's controls and where they sit on the panel |
-| `GET /api/events` | Server-sent events: `status`, `press`, `activity`, `configuration`, `learned`, `changed` |
+| `GET /api/events` | Server-sent events: `status`, `press`, `activity`, `configuration`, `learned`, `changed`, `joystick`, `sound` |
 | `GET/POST /api/configurations` | List / create configurations |
 | `GET/PATCH/DELETE /api/configurations/<id>` | A configuration with its bindings, edit (incl. custom `displayLines`), delete |
 | `POST /api/configurations/<id>/activate` and `/duplicate` | Switch to / copy a configuration |
@@ -77,6 +99,10 @@ Used by the web UI. JSON with camelCase keys; errors return an HTTP error status
 | `POST /api/system/open-log` | Open the log file on this PC |
 | `GET /api/joystick` | Connected joysticks and their live state (also sent as `joystick` events) |
 | `POST /api/configurations/<id>/joystick-mappings`, `PATCH/DELETE /api/joystick-mappings/<id>` | Manage a configuration's joystick mappings |
+| `GET /api/sound`, `PATCH /api/sound/settings` | Sound devices, settings, sounds and live state (also sent as `sound` events: mic level, talking, key held, sounds playing) |
+| `POST /api/sound/clips` (multipart `files`), `PATCH/DELETE /api/sound/clips/<id>` | Add, edit and remove sounds |
+| `POST /api/sound/clips/<id>/play`, `POST /api/sound/stop` | Play (or stop) a sound, stop all sounds |
+| `GET /api/sound/apps` | Apps with a window open, for limiting push-to-talk to the game |
 | `POST /api/box/find`, `POST /api/box/display` | Scan the network for the box, preview a message on its screen |
 | `POST/GET /api/learn` | Learn mode - the next control used on the box is reported instead of running its actions |
 | `GET /api/export`, `POST /api/import` | Back up everything / restore from a backup (saves a backup to `app/backups/` first) |

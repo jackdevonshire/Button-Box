@@ -10,7 +10,7 @@ WEB_BUILD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static
 INDEX_PATH = os.path.join(WEB_BUILD_DIR, "index.html")
 
 # Pages handled by the web UI's router
-CLIENT_ROUTES = ["/", "/configurations", "/actions/<editor>", "/activity", "/integrations", "/settings"]
+CLIENT_ROUTES = ["/", "/configurations", "/actions/<editor>", "/activity", "/integrations", "/settings", "/sound"]
 
 web = Blueprint("web", __name__)
 

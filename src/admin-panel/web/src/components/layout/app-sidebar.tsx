@@ -1,4 +1,4 @@
-import { Activity, Gamepad2, Layers, LayoutGrid, Plug, Settings } from "lucide-react"
+import { Activity, Gamepad2, Layers, LayoutGrid, Plug, Settings, Volume2 } from "lucide-react"
 import { NavLink, useMatch } from "react-router"
 
 import {
@@ -46,6 +46,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <NavItem to="/" label="Panel" icon={LayoutGrid} end />
               <NavItem to="/configurations" label="Configurations" icon={Layers} />
+              <NavItem to="/sound" label="Sound" icon={Volume2} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
