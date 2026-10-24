@@ -5,7 +5,7 @@ import { toast } from "sonner"
 
 import { CableMeter } from "@/components/sound/cable-meter"
 import { ClipDialog } from "@/components/sound/clip-dialog"
-import { ShortcutSlot } from "@/components/sound/clip-triggers"
+import { StopAllRow } from "@/components/sound/stop-all-row"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -127,11 +127,8 @@ export function SoundboardCard({ sound }: { sound: SoundSnapshot }) {
       </CardContent>
 
       {stopAllClip && clips.length > 0 && (
-        <CardFooter className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t">
-          <span className="text-sm text-muted-foreground">Stop all sounds with</span>
-          <div className="min-w-48 flex-1">
-            <ShortcutSlot clip={stopAllClip} />
-          </div>
+        <CardFooter className="border-t">
+          <StopAllRow clip={stopAllClip} />
         </CardFooter>
       )}
 

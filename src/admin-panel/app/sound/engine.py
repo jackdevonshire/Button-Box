@@ -35,6 +35,8 @@ RETRY_SECONDS = 5               # How often to retry devices that couldn't be op
 ATTACK_BLOCKS = 2               # Blocks in a row above the threshold before it counts as talking, so clicks don't
 CLIP_PREROLL_MS = 120           # Push-to-talk is held this long before a clip reaches the game, so its start isn't lost
 CLIP_TAIL_MS = 150              # And kept held this long after it ends
+DUCK_ATTACK_SECONDS = 0.05      # How quickly sounds drop when you start talking
+DUCK_RELEASE_SECONDS = 0.4      # And come back up after you stop
 CABLE_SECONDS = 0.1             # Roughly how long audio takes to come out of a virtual cable (measured with VB-Cable)
 SILENCE_DB = -100
 PTT_HOLDER = ("sound", "push-to-talk")
@@ -46,6 +48,7 @@ DEFAULT_SETTINGS = {
     "monitorDevice": None,   # Your headphones, to hear clips yourself
     "micVolume": 1.0,
     "clipVolume": 0.8,       # Clips into the game
+    "duckVolume": 0.2,       # Clips in the game drop to this (of their volume) while you talk, so you're heard. 1 = off
     "monitorVolume": 0.5,    # Clips in your headphones
     "pushToTalk": {
         "enabled": False,
@@ -172,6 +175,7 @@ class SoundEngine:
         self.__clips_until = -math.inf  # Push-to-talk stays held for clips until this time
         self.__key = None               # The key held for push-to-talk, if any
         self.__gate_gain = 1.0          # 1 while your voice is let through to the game, 0 while gated
+        self.__duck_gain = 1.0          # How much of the clips' volume reaches the game - lowered while you talk
         self.__focus_ok = True
         self.__last_focus_check = 0.0
         self.__last_publish = 0.0
@@ -339,10 +343,27 @@ class SoundEngine:
         clip_mix = np.zeros(frames, np.float32)
         for voice in self.__voices:
             voice.mix_into("game", clip_mix)
-        mix += clip_mix * self.__settings["clipVolume"]
+        mix += clip_mix * (self.__duck_gains(frames) * self.__settings["clipVolume"])
 
         np.clip(mix, -1, 1, out=mix)
         outdata[:] = mix[:, None]
+
+    def __duck_gains(self, frames):
+        """
+        The clips' volume for this block: lowered while you're talking so your voice comes through, fading rather
+        than jumping. A single number when it's steady, or a ramp across the block while fading.
+        """
+        duck = self.__settings.get("duckVolume", 1.0)
+        talking = "mic" in self.__streams and time.perf_counter() - self.__last_talk < self.__talk_hold_seconds()
+        target = duck if talking else 1.0
+        start = self.__duck_gain
+        if start == target:
+            return start
+        seconds = DUCK_ATTACK_SECONDS if target < start else DUCK_RELEASE_SECONDS
+        step = max(1.0 - duck, 0.01) * frames / SAMPLE_RATE / seconds
+        end = max(target, start - step) if target < start else min(target, start + step)
+        self.__duck_gain = end
+        return np.linspace(start, end, frames, dtype=np.float32)
 
     def __monitor_callback(self, outdata, frames, time_info, status):
         mix = np.zeros(frames, np.float32)

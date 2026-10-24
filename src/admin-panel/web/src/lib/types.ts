@@ -166,6 +166,8 @@ export interface SoundSettings {
   monitorDevice: string | null
   micVolume: number
   clipVolume: number
+  /** Sounds in the game drop to this (of their volume) while you talk. 1 turns it off */
+  duckVolume: number
   monitorVolume: number
   pushToTalk: PushToTalkSettings
 }

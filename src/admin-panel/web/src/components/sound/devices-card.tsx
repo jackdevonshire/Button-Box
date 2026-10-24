@@ -104,6 +104,18 @@ export function DevicesCard({ sound }: { sound: SoundSnapshot }) {
             onCommit={(clipVolume) => save.mutate({ clipVolume })}
           />
           <VolumeField
+            label="Sounds while I talk"
+            key={`duck-${settings.duckVolume}`}
+            value={settings.duckVolume}
+            max={1}
+            description={
+              settings.duckVolume >= 1
+                ? "Off - sounds stay at full volume while you talk."
+                : "Sounds in the game drop to this while you talk, so you're heard over them."
+            }
+            onCommit={(duckVolume) => save.mutate({ duckVolume })}
+          />
+          <VolumeField
             label="In your headphones"
             key={settings.monitorVolume}
             value={settings.monitorVolume}
@@ -227,7 +239,19 @@ function DeviceField({
 }
 
 /** Keyed by the saved value, so the slider holds where it was let go until the saved value arrives */
-function VolumeField({ label, value, onCommit }: { label: string; value: number; onCommit: (value: number) => void }) {
+function VolumeField({
+  label,
+  value,
+  max = 2,
+  description,
+  onCommit,
+}: {
+  label: string
+  value: number
+  max?: number
+  description?: string
+  onCommit: (value: number) => void
+}) {
   const [draft, setDraft] = useState<number | null>(null)
   const shown = draft ?? value
   return (
@@ -238,13 +262,14 @@ function VolumeField({ label, value, onCommit }: { label: string; value: number;
       </div>
       <Slider
         min={0}
-        max={2}
+        max={max}
         step={0.05}
         value={[shown]}
         onValueChange={([next]) => setDraft(next)}
         onValueCommit={([next]) => onCommit(next)}
         aria-label={label}
       />
+      {description && <FieldDescription>{description}</FieldDescription>}
     </Field>
   )
 }
