@@ -19,14 +19,14 @@ import type { ActionOutput, SoundClip } from "@/lib/types"
  * Everything that plays a sound in one place: a keyboard shortcut (works in any app), and box and joystick buttons
  * (part of the active configuration). Changes here save straight away.
  */
-export function ClipTriggers({ clip }: { clip: SoundClip }) {
+export function ClipTriggers({ clip, title = "Play it from" }: { clip: SoundClip; title?: string }) {
   const { data: status } = useStatus()
   const { data: configuration } = useConfiguration(status?.activeConfigurationId)
 
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <h3 className="text-sm font-medium">Play it from</h3>
+        <h3 className="text-sm font-medium">{title}</h3>
         <p className="text-sm text-muted-foreground">
           These save straight away. Box and joystick buttons belong to{" "}
           <span className="font-medium text-foreground">{configuration?.name ?? "the active configuration"}</span>.
@@ -112,7 +112,7 @@ function BoxRow({ clip, configurationId }: { clip: SoundClip; configurationId: n
     mutationFn: (control: string) => api.createBinding(configurationId, { control, event: "on", actionId: clip.id }),
     onSuccess: (binding) => {
       queryClient.invalidateQueries()
-      toast.success(`${controlLabel(controls, binding.control)} now plays ${clip.name}`)
+      toast.success(`${controlLabel(controls, binding.control)} → ${clip.name}`)
     },
     onError: (e: Error) => toast.error(e.message),
   })
@@ -193,7 +193,7 @@ function JoystickRow({ clip, configurationId }: { clip: SoundClip; configuration
     },
     onSuccess: (mapping) => {
       queryClient.invalidateQueries()
-      toast.success(`${inputLabel(mapping.inputType, mapping.input)} now plays ${clip.name}`)
+      toast.success(`${inputLabel(mapping.inputType, mapping.input)} → ${clip.name}`)
     },
     onError: (e: Error) => toast.error(e.message),
   })

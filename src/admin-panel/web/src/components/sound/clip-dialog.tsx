@@ -29,7 +29,13 @@ const againOptions: { value: ClipAgain; label: string; hint: string }[] = [
 export function ClipDialog({ clip, onOpenChange }: { clip: SoundClip | null; onOpenChange: (open: boolean) => void }) {
   return (
     <Dialog open={clip !== null} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-lg"
+        onEscapeKeyDown={(event) => {
+          // Esc can be part of a shortcut, so don't close while recording one
+          if (document.activeElement?.closest("[data-key-recorder]")) event.preventDefault()
+        }}
+      >
         {/* Remounts for each clip, so the form starts from its saved values */}
         {clip && <ClipForm key={clip.id} clip={clip} onDone={() => onOpenChange(false)} />}
       </DialogContent>

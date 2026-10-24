@@ -113,6 +113,8 @@ class SoundService(BaseIntegrationService):
         for key in ("micVolume", "clipVolume", "monitorVolume"):
             if key in changes:
                 settings[key] = _number(changes[key], 0, 2, "Volume")
+        if "duckVolume" in changes:
+            settings["duckVolume"] = _number(changes["duckVolume"], 0, 1, "The volume while you talk")
         if settings["gameDevice"] and settings["gameDevice"] == settings["monitorDevice"]:
             raise ValueError("Sounds for the game and your headphones need to go to different devices")
 

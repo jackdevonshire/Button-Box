@@ -77,6 +77,7 @@ export function KeySlot({
   return (
     <button
       type="button"
+      data-key-recorder
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
       onFocus={() => {
