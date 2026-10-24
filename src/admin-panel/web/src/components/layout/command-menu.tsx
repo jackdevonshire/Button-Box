@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Activity, Check, Gamepad2, Layers, LayoutGrid, Moon, Plug, Radar, Settings, Sun } from "lucide-react"
+import { Activity, Check, Gamepad2, Layers, LayoutGrid, Moon, Plug, Radar, Settings, Sun, Volume2 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
@@ -62,6 +62,10 @@ export function CommandMenu({ open, onOpenChange }: { open: boolean; onOpenChang
           <CommandItem onSelect={() => run(() => navigate("/configurations"))}>
               <Layers />
               Configurations
+            </CommandItem>
+            <CommandItem onSelect={() => run(() => navigate("/sound"))}>
+              <Volume2 />
+              Sound
             </CommandItem>
             {integrations
               .filter((integration) => integration.actionEditor)

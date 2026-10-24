@@ -1,6 +1,6 @@
 """
 The joystick engine: reads connected joysticks in a background loop and applies the active configuration's mappings,
-turning hat directions and buttons into mouse movement, held keys or actions.
+turning hat directions and buttons into held keys or actions.
 """
 import threading
 import time
@@ -8,25 +8,9 @@ import traceback
 
 from app.joystick import output, winmm
 
-TICK_SECONDS = 1 / 250             # How often joysticks are read and the mouse is moved
+TICK_SECONDS = 1 / 250             # How often joysticks are read
 DEVICE_REFRESH_SECONDS = 2         # How often to look for joysticks being plugged in or removed
 AXIS_PUBLISH_SECONDS = 0.1         # Axis changes are sent to the UI at most this often
-HOLD_KEY_SETTLE_SECONDS = 0.03     # Gap between holding a key (like Alt) and moving, so the game sees the key first
-MAX_RETURN_STEP = 200              # Largest single mouse move when returning to centre
-
-DEFAULT_MOUSE = {"direction": None, "speed": 800, "rampMs": 150, "maxDistance": 0, "holdKey": "alt",
-                 "returnOnRelease": False}
-DIRECTIONS = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
-
-
-class _MouseLook:
-    """Movement state for one mouse mapping while its input is held"""
-
-    def __init__(self, settings, started):
-        self.settings = settings
-        self.started = started
-        self.travelled = [0.0, 0.0]
-        self.remainder = [0.0, 0.0]  # Fractions of a pixel carried between ticks, so slow speeds stay smooth
 
 
 class JoystickEngine:
@@ -39,9 +23,7 @@ class JoystickEngine:
         self.__states = {}             # Device id -> latest winmm.JoystickState
         self.__mappings = []           # The active configuration's enabled mappings, as plain dicts
         self.__active_inputs = set()   # (device, input_type, input) currently held
-        self.__mouse = {}              # Mapping id -> _MouseLook
-        self.__returns = []            # Pending [dx, dy] moves back to centre
-        self.__held = output.HeldKeys()
+        self.__held = output.held_keys
         self.__lock = threading.Lock()
         self.__last_device_refresh = 0
         self.__last_axis_publish = 0
@@ -105,8 +87,8 @@ class JoystickEngine:
             self.__publish_state()
 
         if self.__is_enabled():
-            self.__apply_mappings(now)
-        elif self.__active_inputs or self.__mouse:
+            self.__apply_mappings()
+        elif self.__active_inputs:
             self.__release_everything()
 
     def __refresh_devices(self):
@@ -131,7 +113,7 @@ class JoystickEngine:
             inputs |= {(device_id, "button", str(button)) for button in state.buttons}
         return inputs
 
-    def __apply_mappings(self, now):
+    def __apply_mappings(self):
         inputs = self.__current_inputs()
         pressed = inputs - self.__active_inputs
         released = self.__active_inputs - inputs
@@ -140,38 +122,23 @@ class JoystickEngine:
         for mapping in self.__mappings:
             key = (mapping["device"], mapping["inputType"], mapping["input"])
             if key in pressed:
-                self.__on_press(mapping, now)
+                self.__on_press(mapping)
             elif key in released:
                 self.__on_release(mapping)
 
-        self.__move_mouse(now)
-
-    def __on_press(self, mapping, now):
+    def __on_press(self, mapping):
         settings = mapping["output"]
-        if mapping["outputType"] == "mouse":
-            settings = {**DEFAULT_MOUSE, **settings}
-            if not settings["direction"]:
-                settings["direction"] = mapping["input"] if mapping["inputType"] == "hat" else "right"
-            if settings["holdKey"]:
-                self.__held.press(settings["holdKey"], mapping["id"])
-            self.__mouse[mapping["id"]] = _MouseLook(settings, now)
-        elif mapping["outputType"] == "keys":
+        if mapping["outputType"] == "keys":
             for key in settings.get("keys", []):
-                self.__held.press(key, mapping["id"])
+                self.__held.press(key, ("joystick", mapping["id"]))
         elif mapping["outputType"] == "action" and settings.get("when", "press") == "press":
             self.__trigger_action(mapping)
 
     def __on_release(self, mapping):
         settings = mapping["output"]
-        if mapping["outputType"] == "mouse":
-            look = self.__mouse.pop(mapping["id"], None)
-            if look and look.settings["returnOnRelease"]:
-                self.__returns.append([-round(look.travelled[0]), -round(look.travelled[1])])
-            if look and look.settings["holdKey"]:
-                self.__held.release(look.settings["holdKey"], mapping["id"])
-        elif mapping["outputType"] == "keys":
+        if mapping["outputType"] == "keys":
             for key in settings.get("keys", []):
-                self.__held.release(key, mapping["id"])
+                self.__held.release(key, ("joystick", mapping["id"]))
         elif mapping["outputType"] == "action" and settings.get("when", "press") == "release":
             self.__trigger_action(mapping)
 
@@ -180,56 +147,8 @@ class JoystickEngine:
         if action_id:
             self.__run_action(action_id, mapping)
 
-    def __move_mouse(self, now):
-        dx = dy = 0
-
-        # Finish any moves back to centre first, in steps so the game doesn't see one huge jump
-        if self.__returns:
-            remaining = self.__returns[0]
-            step_x = max(-MAX_RETURN_STEP, min(MAX_RETURN_STEP, remaining[0]))
-            step_y = max(-MAX_RETURN_STEP, min(MAX_RETURN_STEP, remaining[1]))
-            dx, dy = step_x, step_y
-            remaining[0] -= step_x
-            remaining[1] -= step_y
-            if remaining == [0, 0]:
-                self.__returns.pop(0)
-
-        for look in self.__mouse.values():
-            settings = look.settings
-            elapsed = now - look.started
-            if settings["holdKey"]:
-                elapsed -= HOLD_KEY_SETTLE_SECONDS
-            if elapsed <= 0:
-                continue
-
-            # Start at a quarter speed and ramp up, so small taps make small adjustments
-            ramp = settings["rampMs"] / 1000
-            speed = settings["speed"] * (min(1.0, 0.25 + 0.75 * elapsed / ramp) if ramp > 0 else 1.0)
-            step = speed * TICK_SECONDS
-
-            max_distance = settings["maxDistance"]
-            if max_distance:
-                step = min(step, max(0.0, max_distance - (abs(look.travelled[0]) + abs(look.travelled[1]))))
-
-            unit_x, unit_y = DIRECTIONS.get(settings["direction"], (0, 0))
-            for axis, unit in ((0, unit_x), (1, unit_y)):
-                if not unit:
-                    continue
-                exact = step * unit + look.remainder[axis]
-                whole = int(exact)
-                look.remainder[axis] = exact - whole
-                look.travelled[axis] += whole
-                if axis == 0:
-                    dx += whole
-                else:
-                    dy += whole
-
-        output.move_mouse(dx, dy)
-
     def __release_everything(self):
-        self.__held.release_all()
-        self.__mouse.clear()
-        self.__returns.clear()
+        self.__held.release_all("joystick")
         self.__active_inputs = set()
 
     # endregion

@@ -144,7 +144,7 @@ class Setting(db.Model):
 class JoystickMapping(db.Model):
     """
     Maps a joystick input (a hat direction or a button) to something to do while the configuration is active:
-    move the mouse to look around, hold keys, or run an action.
+    hold keys or run an action.
     """
     __tablename__ = 'joystick_mapping'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -153,7 +153,7 @@ class JoystickMapping(db.Model):
     device = db.Column(db.String, nullable=False)       # Vendor:product id, e.g. "044F:0406"
     input_type = db.Column(db.String, nullable=False)   # "hat" or "button"
     input = db.Column(db.String, nullable=False)        # Hat direction (up/down/left/right) or button number
-    output_type = db.Column(db.String, nullable=False)  # "mouse", "keys" or "action"
+    output_type = db.Column(db.String, nullable=False)  # "keys" or "action"
     output = db.Column(JSON, nullable=False)
     enabled = db.Column(db.Boolean, nullable=False, default=True)
 

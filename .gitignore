@@ -18,6 +18,8 @@ downloads/
 eggs/
 .eggs/
 lib/
+# ...but not the web UI's source folder of the same name
+!src/admin-panel/web/src/lib/
 lib64/
 parts/
 sdist/

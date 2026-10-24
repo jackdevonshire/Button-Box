@@ -4,6 +4,7 @@ from app.integrations.mode_selection.service import ModeSelectionService
 from app.integrations.command.service import CommandService
 from app.integrations.script.service import ScriptService
 from app.integrations.joystick.service import JoystickService
+from app.integrations.sound.service import SoundService
 
 # List all integrations here
 ALL_INTEGRATIONS = [
@@ -12,6 +13,7 @@ ALL_INTEGRATIONS = [
     CommandService(),
     ScriptService(),
     JoystickService(),
+    SoundService(),
 ]
 
 
