@@ -79,7 +79,7 @@ export type SoundSettingsInput = Partial<Omit<SoundSettings, "pushToTalk">> & {
   pushToTalk?: Partial<SoundSettings["pushToTalk"]>
 }
 
-export type ClipInput = Partial<Pick<SoundClip, "name" | "volume" | "again">>
+export type ClipInput = Partial<Pick<SoundClip, "name" | "volume" | "again" | "hotkey">>
 
 export interface ConfigurationInput {
   name?: string

@@ -12,7 +12,7 @@ import {
   ScanLine,
   Trash2,
 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { useSearchParams } from "react-router"
 import { toast } from "sonner"
 
@@ -31,13 +31,13 @@ import {
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { usePickFromStick } from "@/hooks/use-pick-from-stick"
 import { api } from "@/lib/api"
 import { hatDirections, inputKey, inputLabel, mappingTitle, outputSummary } from "@/lib/joystick"
 import { useActions, useJoystick } from "@/lib/queries"
-import type { Configuration, HatDirection, JoystickDevice, JoystickDeviceState, JoystickMapping } from "@/lib/types"
+import type { Configuration, HatDirection, JoystickDevice, JoystickMapping } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
-const PICK_SECONDS = 8
 const hatIcons = { up: ArrowUp, down: ArrowDown, left: ArrowLeft, right: ArrowRight }
 
 /** The joystick half of the panel page: a live view of the stick and this configuration's mappings */
@@ -460,52 +460,4 @@ function InactiveNotice() {
       </Button>
     </div>
   )
-}
-
-/** Selects the next hat direction or button pressed on the stick */
-function usePickFromStick(state: JoystickDeviceState | undefined, onPick: (key: string) => void) {
-  const [deadline, setDeadline] = useState<number | null>(null)
-  const [now, setNow] = useState(() => Date.now())
-  const previous = useRef<Set<string>>(new Set())
-  const onPickRef = useRef(onPick)
-  useEffect(() => {
-    onPickRef.current = onPick
-  })
-
-  // Watch for anything newly pressed while picking
-  useEffect(() => {
-    const current = new Set([
-      ...(state?.hat ?? []).map((direction) => inputKey("hat", direction)),
-      ...(state?.buttons ?? []).map((button) => inputKey("button", String(button))),
-    ])
-    if (deadline !== null) {
-      const pressed = [...current].find((key) => !previous.current.has(key))
-      if (pressed) {
-        setDeadline(null)
-        onPickRef.current(pressed)
-      }
-    }
-    previous.current = current
-  }, [state, deadline])
-
-  useEffect(() => {
-    if (deadline === null) return
-    const timer = setInterval(() => {
-      setNow(Date.now())
-      if (Date.now() > deadline) {
-        setDeadline(null)
-        toast("Nothing was pressed on the stick")
-      }
-    }, 250)
-    return () => clearInterval(timer)
-  }, [deadline])
-
-  return {
-    active: deadline !== null,
-    secondsLeft: deadline === null ? 0 : Math.max(0, Math.ceil((deadline - now) / 1000)),
-    start: () => {
-      setNow(Date.now())
-      setDeadline(Date.now() + PICK_SECONDS * 1000)
-    },
-  }
 }

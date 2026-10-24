@@ -22,7 +22,7 @@ from app.core.display_service import DisplayService, LCD_COLS, LCD_ROWS
 from app.core.events import event_bus, format_sse
 from app.core.models import ActivityEntry, Binding, Configuration, IntegrationAction, JoystickMapping, Setting
 from app.core.types import CONTROLS, EventType, Gesture, PhysicalKey
-from app.sound import apps as sound_apps, clips as sound_clips, devices as sound_devices
+from app.sound import apps as sound_apps, clips as sound_clips, devices as sound_devices, hotkeys as sound_hotkeys
 from app.sound.engine import SoundError
 
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -431,17 +431,30 @@ def sound_service():
 def clip_json(action):
     data = action.to_json()
     config = action.configuration
+    shortcut = {"hotkey": config.get("hotkey"), "hotkeyError": sound_service().hotkey_error(action.id)}
     if config.get("stopAll"):
-        return {**data, "stopAll": True}
-    return {**data, "stopAll": False, "file": config["file"], "volume": config["volume"], "again": config["again"],
-            "duration": sound_clips.describe(config["file"])}
+        return {**data, **shortcut, "stopAll": True}
+    return {**data, **shortcut, "stopAll": False, "file": config["file"], "volume": config["volume"],
+            "again": config["again"], "duration": sound_clips.describe(config["file"])}
 
 
-def get_clip(id):
+def get_clip(id, allow_stop_all=False):
     action = get_or_404(IntegrationAction, id, "Sound")
-    if action.integration_id != SOUND_INTEGRATION_ID or action.configuration.get("stopAll"):
+    if action.integration_id != SOUND_INTEGRATION_ID or (action.configuration.get("stopAll") and not allow_stop_all):
         raise ApiError("That isn't a sound", 404)
     return action
+
+
+def check_hotkey_unused(action, hotkey):
+    """Two sounds can't share a shortcut"""
+    try:
+        wanted = sound_hotkeys.parse(hotkey)
+    except ValueError as e:
+        raise ApiError(str(e))
+    for other in IntegrationAction.query.filter_by(integration_id=SOUND_INTEGRATION_ID):
+        keys = other.configuration.get("hotkey")
+        if other.id != action.id and keys and sound_hotkeys.parse(keys) == wanted:
+            raise ApiError(f"{sound_hotkeys.label(hotkey)} already plays {other.name}")
 
 
 @api.get("/sound")
@@ -454,6 +467,7 @@ def get_sound():
         "devices": sound_devices.list_devices(),
         "clips": [clip_json(action) for action in actions],
         "state": service.engine.status(),
+        "hotkeyKeys": sound_hotkeys.SUPPORTED_KEYS,
     }
 
 
@@ -516,19 +530,27 @@ def upload_clips():
 
 @api.patch("/sound/clips/<int:id>")
 def update_clip(id):
-    action = get_clip(id)
+    """Edits a sound, or just the shortcut of Stop all sounds"""
+    action = get_clip(id, allow_stop_all=True)
     data = body()
+    if action.configuration.get("stopAll") and set(data) - {"hotkey"}:
+        raise ApiError("Only the shortcut of Stop all sounds can be changed")
     if "name" in data:
         action.name = require_text(data, "name", "name")
     configuration = dict(action.configuration)
-    for key in ("volume", "again"):
+    for key in ("volume", "again", "hotkey"):
         if key in data:
             configuration[key] = data[key]
+    if configuration.get("hotkey"):
+        check_hotkey_unused(action, configuration["hotkey"])
+    service = sound_service()
     try:
-        action.configuration = sound_service().validate_action_configuration(configuration)
+        action.configuration = service.validate_action_configuration(configuration)
     except ValueError as e:
         raise ApiError(str(e))
     db.session.commit()
+    if "hotkey" in data:
+        service.refresh_hotkeys()
     refresh_after_change()
     return clip_json(action)
 
@@ -548,6 +570,7 @@ def delete_clip(id):
         sound_clips.forget(file)
         if sound_clips.exists(file):
             os.remove(sound_clips.path_for(file))
+    sound_service().refresh_hotkeys()
     refresh_after_change()
     return {"ok": True, "removedBindings": removed_bindings}
 
